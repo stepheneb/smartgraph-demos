@@ -1,0 +1,51 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>Flotr graphs</title>
+
+  <script type="text/javascript" src="javascripts/lib/prototype.js"></script>
+  <!--[if IE]>
+  <script type="text/javascript" src="javascripts/lib/excanvas.js"></script>
+  <script type="text/javascript" src="javascripts/lib/base64.js"></script>
+  <![endif]-->
+  <script type="text/javascript" src="javascripts/lib/base canvas2image 64.js"></script>
+  <script type="text/javascript" src="javascripts/lib/base canvastext 64.js"></script>
+  <script type="text/javascript" src="javascripts/flotr/flotr.js"></script>
+  <script type="text/javascript" src="javascripts/flotrgraph.js"></script>
+
+  <link type="text/css" charset="utf-8" rel="stylesheet" media="screen, projection" href="stylesheets/apidocs.css" />
+</head>
+<body>
+  <div id="main" class="page-content">
+    <h3 class="page-title namespace">
+      Flotr graphs
+    </h3>
+    <div id="back" class="back">
+      <a href="index.html">back</a>
+    </div>
+    <div class="section section-klass_methods">
+      <div class="section-content">
+        <ul class="method-details-list">
+          <li class="method-description">
+            <form id="math" action="#">
+              <fieldset>
+                <legend>Simple graph: </legend>
+                <label>y = </label>
+                <input type="text" id="exp" value="-2.5 + 4 * x * x" /><br /><br />
+                <input type="button" value="plot" onclick="plotIt([0,0]);" />
+              </fieldset>
+              <fieldset>
+                <legend>Question: </legend>
+                <p>Click on the graph where the y value is less than zero.</p>
+                <input type="button" value="Check Answer" onclick="checkAnswer();" />
+              </fieldset>
+            </form>
+            <div id="container1" style="width:600px;height:300px;"></div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
