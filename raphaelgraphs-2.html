@@ -14,11 +14,14 @@
 
     <script type="text/javascript">
         
-        var f = function (x) {
-            return (-2.5 + 4 * x * x);
-        };
-        
-        
+        var f = function (x) { return ( Math.sin(x)); },
+            xrange = { min: -5, max: 5 },
+            xstep = 0.1,
+            xaxis_steps = 10,
+            yaxis_steps = 10,
+            padding = { top: 20, right: 20, bottom: 20, left: 20 };
+
+
         var range = function (min, max, step) {
             var xs = [];
             var n_steps = Math.floor((max-min)/step)+1;  
@@ -30,7 +33,8 @@
             return xs;
         };
         
-        // evaluate f over range
+        
+        // evaluate f over xs
         var eval_func = function (f, xs) {
             var ys = [];
 
@@ -41,19 +45,53 @@
             return ys;
         };
         
+        // handy utilities        
+        var max = function (arr) { return Math.max.apply(null, arr); };
+        var min = function (arr) { return Math.min.apply(null, arr); };
+        
         
         $(document).ready(function () {
-            var paper = Raphael("container1");
+
+            var $container = $('#container');
             
-            paper.g.txtattr.font = "12px 'Fontin Sans', Fontin-Sans, sans-serif";
+            var r = Raphael("container"),
+                txt = {font: '12px Fontin-Sans, Arial', fill: "#fff"},
+                w = $container.width(),
+                h = $container.height();
+                
             
-            var xs = range(-5, 5, 0.1);
-            var ys = eval_func(f, xs);
+            var plot = function (r) {
+                
+                var xs = range(xrange.min, xrange.max, xstep);
+                var ys = eval_func(f, xs);
+                var yrange = { min: min(ys), max: max(ys) };
+                
+                plot_width = w - padding.left - padding.right;
+                plot_height = h - padding.top - padding.bottom;
+                
+                
+                xaxis_offset = plot_height *
+                    ((yrange.min < 0 && yrange.max > 0) ? (yrange.max / (yrange.max - yrange.min)) : 1);
+                    
+                yaxis_offset = plot_width *
+                    ((xrange.min < 0 && xrange.max > 0) ? (-xrange.min / (xrange.max - xrange.min)) : 0);
+                     
+                var chart = r.g.linechart(padding.left, padding.top, plot_width, plot_height, xs, ys);
+                r.rect(padding.left, padding.top, plot_width, plot_height);
+                
+                r.g.txtattr.font = "12px 'Fontin Sans', Fontin-Sans, sans-serif";
+                
+                // x axis
+                r.g.axis(
+                    padding.left, padding.top + xaxis_offset, plot_width, xrange.min, xrange.max, xaxis_steps, 2);
+
+                
+                // y axis 
+                r.g.axis(
+                    padding.left + yaxis_offset, padding.top + plot_height, plot_height, yrange.min, yrange.max, yaxis_steps, 3);
+            };
             
-            // axes are clockwise from top (i.e., trbl like in css)            
-            var chart = paper.g.linechart(10, 10, 580, 280, xs, ys/*, {axis: "0 0 1 1"}*/);
-            
-            paper.g.axis(200, 200, 380, -5, 5, 11, 4);
+            plot(r);
         });
     </script>
 
@@ -83,7 +121,7 @@
                                 <input type="button" value="Check Answer" onclick="checkAnswer();" />
                             </fieldset>
                         </form>
-                        <div id="container1" style="width:600px;height:300px;"></div>
+                        <div id="container" style="width:600px;height:300px;"></div>
                     </li>
                 </ul>
             </div>
