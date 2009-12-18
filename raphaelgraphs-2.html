@@ -14,12 +14,16 @@
 
     <script type="text/javascript">
         
-        var f = function (x) { return ( Math.sin(x)); },
+        var f = function (x) { return ( -2.5 + 4 * x * x ); },
             xrange = { min: -5, max: 5 },
             xstep = 0.1,
             xaxis_steps = 10,
             yaxis_steps = 10,
-            padding = { top: 20, right: 20, bottom: 20, left: 20 };
+            padding = { top: 20, right: 20, bottom: 20, left: 20 },
+            txt = {font: '12px Fontin-Sans, Arial', fill: "#fff"},
+            colorhue = .6,
+            color = "hsb(" + [colorhue, 1, .75] + ")",
+            snap_width = 50;
 
 
         var range = function (min, max, step) {
@@ -55,29 +59,93 @@
             var $container = $('#container');
             
             var r = Raphael("container"),
-                txt = {font: '12px Fontin-Sans, Arial', fill: "#fff"},
-                w = $container.width(),
-                h = $container.height();
-                
-            
+                canvas_width = $container.width(),
+                canvas_height = $container.height(),
+                plot_width = canvas_width - padding.left - padding.right,
+                plot_height = canvas_height - padding.top - padding.bottom;
+
             var plot = function (r) {
                 
                 var xs = range(xrange.min, xrange.max, xstep);
                 var ys = eval_func(f, xs);
                 var yrange = { min: min(ys), max: max(ys) };
                 
-                plot_width = w - padding.left - padding.right;
-                plot_height = h - padding.top - padding.bottom;
-                
-                
                 xaxis_offset = plot_height *
                     ((yrange.min < 0 && yrange.max > 0) ? (yrange.max / (yrange.max - yrange.min)) : 1);
                     
                 yaxis_offset = plot_width *
                     ((xrange.min < 0 && xrange.max > 0) ? (-xrange.min / (xrange.max - xrange.min)) : 0);
-                     
-                var chart = r.g.linechart(padding.left, padding.top, plot_width, plot_height, xs, ys);
-                r.rect(padding.left, padding.top, plot_width, plot_height);
+                    
+                // make this a plain ol' path.
+                
+
+                //var chart = r.g.linechart(padding.left, padding.top, plot_width, plot_height, xs, ys);
+                
+                var xspacing = plot_width / (xrange.max - xrange.min);
+                var yspacing = plot_height / (yrange.max - yrange.min);
+                
+                var pathspec = [];
+                var pi = 0;
+                
+                for (var i = 0, ii = xs.length; i < ii; i++) {
+                    var y = padding.top + Math.round(yspacing * (yrange.max - ys[i])),
+                        x = padding.left + Math.round(xspacing * (xs[i] - xrange.min));
+                        
+                    pathspec[pi++] = (pi == 1) ? "M" : "L";
+                    pathspec[pi++] = x;
+                    pathspec[pi++] = ' ';
+                    pathspec[pi++] = y;
+                    //pathspec[pi++] = ' ';
+                }
+                //pathspec[pi] = "z";
+                
+                // draw the path
+                var pathstr = pathspec.join('');
+                var path = r.path(pathstr).attr({
+                    stroke: color,
+                    "stroke-width": 2,
+                });
+                
+                var snap_path = r.path(pathstr).attr({
+                    opacity: 0.0,
+                    "stroke-width": snap_width
+                });
+                
+                var point = r.circle(0, 0, 3).attr({
+                    stroke: "#aa0000",
+                    fill: "#aa0000"
+                });
+                
+                
+                point.attr({cx: plot_width/2 + padding.left, cy: plot_height/2 + padding.top});
+                
+                var point_is_selected = false;
+                var point_location = { x: 0, y: 0 };
+                
+                $(snap_path.node).hover(function () {
+                    var left = $container.offset().left
+                    $(document).bind("mousemove.point_selection", function (e) {
+                        var xloc = e.clientX - left;
+                    
+                        var xval = (xloc - padding.left) / xspacing + xrange.min
+                        var yval = f(xval);
+                        var yloc = padding.top + Math.round(yspacing * (yrange.max - yval));
+                        
+                        
+                        point.attr({cx: xloc, cy: yloc}).show();
+                    });
+                    
+                    $(document).bind("click.point_selection", function (e) {
+                        point_location.x = e.clientX;
+                        point_is_selected = true;
+                    });
+                }, function () {
+                    
+                    $(document).unbind(".point_selection");
+                    if (!point_is_selected) {
+                        point.hide();
+                    }            
+                });
                 
                 r.g.txtattr.font = "12px 'Fontin Sans', Fontin-Sans, sans-serif";
                 
@@ -85,6 +153,7 @@
                 r.g.axis(
                     padding.left, padding.top + xaxis_offset, plot_width, xrange.min, xrange.max, xaxis_steps, 2);
 
+                // can we animate these when we switch between ranges?
                 
                 // y axis 
                 r.g.axis(
