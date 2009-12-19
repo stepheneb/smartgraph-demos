@@ -14,7 +14,7 @@
 
     <script type="text/javascript">
         
-        var f = function (x) { return ( -2.5 + 4 * x * x ); },
+        var f = function (x) { return ( Math.exp(0.3*x)*Math.cos(x) ); },
             xrange = { min: -5, max: 5 },
             xstep = 0.1,
             xaxis_steps = 10,
@@ -91,13 +91,12 @@
                     var y = padding.top + Math.round(yspacing * (yrange.max - ys[i])),
                         x = padding.left + Math.round(xspacing * (xs[i] - xrange.min));
                         
-                    pathspec[pi++] = (pi == 1) ? "M" : "L";
+                    pathspec[pi] = (pi == 0) ? "M" : "L";
+                    pi++;
                     pathspec[pi++] = x;
                     pathspec[pi++] = ' ';
                     pathspec[pi++] = y;
-                    //pathspec[pi++] = ' ';
                 }
-                //pathspec[pi] = "z";
                 
                 // draw the path
                 var pathstr = pathspec.join('');
@@ -106,46 +105,126 @@
                     "stroke-width": 2,
                 });
                 
+                // the "snap_path" is a wide path that flanks the main vector path of the line graph.
+                // When it is hovered, the selectable "dot" becomes visible.
+                // Try setting opacity = 0.1 to visualize the snap_path.
+                
                 var snap_path = r.path(pathstr).attr({
-                    opacity: 0.0,
+                    opacity: 0.1,
                     "stroke-width": snap_width
                 });
                 
                 var point = r.circle(0, 0, 3).attr({
                     stroke: "#aa0000",
-                    fill: "#aa0000"
-                });
+                    fill: "#aa0000",
+                    opacity: 0.5,
+                    r: 6,
+                }).hide();
                 
+                var xcross = r.path("M " + padding.left + " " + padding.top + "L " + padding.left + " " + (padding.top + plot_height)).hide();
                 
-                point.attr({cx: plot_width/2 + padding.left, cy: plot_height/2 + padding.top});
-                
+                var ycross = r.path("M " + padding.left + " " + padding.top + "L " + (padding.left + plot_width) + " " + padding.top).hide();
+
                 var point_is_selected = false;
                 var point_location = { x: 0, y: 0 };
                 
+                var container_left = $container.offset().left;
+                var move_point = function (clientX) {
+                    var xloc = clientX - container_left - padding.left;
+                    
+                    if (xloc < 0) {
+                        xloc = 0;
+                    }
+                    if (xloc >= plot_width) {
+                        xloc = plot_width-1;
+                    }
+                    
+                    var xval = (xloc) / xspacing + xrange.min
+                    var yval = f(xval);
+                    var yloc = Math.round(yspacing * (yrange.max - yval));
+            
+                    point.attr({cx: xloc + padding.left, cy: yloc + padding.top});
+                    
+                    xcross.attr("path", "M " + (padding.left + xloc) + " " + padding.top + "L " + (padding.left + xloc) + " " + (padding.top + plot_height));
+
+                };
+                
+                var tracking_mode_is_on = false;
+                
+                var set_tracking_mode_on = function () {
+                    point.attr("opacity", 0.5);
+                    tracking_mode_is_on = true;
+                    var x = point.attr("cx");
+                    xcross.attr("path", "M " + x + " " + padding.top + "L " + x + " " + (padding.top + plot_height)).show();
+                    
+                };
+                
+                var set_tracking_mode_off = function () {
+                    xcross.hide();
+                    point.attr("opacity", 1.0);
+                    tracking_mode_is_on = false;
+                };
+                
+                var point_is_being_dragged = false;
+                var point_is_hovered = false;
+                
                 $(snap_path.node).hover(function () {
-                    var left = $container.offset().left
-                    $(document).bind("mousemove.point_selection", function (e) {
-                        var xloc = e.clientX - left;
-                    
-                        var xval = (xloc - padding.left) / xspacing + xrange.min
-                        var yval = f(xval);
-                        var yloc = padding.top + Math.round(yspacing * (yrange.max - yval));
+                    point.show();
+                    if (!point_is_selected)  {
+                        set_tracking_mode_on();
+                        $(document).bind("mousemove.point-selection", function (e) {
+                            move_point(e.clientX);
+                        });
+
+                        $(document).bind("click.point-selection", function (e) {
+                            $(document).unbind(".point-selection");
                         
-                        
-                        point.attr({cx: xloc, cy: yloc}).show();
-                    });
-                    
-                    $(document).bind("click.point_selection", function (e) {
-                        point_location.x = e.clientX;
-                        point_is_selected = true;
-                    });
+                            set_tracking_mode_off();
+                            point_is_selected = true;
+                            
+                            $(point.node).hover(function () {
+                                point_is_hovered = true;
+                                set_tracking_mode_on();
+                            }, function () {
+                                point_is_hovered = false;
+                                if (!point_is_being_dragged) {                                
+                                    set_tracking_mode_off();
+                                }
+                            });
+                            
+                            $(point.node).mousedown(function (e) {
+                                point_is_being_dragged = true;                    
+                                $(document).bind("mousemove.selected-point-move", function (e) {
+                                    move_point(e.clientX);
+                                });
+                                
+                                $(document).bind("mouseup.selected-point-move", function (e) {
+                                    point_is_being_dragged = false;
+                                    set_tracking_mode_off();
+                                    $(document).unbind(".selected-point-move");
+                                });
+                                
+                                return false;       // prevent initiation of drag-and-drop
+                            });
+                        });
+                    }
                 }, function () {
-                    
-                    $(document).unbind(".point_selection");
+                    $(document).unbind(".point-selection");
+
+                    if (!point_is_being_dragged) {
+                        set_tracking_mode_off();
+                    }
                     if (!point_is_selected) {
                         point.hide();
                     }            
                 });
+                
+                
+                // note that firefox fires a lot of unnecessary mouseleaves!
+                $(snap_path.node).mouseleave(function () {
+                   alert("mouseleave");
+                });
+
                 
                 r.g.txtattr.font = "12px 'Fontin Sans', Fontin-Sans, sans-serif";
                 
