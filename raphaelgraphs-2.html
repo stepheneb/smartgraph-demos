@@ -167,8 +167,10 @@
                 
                 var point_is_being_dragged = false;
                 var point_is_hovered = false;
+                var leave_timer;
                 
                 $(snap_path.node).hover(function () {
+                    clearTimeout(leave_timer);
                     point.show();
                     if (!point_is_selected)  {
                         set_tracking_mode_on();
@@ -209,20 +211,22 @@
                         });
                     }
                 }, function () {
-                    $(document).unbind(".point-selection");
+                    leave_timer = setTimeout(function () {
+                        $(document).unbind(".point-selection");
 
-                    if (!point_is_being_dragged) {
-                        set_tracking_mode_off();
-                    }
-                    if (!point_is_selected) {
-                        point.hide();
-                    }            
+                        if (!point_is_being_dragged && !point_is_hovered) {
+                            set_tracking_mode_off();
+                        }
+                        if (!point_is_selected) {
+                            point.hide();
+                        }
+                    }, 250);
                 });
                 
                 
                 // note that firefox fires a lot of unnecessary mouseleaves!
                 $(snap_path.node).mouseleave(function () {
-                   alert("mouseleave");
+                   //alert("mouseleave");
                 });
 
                 
