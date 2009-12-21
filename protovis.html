@@ -1,0 +1,197 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <!-- modified from http://protovis-js.googlecode.com/svn/trunk/how-to/scale-interaction-1.html by RK -->
+
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Protovis graphs</title>
+    <script type="text/javascript" src="javascripts/protovis/protovis-d3.1.js"></script>    
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"></script>
+
+
+    <link type="text/css" charset="utf-8" rel="stylesheet" media="screen, projection" 
+        href="stylesheets/apidocs.css" />
+    <link rel="stylesheet" href="demo.css" type="text/css" media="screen" charset="utf-8">
+
+
+    <script type="text/javascript">
+    
+        var f, point_val;
+        var vis;
+        
+        $(document).ready(function () {
+            
+            var plot_f = function () {                
+                var f_as_string = "f = function (x) { return (" + $("#plot-func").val() + "); };";
+                eval(f_as_string);
+                
+                //alert("data[0].y = " + data[0].y);
+
+                point_val = undefined;
+                
+                var checker = function () {
+                    if (!vis) {
+                        setTimeout(checker, 50);
+                    }
+                    else {
+                        vis.render();
+                    }
+                };
+                checker();
+            };
+            
+            // click events...
+
+            $("#answer-button").click(function () {
+                if (point_val) {
+                    if (point_val.y < 0) {
+                        alert("That's correct!");
+                    }
+                    else {
+                        alert("Nope; try again.");
+                    }
+                }
+                else {
+                    alert("You haven't selected a point yet.");
+                }
+            });
+
+
+            $("#plot-button").click(function () {
+                plot_f();
+            });
+            
+            plot_f();
+        });
+    </script>
+    
+</head>
+<body> 
+    <div id="main" class="page-content">
+        <h3 class="page-title namespace">
+            Raphael graphs
+        </h3>
+        <div id="back" class="back">
+            <a href="index.html">back</a>
+        </div>
+        <div class="section section-klass_methods">
+            <div class="section-content">
+                <ul class="method-details-list">
+                    <li class="method-description">
+                        <form id="math" action="#">
+                            <fieldset>
+                                <legend>Simple graph: </legend>
+                                <label>y = </label>
+                                <input type="text" id="plot-func"value="Math.exp(0.3*x)*Math.cos(x)" />
+                                <br /><br />
+                                <input type="button" id="plot-button" value="plot"  />
+                            </fieldset>
+                            <fieldset>
+                                <legend>Question: </legend>
+                                <p>Click on the graph where the y value is less than zero.</p>
+                                <input type="button" value="Check Answer" id="answer-button" />
+                            </fieldset>
+                        </form>
+                        <div id="container" style="width:600px;height:300px;">
+                            <script type="text/javascript+protovis">
+
+                               var data = pv.range(-5, 5, .1).map(function(x) {
+                                   return {x: x, y: f(x)};
+                               });
+
+                              /* Chart dimensions and scales. */
+                              var w = 600,
+                                  h = 300,
+                                  x = pv.Scale.linear(data, function(d) d.x).range(0, w),
+                                  y = pv.Scale.linear(pv.min(data, function(d) d.y), pv.max(data, function(d) d.y)).range(0, h)
+                                  i = -1;
+
+                              /* The root panel. */
+                              vis = new pv.Panel()
+                                  .width(w)
+                                  .height(h)
+                                  .bottom(20)
+                                  .left(20)
+                                  .right(10)
+                                  .top(5);
+
+                              /* Y-ticks. */
+                              vis.add(pv.Rule)
+                                  .data(y.ticks())
+                                  .visible(function() !(this.index % 2))
+                                  .bottom(function(d) Math.round(y(d)) - .5)
+                                  .strokeStyle(function(d) d ? "#eee" : "#000")
+                                .anchor("left").add(pv.Label)
+                                  .text(function(d) d.toFixed(1));
+
+
+                              /* X-ticks. */
+                              vis.add(pv.Rule)
+                                  .data(x.ticks())
+                                  .left(function(d) Math.round(x(d)) - .5)
+                                  .strokeStyle(function(d) d ? "#eee" : "#000")
+                                .anchor("bottom").add(pv.Label)
+                                  .text(function(d) x.tickFormat(d));
+
+                              /* The line. */
+                              var line = vis.add(pv.Line)
+                                  .data(data)
+                                  .left(function(d) x(d.x))
+                                  .bottom(function(d) y(d.y))
+                                  .lineWidth(2);
+
+                              /* The mouseover dots and label. */
+                              line.add(pv.Dot)
+                                  .visible(function() i >= 0)
+                                  .data(function() [data[i]])
+                                  .fillStyle(function() line.strokeStyle())
+                                  .strokeStyle("#000")
+                                  .size(20)
+                                  .lineWidth(1)
+                                .add(pv.Dot)
+                                  .left(10)
+                                  .bottom(10)
+                                .anchor("right").add(pv.Label)
+                                  .text(function(d) d.y.toFixed(2));
+
+                              var selected = -1;
+                              
+                              line.add(pv.Dot)
+                                .visible(function() selected >= 0)
+                                .data(function() [data[selected]])  
+                                .fillStyle("#a00")
+                                .size(20)
+                                .lineWidth(1)
+
+
+                              /* An invisible bar to capture events (without flickering). */
+                              vis.add(pv.Bar)
+                                  .fillStyle("rgba(0,0,0,.001)")
+                                  .event("mouseout", function() {
+                                      i = -1;
+                                      return vis; // returning vis here is allegedly equivalent to calling vis.render() again
+                                    })
+                                  .event("mousemove", function() {
+                                      var mx = x.invert(vis.mouse().x);
+                                      i = pv.search(data.map(function(d) d.x), mx);
+                                      i = i < 0 ? (-i - 2) : i;
+                                      return vis;
+                                    })
+                                  .event("click", function () {
+                                    selected = i;
+                                    point_val = data[i];
+                                    return vis;
+                                  });      
+              
+                            </script>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</body>
+    
+
+    
+</html>
