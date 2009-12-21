@@ -13,9 +13,10 @@
     <link rel="stylesheet" href="demo.css" type="text/css" media="screen" charset="utf-8">
 
     <script type="text/javascript">
+    
+        var f, point_val;
         
-        var f = function (x) { return ( Math.exp(0.3*x)*Math.cos(x) ); },
-            xrange = { min: -5, max: 5 },
+        var xrange = { min: -5, max: 5 },
             xstep = 0.1,
             xaxis_steps = 10,
             yaxis_steps = 10,
@@ -23,7 +24,7 @@
             txt = {font: '12px Fontin-Sans, Arial', fill: "#fff"},
             colorhue = .6,
             color = "hsb(" + [colorhue, 1, .75] + ")",
-            snap_width = 20;
+            boundary_width = 30;
 
         // range from min to max by step, augmented with one point below min and one above max
         var augmented_range = function (min, max, step) {
@@ -58,18 +59,19 @@
         
         $(document).ready(function () {
 
-            var $container = $("#container");
-            
-            var r = Raphael("container"),
+
+            var $container = $("#container"),
                 canvas_width = $container.width(),
                 canvas_height = $container.height(),
                 plot_width = canvas_width - padding.left - padding.right,
                 plot_height = canvas_height - padding.top - padding.bottom;
 
-            var plot = function (r) {
+            var plot = function () {
                 
-                var augmented_xs = augmented_range(xrange.min, xrange.max, xstep);
-                var augmented_ys = eval_func(f, augmented_xs);
+                var r = Raphael("container");
+
+                var augmented_xs = augmented_range(xrange.min, xrange.max, xstep),
+                    augmented_ys = eval_func(f, augmented_xs);
                 
                 var xs = [], 
                     ys = [];
@@ -87,7 +89,20 @@
                     
                 var yaxis_offset = plot_width *
                     ((xrange.min < 0 && xrange.max > 0) ? (-xrange.min / (xrange.max - xrange.min)) : 0);
-                    
+
+                r.g.txtattr.font = "12px 'Fontin Sans', Fontin-Sans, sans-serif";
+
+                // x axis
+                r.g.axis(
+                    padding.left, padding.top + xaxis_offset, plot_width, xrange.min, xrange.max, xaxis_steps, 2);
+
+                // can we animate these when we switch between ranges?
+
+                // y axis 
+                r.g.axis(
+                    padding.left + yaxis_offset, padding.top + plot_height, plot_height, yrange.min, yrange.max, yaxis_steps, 3);
+
+
                 // how to do it with graphael:
                 // var chart = r.g.linechart(padding.left, padding.top, plot_width, plot_height, xs, ys);
                 
@@ -122,6 +137,7 @@
                     pathspec[pi++] = y;
                 }
                 
+                
                 // draw the path
                 var pathstr = pathspec.join('');
                 var curve = r.path(pathstr).attr({
@@ -133,7 +149,7 @@
                 
                 pathspec = [];
                 pi = 0;
-                var half_width = snap_width / 2;
+                var half_width = boundary_width / 2;
                 var dx, dy;
                 
                 // define segments above the function curve
@@ -154,7 +170,7 @@
                 }
                 
                 // define segments below the function curve...
-                for (i = xlocs.length-1; i >= 1; i--) {
+                for (i = xlocs.length-1; i > 0; i--) {
                     var dx = xlocs[i] - xlocs[i-1],
                         dy = ylocs[i] - ylocs[i-1];
                         
@@ -176,33 +192,205 @@
                 var curve_boundary = r.path(pathstr).attr({
                     fill: "#000000",
                     stroke: "#000000",
-                    opacity: 0.1,
+                    opacity: 0,
                     "stroke-width": 0,
                 });
 
+                // Now events work properly on the curve_boundary...
+                
+                
+                var point = r.circle(0, 0, 3).attr({
+                    stroke: "#aa0000",
+                    fill: "#aa0000",
+                    opacity: 0.5,
+                    r: 6,
+                }).hide();
 
-                // Now events work properly on the curve_boundary
-                
-                r.g.txtattr.font = "12px 'Fontin Sans', Fontin-Sans, sans-serif";
-                
-                // x axis
-                r.g.axis(
-                    padding.left, padding.top + xaxis_offset, plot_width, xrange.min, xrange.max, xaxis_steps, 2);
+                var xcross = r.path("M " + padding.left + " " + padding.top + "L " + padding.left + " " + (padding.top + plot_height)).hide();
 
-                // can we animate these when we switch between ranges?
+                var ycross = r.path("M " + padding.left + " " + padding.top + "L " + (padding.left + plot_width) + " " + padding.top).hide();
                 
-                // y axis 
-                r.g.axis(
-                    padding.left + yaxis_offset, padding.top + plot_height, plot_height, yrange.min, yrange.max, yaxis_steps, 3);
-            
-                // mouseleave fires when mouse touches anything in front of the curve_boundary, so make sure
-                // curve_boundary is in front.
-            
+                
+                var point_has_been_dropped = false;
+                var tracking_is_on = false;
+                var point_is_being_dragged = false;
+                
+
+                var set_tracking_mode_on = function () {
+                    point.attr("opacity", 0.5);
+                    tracking_is_on = true;
+                    var xloc = point.attr("cx");
+                    var yloc = point.attr("cy");
+                    
+                    xcross.attr("path", 
+                        "M " + xloc + " " + padding.top + 
+                        "L " + xloc + " " + (padding.top + plot_height)
+                    ).show();
+                    
+                    ycross.attr("path", 
+                        "M " + padding.left + " " + yloc + 
+                        "L " + (padding.left + plot_width) + " " + yloc
+                    ).show();
+                };
+                
+                var set_tracking_mode_off = function () {
+                    xcross.hide();
+                    ycross.hide();
+                    point.attr("opacity", 1.0);
+                    tracking_is_on = false;
+                };
+
+                var container_left = $container.offset().left;
+                var xspacing = plot_width / (xrange.max - xrange.min);
+                var yspacing = plot_height / (yrange.max - yrange.min);
+                
+                var get_xy = function (clientX) {
+
+                    var xloc = clientX - container_left - padding.left;
+                    
+                    if (xloc < 0) {
+                        xloc = 0;
+                    }
+                    if (xloc >= plot_width) {
+                        xloc = plot_width-1;
+                    }
+
+                    var xval = (xloc) / xspacing + xrange.min;
+                    var yval = f(xval);
+                    var yloc = Math.round(yspacing * (yrange.max - yval));
+                    
+                    return {
+                        xloc: xloc,
+                        yloc: yloc,
+                        xval: xval,
+                        yval: yval,
+                    };
+                };
+                    
+                var move_point = function (clientX) {
+                    var locs_and_vals = get_xy(clientX);
+                    
+                    var xloc = locs_and_vals.xloc;
+                    var yloc = locs_and_vals.yloc;
+                    
+                    point.attr({cx: xloc + padding.left, cy: yloc + padding.top});
+
+                    xcross.attr("path", "M " + (padding.left + xloc) + " " + padding.top + "L " + (padding.left + xloc) + " " + (padding.top + plot_height));
+                    ycross.attr("path", "M " + padding.left + " " + (padding.top + yloc) + "L " + (padding.left + plot_width) + " " + (padding.top + yloc));
+
+                };
+                
+                
+                $(curve_boundary.node).hover(function () {
+                    if (!point_has_been_dropped) {
+                        point.show();
+                        set_tracking_mode_on();
+
+                        $(document).bind("mousemove.initial-point-selection", function (e) {
+                            move_point(e.clientX);                         
+                        });
+                    }
+                }, function () {
+                    if (!point_is_being_dragged) {
+                        if (!point_has_been_dropped) {
+                            point.hide();
+                        }
+                        set_tracking_mode_off();
+                        $(document).unbind("mousemove.initial-point-selection");
+                    }
+                });
+                
+                
+                $(curve_boundary.node).click(function (e) {
+                    if (!point_has_been_dropped) {
+                        point_has_been_dropped = true;
+                        point.toFront();
+                        set_tracking_mode_off();
+                        $(document).unbind("mousemove.initial-point-selection");
+                        
+                        var locs_and_vals = get_xy(e.clientX);
+                        point_val = {
+                            x: locs_and_vals.xval,
+                            y: locs_and_vals.yval
+                        };
+                    }
+                });
+                
+                
+                $(point.node).hover(function () {
+                    if (point_has_been_dropped && !point_is_being_dragged) {
+                       set_tracking_mode_on();
+                    } 
+                }, function () {
+                    if (point_has_been_dropped && !point_is_being_dragged) {
+                        set_tracking_mode_off();
+                    }
+                });
+                
+                
+                $(point.node).mousedown(function () {
+                    if (point_has_been_dropped) {
+                        point_is_being_dragged = true;
+                        set_tracking_mode_on();
+                        $(document).bind("mousemove.point-dragging", function (e) {
+                            move_point(e.clientX);
+                        });
+                    }
+                    return false;
+                });
+                
+                $(document).mouseup(function (e) {
+                    if (point_is_being_dragged) {
+                        point_is_being_dragged = false;
+                        set_tracking_mode_off();
+                        $(document).unbind("mousemove.point-dragging");
+                        
+                        var locs_and_vals = get_xy(e.clientX);
+                        point_val = {
+                            x: locs_and_vals.xval,
+                            y: locs_and_vals.yval
+                        };
+                    }
+                });
+
+                // make sure the curve_boundary is in front, otherwise spurious mouseleave events will be generated.
                 curve_boundary.toFront();
+            };
+
+            
+            var plot_f = function () {                
+                var f_as_string = "f = function (x) { return (" + $("#plot-func").val() + "); }";
+                alert("setting f to: " + f_as_string);
+                eval(f_as_string);
+            
+                $container.empty();
+                delete point_val;
+                plot();
             };
             
             
-            plot(r);
+            // click events...
+            
+            $("#answer-button").click(function () {
+                if (point_val) {
+                    if (point_val.y < 0) {
+                        alert("That's correct!");
+                    }
+                    else {
+                        alert("Nope; try again.");
+                    }
+                }
+                else {
+                    alert("You haven't selected a point yet.");
+                }
+            });
+            
+            
+            $("#plot-button").click(function () {
+                plot_f();
+            });
+
+            plot_f();
         });
     </script>
 
@@ -223,13 +411,14 @@
                             <fieldset>
                                 <legend>Simple graph: </legend>
                                 <label>y = </label>
-                                <input type="text" id="exp" value="-2.5 + 4 * x * x" /><br /><br />
-                                <input type="button" value="plot" onclick="plotIt([0,0]);" />
+                                <input type="text" id="plot-func"value="Math.exp(0.3*x)*Math.cos(x)" />
+                                <br /><br />
+                                <input type="button" id="plot-button" value="plot"  />
                             </fieldset>
                             <fieldset>
                                 <legend>Question: </legend>
                                 <p>Click on the graph where the y value is less than zero.</p>
-                                <input type="button" value="Check Answer" onclick="checkAnswer();" />
+                                <input type="button" value="Check Answer" id="answer-button" />
                             </fieldset>
                         </form>
                         <div id="container" style="width:600px;height:300px;"></div>
