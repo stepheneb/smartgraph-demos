@@ -360,7 +360,6 @@
             
             var plot_f = function () {                
                 var f_as_string = "f = function (x) { return (" + $("#plot-func").val() + "); }";
-                alert("setting f to: " + f_as_string);
                 eval(f_as_string);
             
                 $container.empty();
