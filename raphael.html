@@ -275,8 +275,15 @@
                     
                     point.attr({cx: xloc + padding.left, cy: yloc + padding.top});
 
-                    xcross.attr("path", "M " + (padding.left + xloc) + " " + padding.top + "L " + (padding.left + xloc) + " " + (padding.top + plot_height));
-                    ycross.attr("path", "M " + padding.left + " " + (padding.top + yloc) + "L " + (padding.left + plot_width) + " " + (padding.top + yloc));
+                    xcross.attr("path", 
+						"M " + (padding.left + xloc) + " " + padding.top + 
+						"L " + (padding.left + xloc) + " " + (padding.top + plot_height)
+					);
+						
+                    ycross.attr("path", 
+						"M " + padding.left + " " + (padding.top + yloc) + 
+						"L " + (padding.left + plot_width) + " " + (padding.top + yloc)
+					);
 
                 };
                 
