@@ -51,9 +51,7 @@
             var ys = eval_func(f, xs);
             
             // axes are clockwise from top (i.e., trbl like in css)            
-            var chart = paper.g.linechart(10, 10, 580, 280, xs, ys/*, {axis: "0 0 1 1"}*/);
-            
-            paper.g.axis(200, 200, 380, -5, 5, 11, 4);
+            var chart = paper.g.linechart(10, 10, 580, 280, xs, ys, axis: "0 0 1 1"});
         });
     </script>
 
