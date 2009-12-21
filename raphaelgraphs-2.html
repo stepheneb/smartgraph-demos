@@ -14,6 +14,7 @@
 
     <script type="text/javascript">
     
+        var undefined;    
         var f, point_val;
         
         var xrange = { min: -5, max: 5 },
@@ -363,7 +364,7 @@
                 eval(f_as_string);
             
                 $container.empty();
-                delete point_val;
+                point_val = undefined;
                 plot();
             };
             
