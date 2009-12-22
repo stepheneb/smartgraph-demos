@@ -29,6 +29,7 @@
 
                 point_val = undefined;
                 
+                // don't want to render vis until we've defined f.
                 var checker = function () {
                     if (!vis) {
                         setTimeout(checker, 50);
@@ -69,7 +70,7 @@
 <body> 
     <div id="main" class="page-content">
         <h3 class="page-title namespace">
-            Raphael graphs
+            Protovis graphs
         </h3>
         <div id="back" class="back">
             <a href="index.html">back</a>
