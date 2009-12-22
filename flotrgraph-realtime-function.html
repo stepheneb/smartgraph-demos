@@ -1,0 +1,74 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>Flotr: Real-time function</title>
+
+  <script type="text/javascript" src="javascripts/lib/prototype.js"></script>
+  <!--[if IE]>
+  <script type="text/javascript" src="javascripts/lib/excanvas.js"></script>
+  <script type="text/javascript" src="javascripts/lib/base64.js"></script>
+  <![endif]-->
+  <script type="text/javascript" src="javascripts/lib/base canvas2image 64.js"></script>
+  <script type="text/javascript" src="javascripts/lib/base canvastext 64.js"></script>
+  <script type="text/javascript" src="javascripts/flotr/flotr.js"></script>
+  <script type="text/javascript" src="javascripts/flotrgraph-realtime-function.js"></script>
+
+  <link type="text/css" charset="utf-8" rel="stylesheet" media="screen, projection" href="stylesheets/apidocs.css" />
+</head>
+<body>
+  <div id="main" class="page-content">
+    <h3 class="page-title namespace">Flotr: Real-time function</h3>
+    <div id="back" class="back">
+      <a href="index.html">back</a>
+    </div>
+    <div class="section section-klass_methods">
+      <div class="section-content">
+        <ul class="method-details-list">
+          <li class="method-description">
+            <form id="math" action="#">
+              <fieldset>
+                <legend>Real-time function: </legend>
+                <ul class="method-details-list-h">
+                  <li class="method-description">
+                    <label>y = </label>
+                    <input type="text" id="exp" class="expression" value="Math.exp(0.6*x)*Math.cos(x)" />
+                  </li>
+                  <li class="method-description">
+                    <label>update interval(ms): </label>
+                    <input type="text" id="interval" class="value" value="100" />
+                  </li>
+                </ul>
+                <p />
+                <ul class="method-details-list-h">
+                  <li class="method-description">
+                    <input type="button" value="plot" onclick="plotIt();" />
+                  </li>
+                  <li class="method-description">
+                    <input type="button" value="start" onclick="startPlotting();" />
+                  </li>
+                  <li class="method-description">
+                    <input type="button" value="stop" onclick="stopped = true;" />
+                  </li>
+                  <li class="method-description">
+                    <input type="button" value="clear" onclick="clearIt();" />
+                  </li>
+                </ul>
+                
+              </fieldset>
+            </form>
+            <div id="container1" style="width:600px;height:300px;margin:20px"></div>
+          </li>
+          <li>
+            <div id="output_table" class="datatable">
+              <div class="datarow">
+                
+              </div>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
