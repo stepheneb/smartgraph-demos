@@ -29,16 +29,15 @@
 
         // range from min to max by step, augmented with one point below min and one above max
         var augmented_range = function (min, max, step) {
-            var xs = [];
-            xs.push(min-step);
+            var range = [];
+            var n_steps = Math.floor((max-min)/step)+3;  
+            min -= step;
             
-            var n_steps = Math.floor((max-min)/step)+2;  
-                     
             for (var i = 0; i < n_steps; i++) {
-                xs[i] = min + i*step;
+                range[i] = min + i*step;
             }
             
-            return xs;
+            return range;
         };
         
         
@@ -171,7 +170,7 @@
                 }
                 
                 // define segments below the function curve...
-                for (i = xlocs.length-1; i > 0; i--) {
+                for (i = xlocs.length-1; i > 1; i--) {
                     var dx = xlocs[i] - xlocs[i-1],
                         dy = ylocs[i] - ylocs[i-1];
                         
@@ -276,8 +275,15 @@
                     
                     point.attr({cx: xloc + padding.left, cy: yloc + padding.top});
 
-                    xcross.attr("path", "M " + (padding.left + xloc) + " " + padding.top + "L " + (padding.left + xloc) + " " + (padding.top + plot_height));
-                    ycross.attr("path", "M " + padding.left + " " + (padding.top + yloc) + "L " + (padding.left + plot_width) + " " + (padding.top + yloc));
+                    xcross.attr("path", 
+						"M " + (padding.left + xloc) + " " + padding.top + 
+						"L " + (padding.left + xloc) + " " + (padding.top + plot_height)
+					);
+						
+                    ycross.attr("path", 
+						"M " + padding.left + " " + (padding.top + yloc) + 
+						"L " + (padding.left + plot_width) + " " + (padding.top + yloc)
+					);
 
                 };
                 
