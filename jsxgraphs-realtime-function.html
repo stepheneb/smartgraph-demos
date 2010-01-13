@@ -4,7 +4,7 @@
    <link rel="stylesheet" type="text/css" href="jsxgraph.css" />
    <link type="text/css" charset="utf-8" rel="stylesheet" media="screen, projection" href="stylesheets/apidocs.css" />
    <script type="text/javascript" src="javascripts/lib/prototype.js"></script>
-   <script type="text/javascript" src="javascripts/jsxgraph/src/loadjsxgraph.js"></script>
+   <script type="text/javascript" src="javascripts/jsxgraph/jsxgraph_uncompressed.js"></script>
 </head>
 <body>
   <div id="main" class="page-content">
@@ -75,7 +75,7 @@
               //update the graph
               graph.updateCurve();
               //update the whole board
-              board.update();
+              //board.update();
             }
             
             function clearIt(){
@@ -83,7 +83,7 @@
               //update the graph
               graph.updateCurve();
               //update the whole board
-              board.update();
+              //board.update();
             }
             
             
@@ -109,7 +109,9 @@
                 if (!g) {                   // If the curve does not exist yet, create it.
                     g = board.createElement('curve', [xdata,ydata],{strokeWidth:3, strokeColor:'red'}); 
                 } 
-                board.update();
+                g.prepareUpdate();
+				g.update();
+				g.updateRenderer();
             };
             
             startPlotting = function() {
