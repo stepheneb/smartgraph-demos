@@ -26,7 +26,7 @@
                     </li>
                     <li class="method-description">
                       <label>update interval(ms): </label>
-                      <input type="text" id="interval" class="value" value="100" />
+                      <input type="text" id="interval" class="value" value="10" />
                     </li>
                   </ul>
                   <p />
@@ -109,6 +109,8 @@
                 if (!g) {                   // If the curve does not exist yet, create it.
                     g = board.createElement('curve', [xdata,ydata],{strokeWidth:3, strokeColor:'red'}); 
                 } 
+
+				// The following updates just the curve 'g'. It may dip into jsxgraph's private API
                 g.prepareUpdate();
 				g.update();
 				g.updateRenderer();
