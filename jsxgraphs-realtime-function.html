@@ -58,86 +58,84 @@
   <div id="debug" style="display:block;"></div>
    <script type="text/javascript">
     /* <![CDATA[ */
+
+            var board, axisx, axisy, graph, f, g, timer, interval,
+                xvalue, xdata, ydata, index;
+
+            var resetCurveData = function () {
+                xdata = [-5];
+                ydata = [0];
+                index = 0;
+            };
             
-            var board, g, timer, interval,
-                xdata = [], ydata = [], xvalue,
-                turt,i, index;
-            
-            xdata.push(-5);
-            ydata.push(0);
-            index = 0;
-            
+            resetCurveData();
+            JXG.Options.fontSize = 14;
+
+            eval("function f(x){ return "+document.getElementById("exp").value+";}");
+
+            board = JXG.JSXGraph.initBoard('jxgbox', {originX: 300, originY: 150, unitX: 60, unitY: 15, showNavigation: false, showCopyright: false, grid: false});
+            axisx = board.createElement('axis', [[0,0], [1,0]], {strokeColor:'black'});
+            axisy = board.createElement('axis', [[0,0], [0,1]], {strokeColor:'black'});
+            graph = board.createElement('functiongraph', [function(x){ return f(x);}]);
+
+
             function plotIt(){
+              clearPlot();
+              
               //redefine function f according to the current text field value
-              eval("function f(x){ return "+document.getElementById("exp").value+";}");
-              //change the Y attribute of the graph to the new function 
+              eval("f = function(x) { return "+document.getElementById("exp").value+";}");
+              //change the Y attribute of the graph to the new function
               graph.Y = function(x){ return f(x); };
               //update the graph
               graph.updateCurve();
               //update the whole board
-              //board.update();
+              board.update();
             }
             
-            function clearIt(){
-              graph.Y = function(x){ return g(x); };
-              //update the graph
-              graph.updateCurve();
-              //update the whole board
-              //board.update();
-            }
-            
-            
-            JXG.Options.fontSize = 14;
-            
-            eval("function f(x){ return "+document.getElementById("exp").value+";}");
-            
-            board = JXG.JSXGraph.initBoard('jxgbox', {originX: 300, originY: 150, unitX: 60, unitY: 15, showNavigation: false, showCopyright: false, grid: false});
-            var axisx = board.createElement('axis', [[0,0], [1,0]], {strokeColor:'black'});
-            var axisy = board.createElement('axis', [[0,0], [0,1]], {strokeColor:'black'});
-            var graph = board.createElement('functiongraph', [function(x){ return f(x);}]);
-
 
             fetchData = function() {
                 if (xdata.length<100) {
-                  index = index + 1;
-                  xvalue = index*0.1-5;
-                  xdata.push(xvalue);
-                  ydata.push(f(xvalue));
-                } else {
-                  stopPlotting;
-                }
-                if (!g) {                   // If the curve does not exist yet, create it.
-                    g = board.createElement('curve', [xdata,ydata],{strokeWidth:3, strokeColor:'red'}); 
+                    index = index + 1;
+                    xvalue = index*0.1-5;
+                    xdata.push(xvalue);
+                    ydata.push(f(xvalue));
                 } 
+                else {
+                    stopPlotting();
+                    resetCurveData();
+                }
 
-				// The following updates just the curve 'g'. It may dip into jsxgraph's private API
+                // The following updates just the curve 'g'. It may dip into jsxgraph's private API
                 g.prepareUpdate();
-				g.update();
-				g.updateRenderer();
+                g.update();
+                g.updateRenderer();
             };
             
+
             startPlotting = function() {
-              interval = $('interval').value;
-              timer = setInterval(fetchData,interval);  // Start the periodical update              
-            }
-            
+                if (!g) {
+                    g = board.createElement('curve', [xdata,ydata],{strokeWidth:3, strokeColor:'red'});
+                }
+                interval = $('interval').value;
+                timer = setInterval(fetchData, interval);  // Start the periodical update
+            };
+
+
             stopPlotting = function() {
-              clearInterval(timer);
-            }
+                clearInterval(timer);
+            };
             
+
             clearPlot = function() {
-              xdata = [];
-              ydata = [];
-              xdata.push(-5);
-              ydata.push(0);
-              index = 0;
-              if (!g) {                   // If the curve does not exist yet, create it.
-                  g = board.createElement('curve', [xdata,ydata],{strokeWidth:3, strokeColor:'red'}); 
-              }
-              board.update();
+                stopPlotting();
+                resetCurveData();                
+                if (g) {
+                    g.remove();
+                    g = undefined;
+                }
+                board.update();
             }
-        
-      
+
           /* ]]> */
   </script>
 </body>
