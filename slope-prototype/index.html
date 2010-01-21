@@ -1,0 +1,142 @@
+<html>
+<head>
+  <title>Prototype SmartGraph - Slope Activity</title>
+  
+  <link rel="stylesheet" href="blueprint/screen.css" type="text/css" media="screen, projection">
+  <link rel="stylesheet" href="blueprint/print.css" type="text/css" media="print">
+  <!--[if lt IE 8]><link rel="stylesheet" href="blueprint/ie.css" type="text/css" media="screen, projection"><![endif]-->
+  
+  <link rel="stylesheet" href="../stylesheets/jsxgraph/jsxgraph.css" type="text/css">
+  <script type="text/javascript" src="../javascripts/jsxgraph/jsxgraph_uncompressed.js"></script>
+  <script type="text/javascript" src="../javascripts/jquery-1.4.0/jquery.min.js"></script>
+  
+  <script type="text/javascript">
+    
+    JXG.Options.grid.hasGrid = true;
+    JXG.Options.grid.gridX = 1;
+    JXG.Options.grid.gridY = 1;
+    JXG.Options.grid.gridOpacity="0.5";
+    JXG.Options.grid.gridColor="#000000";
+    
+    
+    $(document).ready(function () {
+      var b = JXG.JSXGraph.initBoard('box', { 
+        originX: 135, 
+        originY: 250, 
+        unitX: 25, 
+        unitY: 25, 
+        axis: true,
+        showCopyright: false,
+        showNavigation: false
+      });
+      
+      // this line is required to actually set the options defined using JXG.Option above
+      JXG.useStandardOptions(b);
+      
+      var f = function (x) {
+        return 2.5*x;
+      }
+      
+      var l = b.createElement('functiongraph', [f]);
+      var p1 = b.createElement('glider', [-3, f(-3), l]);
+      var p2 = b.createElement('glider', [3, f(3), l]);
+      
+      p1.setProperty('fixed: true');
+      p2.setProperty('fixed: true');
+      
+      
+      var mp1 = b.createElement('point', [-3, f(-3)+1.5]);
+      var arrow1 = b.createElement('arrow', [p1, mp1]);
+      var dotted1 = b.createElement('line', [p2, mp1], { 
+        straightFirst: false,
+        straightLast: false,
+        strokeColor: '#cccccc'
+      });
+    
+      //dotted1.setStraight(false, false);
+      ///dotted1.setProperty('strokeColor: #cccccc');
+      
+      
+      // create point on arrow1
+      
+      var pd1, slope = dotted1.getSlope();
+      
+      var arcSideLength = 1.0;
+      
+      var arcSideData = function (midpoint, arcSidePoint) {
+        var x = midpoint.X() - arcSidePoint.X();
+        var y = midpoint.Y() - arcSidePoint.Y();
+        var length = Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
+    
+        return {
+          x: x,
+          y: y,
+          length: length
+        };
+      };
+      
+      
+      var arcPointX = function (midpoint, arcSidePoint) {
+        var data = arcSideData(midpoint, arcSidePoint);
+        var deltaX = data.x * arcSideLength / data.length;
+        
+        return midpoint.X() - deltaX;
+      };
+      
+      
+      var arcPointY = function (midpoint, arcSidePoint) {
+        var data = arcSideData(midpoint, arcSidePoint);
+        var deltaY = data.y * arcSideLength / data.length;
+        
+        return midpoint.Y() - deltaY;
+      };
+      
+      // some cut-and-paste going on here!
+      
+      var pdotted1 = b.createElement('point', [
+        function () { return arcPointX(mp1, p1) },
+        function () { return arcPointY(mp1, p1) }
+      ], { visible: false });
+
+      var parrow1 = b.createElement('point', [
+        function () { return arcPointX(mp1, p2) },
+        function () { return arcPointY(mp1, p2) }
+      ], { visible: false });
+        
+        
+      b.createElement('arc', [mp1, pdotted1, parrow1], { strokeColor: '#cccccc' });
+      //b.update();
+      
+      
+      /**/
+      
+      
+      
+      
+      
+        // note I think you want a "Sector" for the animation of the angle...
+    });
+  </script>
+  
+     
+</head>
+<body>
+
+  <div class="container">
+    <h1 class="prepend-2">Slopes</h1>
+    <div class="span-16">
+      <div class="span-1" style="height:500px"></div>
+      <div class="span-15 last" style="height: 300px; background-color: #acc">
+        <h2>Let's Measure the Slope</h2>
+          First, let's measure the y-distance. Pull the arrowhead until you form a right angle (When you see the right angle symbol, let go.)
+        </h2>
+      </div>
+      <div class="span-15 last" style="height:100px; background-color: #cac">Another div (answer box goes here?)</div>
+      <div class="span-15 last" style="height:100px; background-color: #aac">Yet another div (next/last buttons go here?)</div>
+    </div>
+    <div id="box" class="span-7 jxgbox" style="height:500px;">
+    </div>
+  </div>
+
+</body>
+</html>
