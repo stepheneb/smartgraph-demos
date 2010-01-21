@@ -35,7 +35,7 @@
       
       var f = function (x) {
         return 2.5*x;
-      }
+      };
       
       var l = b.createElement('functiongraph', [f]);
       var p1 = b.createElement('glider', [-3, f(-3), l]);
@@ -48,11 +48,10 @@
       var mp1 = b.createElement('point', [-3, f(-3)+1.5]);
       var arrow1 = b.createElement('arrow', [p1, mp1]);
       var dotted1 = b.createElement('line', [p2, mp1], { 
-        straightFirst: false,
-        straightLast: false,
-        strokeColor: '#cccccc'
+        strokeColor: '#aaaaaa',
+        visible: false,
+        dash: 2
       });
-
       
       var arcSideLength = 1.0;
       
@@ -91,12 +90,39 @@
         function () { return arcPointX(mp1, p2) },
         function () { return arcPointY(mp1, p2) }
       ], { visible: false });
+
+      var angleSymbol = b.createElement('arc', [mp1, pdotted1, parrow1], { strokeColor: '#aaaaaa', visible: false });
+      
+  
+      var mp1Dragging = false;
+      
+      mp1.highlight = function () {
+        $(document).bind('mousedown.mp1', function () {
+          mp1Dragging = true;
+          angleSymbol.setProperty('visible:true');
+          dotted1.setProperty('visible:true');
           
-      b.createElement('arc', [mp1, pdotted1, parrow1], { strokeColor: '#cccccc' });
+          $(document).bind('mouseup.mp1', function () {
+            mp1Dragging = false;
+            angleSymbol.setProperty('visible:false');
+            dotted1.setProperty('visible:false');
+            $(document).unbind('.mp1');
+          });
+        });
+      };
+      mp1.noHighlight = function () {
+        if (!mp1Dragging) {
+          $(document).unbind('.mp1');
+        }
+      };
+      
+
+      
     });
+    
+    
   </script>
   
-     
 </head>
 <body>
 
