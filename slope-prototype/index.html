@@ -52,14 +52,7 @@
         straightLast: false,
         strokeColor: '#cccccc'
       });
-    
-      //dotted1.setStraight(false, false);
-      ///dotted1.setProperty('strokeColor: #cccccc');
-      
-      
-      // create point on arrow1
-      
-      var pd1, slope = dotted1.getSlope();
+
       
       var arcSideLength = 1.0;
       
@@ -75,7 +68,6 @@
         };
       };
       
-      
       var arcPointX = function (midpoint, arcSidePoint) {
         var data = arcSideData(midpoint, arcSidePoint);
         var deltaX = data.x * arcSideLength / data.length;
@@ -83,15 +75,12 @@
         return midpoint.X() - deltaX;
       };
       
-      
       var arcPointY = function (midpoint, arcSidePoint) {
         var data = arcSideData(midpoint, arcSidePoint);
         var deltaY = data.y * arcSideLength / data.length;
         
         return midpoint.Y() - deltaY;
       };
-      
-      // some cut-and-paste going on here!
       
       var pdotted1 = b.createElement('point', [
         function () { return arcPointX(mp1, p1) },
@@ -102,19 +91,8 @@
         function () { return arcPointX(mp1, p2) },
         function () { return arcPointY(mp1, p2) }
       ], { visible: false });
-        
-        
+          
       b.createElement('arc', [mp1, pdotted1, parrow1], { strokeColor: '#cccccc' });
-      //b.update();
-      
-      
-      /**/
-      
-      
-      
-      
-      
-        // note I think you want a "Sector" for the animation of the angle...
     });
   </script>
   
