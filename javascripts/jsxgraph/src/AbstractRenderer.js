@@ -71,30 +71,29 @@ JXG.AbstractRenderer = function() {
  */
 JXG.AbstractRenderer.prototype.drawPoint = function(/** JXG.Point */ el) {
     var node,
-    	f = el.visProp['face'];
+        f = el.visProp['face'];
         
     if(f == 'cross' || f == 'x') { // x
         node = this.createPrimitive('path',el.id);
-        this.appendChildPrimitive(node,'points');
+        this.appendChildPrimitive(node,el.layer);
         this.appendNodesToElement(el, 'path');
     }
     else if(f == 'circle' || f == 'o') { // circle
         node = this.createPrimitive('circle',el.id);
-        this.appendChildPrimitive(node,'points');
+        this.appendChildPrimitive(node,el.layer);
         this.appendNodesToElement(el, 'circle');
     }
     else if(f == 'square' || f == '[]') { // rectangle
         node = this.createPrimitive('rect',el.id);
-        this.appendChildPrimitive(node,'points');
+        this.appendChildPrimitive(node,el.layer);
         this.appendNodesToElement(el, 'rect');
     }
     else if(f == 'plus' || f == '+') { // +
         node = this.createPrimitive('path',el.id);
-        this.appendChildPrimitive(node,'points');  
+        this.appendChildPrimitive(node,el.layer);  
         this.appendNodesToElement(el, 'path');
     }
     el.rendNode = node;
-    
     
     this.setObjectStrokeWidth(el,el.visProp['strokeWidth']);
     this.setObjectStrokeColor(el,el.visProp['strokeColor'],el.visProp['strokeOpacity']);
@@ -124,12 +123,14 @@ JXG.AbstractRenderer.prototype.updatePoint = function(/** JXG.Point */ el) {
             this.setDraft(el);
         }
     }
-
+    // Zoom does not work for traces.
+    size *= ((!el.board || !el.board.options.point.zoom)?1.0:Math.sqrt(el.board.zoomX*el.board.zoomY));
+    
     if(f == 'cross' || f == 'x') { // x
-        this.updatePathPrimitive(el.rendNode, this.updatePathStringPoint(el,size,'x'), el.board); 
+        this.updatePathPrimitive(el.rendNode, this.updatePathStringPoint(el, size,'x'), el.board); 
     }
     else if(f == 'circle' || f == 'o') { // circle
-        this.updateCirclePrimitive(el.rendNode,el.coords.scrCoords[1], el.coords.scrCoords[2],size+1);            
+        this.updateCirclePrimitive(el.rendNode,el.coords.scrCoords[1], el.coords.scrCoords[2], size+1);            
     }
     else if(f == 'square' || f == '[]') { // rectangle
         this.updateRectPrimitive(el.rendNode,
@@ -156,6 +157,8 @@ JXG.AbstractRenderer.prototype.changePointStyle = function(/** JXG.Point */el) {
         this.remove(node);
     }
     this.drawPoint(el);
+    JXG.clearVisPropOld(el);
+
     if(!el.visProp['visible']) {
         this.hide(el);
     }
@@ -179,7 +182,7 @@ JXG.AbstractRenderer.prototype.changePointStyle = function(/** JXG.Point */el) {
  */
 JXG.AbstractRenderer.prototype.drawLine = function(el) { 
     var node = this.createPrimitive('line',el.id);
-    this.appendChildPrimitive(node,'lines');
+    this.appendChildPrimitive(node,el.layer);
     this.appendNodesToElement(el,'lines');
 
     this.updateLine(el);
@@ -209,7 +212,7 @@ JXG.AbstractRenderer.prototype.updateLine = function(/** JXG.Line */ el) {
         ay = screenCoords1.scrCoords[2];
         bx = screenCoords2.scrCoords[1];
         by = screenCoords2.scrCoords[2];
-        beta;
+        //beta;                                              // ???
         sgn = (bx-ax>0)?1:-1;
         if (Math.abs(bx-ax)>0.0000001) {
             beta = Math.atan((by-ay)/(bx-ax))+ ((sgn<0)?Math.PI:0);  
@@ -471,7 +474,7 @@ JXG.AbstractRenderer.prototype.drawArrow = function(/** JXG.Line */ el) {
     this.setObjectFillColor(el,el.visProp['fillColor'],el.visProp['fillOpacity']); // ?
     this.setDashStyle(el,el.visProp); // ?
     this.makeArrow(node,el);
-    this.appendChildPrimitive(node,'lines');
+    this.appendChildPrimitive(node,el.layer);
     this.appendNodesToElement(el,'lines');
 
     this.updateArrow(el);
@@ -515,7 +518,7 @@ JXG.AbstractRenderer.prototype.drawCurve = function(el) {
     var node = this.createPrimitive('path',el.id);
     
     //node.setAttributeNS(null, 'stroke-linejoin', 'round');
-    this.appendChildPrimitive(node,'curves');
+    this.appendChildPrimitive(node,el.layer);
     this.appendNodesToElement(el,'path');
     this.setObjectStrokeWidth(el,el.visProp['strokeWidth']); // ?
     this.setObjectStrokeColor(el,el.visProp['strokeColor'],el.visProp['strokeOpacity']); // ?
@@ -558,7 +561,7 @@ JXG.AbstractRenderer.prototype.updateCurve = function(/** JXG.Curve */ el) {
  */
 JXG.AbstractRenderer.prototype.drawCircle = function(/** JXG.Circle */ el) { 
     var node = this.createPrimitive('ellipse',el.id);
-    this.appendChildPrimitive(node,'circles');
+    this.appendChildPrimitive(node,el.layer);
     this.appendNodesToElement(el,'ellipse'); 
     
     this.updateCircle(el);
@@ -583,7 +586,7 @@ JXG.AbstractRenderer.prototype.updateCircle = function(el) {
         }
     }
     // Radius umrechnen:
-    var radius = el.getRadius();
+    var radius = el.Radius();
     if (radius>0.0 && !isNaN(el.midpoint.coords.scrCoords[1]+el.midpoint.coords.scrCoords[2]) ) {
         this.updateEllipsePrimitive(el.rendNode,el.midpoint.coords.scrCoords[1],el.midpoint.coords.scrCoords[2],
             (radius * el.board.stretchX),(radius * el.board.stretchY));
@@ -606,7 +609,7 @@ JXG.AbstractRenderer.prototype.drawPolygon = function(/** JXG.Polygon */ el) {
     el.visProp['fillOpacity'] = 0.3;
     //el.visProp['strokeColor'] = 'none';
     //this.setObjectFillColor(el,el.visProp['fillColor'],el.visProp['fillOpacity']);
-    this.appendChildPrimitive(node,'polygone');
+    this.appendChildPrimitive(node,el.layer);
     this.appendNodesToElement(el,'polygon');
     this.updatePolygon(el);
 };
@@ -666,7 +669,7 @@ JXG.AbstractRenderer.prototype.updateArc = function(/** JXG.Arc */ el) { };
  */
 JXG.AbstractRenderer.prototype.drawText = function(/** JXG.Text */ el) { 
     var node;
-    if (el.type=='html') {
+    if (el.display=='html') {
         node = this.container.ownerDocument.createElement('div');
         node.style.position = 'absolute';
         node.style.fontSize = el.board.fontSize + 'px';  
@@ -698,7 +701,7 @@ JXG.AbstractRenderer.prototype.updateText = function(/** JXG.Text */ el) {
     if (el.visProp['visible'] == false) return;
     if (isNaN(el.coords.scrCoords[1]+el.coords.scrCoords[2])) return;
     this.updateTextStyle(el);
-    if (el.type=='html') {
+    if (el.display=='html') {
         el.rendNode.style.left = (el.coords.scrCoords[1])+'px'; 
         el.rendNode.style.top = (el.coords.scrCoords[2] - this.vOffsetText)+'px'; 
         el.updateText();
@@ -784,7 +787,7 @@ JXG.AbstractRenderer.prototype.updateImage = function(/** JXG.Image */ el) {
     } else {
         this.transformImageParent(el); // Transforms are cleared
     }
-    this.transformImage(el,el.transformations);
+    this.transformImage(el,el.transformations);    
 };
 
 
@@ -855,12 +858,13 @@ JXG.AbstractRenderer.prototype.drawGrid = function(/** JXG.Board */ board) {
                                  board);
                                      
     node2 = this.drawVerticalGrid(topLeft, bottomRight, gx, board);
-    this.appendChildPrimitive(node2,'grid');
+    this.appendChildPrimitive(node2, board.options.layer['grid']);
     if(!board.snapToGrid) {
         el = new Object();
         el.rendNode = node2;
         el.elementClass = JXG.OBJECT_CLASS_LINE;
         el.id = "gridx";
+        JXG.clearVisPropOld(el);
         this.setObjectStrokeColor(el, board.gridColor, board.gridOpacity);
     }
     else {
@@ -868,6 +872,7 @@ JXG.AbstractRenderer.prototype.drawGrid = function(/** JXG.Board */ board) {
         el.rendNode = node2;
         el.elementClass = JXG.OBJECT_CLASS_LINE;
         el.id = "gridx";        
+        JXG.clearVisPropOld(el);
         this.setObjectStrokeColor(el, '#FF8080', 0.5); //board.gridOpacity);    
     }
     this.setPropertyPrimitive(node2,'stroke-width', '0.4px');  
@@ -876,12 +881,13 @@ JXG.AbstractRenderer.prototype.drawGrid = function(/** JXG.Board */ board) {
     }
 
     node2 = this.drawHorizontalGrid(topLeft, bottomRight, gy, board);
-    this.appendChildPrimitive(node2,'grid');
+    this.appendChildPrimitive(node2, board.options.layer['grid']); // Attention layer=1
     if(!board.snapToGrid) {
         el = new Object();
         el.rendNode = node2;
         el.elementClass = JXG.OBJECT_CLASS_LINE;
-        el.id = "gridy";        
+        el.id = "gridy";   
+        JXG.clearVisPropOld(el);
         this.setObjectStrokeColor(el, board.gridColor, board.gridOpacity);
     }
     else {
@@ -889,6 +895,7 @@ JXG.AbstractRenderer.prototype.drawGrid = function(/** JXG.Board */ board) {
         el.rendNode = node2;
         el.elementClass = JXG.OBJECT_CLASS_LINE;
         el.id = "gridy";        
+        JXG.clearVisPropOld(el);
         this.setObjectStrokeColor(el, '#FF8080', 0.5); //board.gridOpacity);    
     }
     this.setPropertyPrimitive(node2,'stroke-width', '0.4px');  
@@ -903,7 +910,23 @@ JXG.AbstractRenderer.prototype.drawGrid = function(/** JXG.Board */ board) {
  * @param board Board from which the grid is removed.
  * @see #drawGrid
  */
-JXG.AbstractRenderer.prototype.removeGrid = function(/** JXG.Board */ board) { };
+JXG.AbstractRenderer.prototype.removeGrid = function(/** JXG.Board */ board) {
+    var c = document.getElementById('gridx');
+    this.remove(c);
+
+    c = document.getElementById('gridy');
+    this.remove(c);
+
+    board.hasGrid = false;
+/*
+    var c = this.layer[board.options.layer['grid']];
+    board.hasGrid = false;
+    while (c.childNodes.length>0) {
+        c.removeChild(c.firstChild);
+    }
+ */
+};
+ 
 
 
 /* ************************** 
@@ -1247,4 +1270,13 @@ JXG.AbstractRenderer.prototype.setShadow = function(element) {
 
 JXG.AbstractRenderer.prototype.updatePathStringPoint = function(el, size, type) {
 };
+
+JXG.AbstractRenderer.prototype.eval = function(val) {
+    if (typeof val=='function') {
+        return val();
+    } else {
+        return val;
+    }
+};
+
 

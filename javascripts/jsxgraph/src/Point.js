@@ -63,7 +63,7 @@ JXG.POINT_STYLE_PLUS_BIG     = 12; // a big +
  * @see JXG.Board#generateName
  * @see JXG.Board#addPoint
  */
-JXG.Point = function (board, coordinates, id, name, show, withLabel) {
+JXG.Point = function (board, coordinates, id, name, show, withLabel, layer) {
     this.constructor();
     
     /**
@@ -94,7 +94,13 @@ JXG.Point = function (board, coordinates, id, name, show, withLabel) {
      */
     this.coords = new JXG.Coords(JXG.COORDS_BY_USER, coordinates, this.board);
     this.initialCoords = new JXG.Coords(JXG.COORDS_BY_USER, coordinates, this.board);
-    
+
+    /**
+     * Set the display layer.
+     */
+    if (layer == null) layer = board.options.layer['point'];
+    this.layer = layer;
+
     /**
      * If true, the infobox is shown on mouse over, else not.
      * @type boolean
@@ -326,8 +332,12 @@ JXG.Point.prototype.update = function (fromParent) {
                 // First, recalculate the new value of this.position
                 // Second, call update(fromParent==true) to make the positioning snappier.
                 if (this.snapWidth!=null && Math.abs(this._smax-this._smin)>=JXG.Math.eps) {
-                    var v = Math.round(this.Value()/this.snapWidth)*this.snapWidth;
-                    this.position = factor*(v-this._smin)/(this._smax-this._smin);
+                    if (this.position<0.0) this.position = 0.0;
+                    if (this.position>1.0) this.position = 1.0;
+                    
+                    var v = this.position*(this._smax-this._smin)+this._smin;
+                        v = Math.round(v/this.snapWidth)*this.snapWidth;
+                    this.position = (v-this._smin)/(this._smax-this._smin);
                     this.update(true);
                 }
             }
@@ -586,7 +596,8 @@ JXG.Point.prototype.setPositionByTransform = function (method, x, y) {
  * @param {number} y y coordinate in screen/user units
  */
 JXG.Point.prototype.setPosition = function (method, x, y) { 
-    this.setPositionByTransform(method, x, y);
+    //this.setPositionByTransform(method, x, y);
+    this.setPositionDirectly(method, x, y);
     return this;
 };
 
@@ -652,9 +663,16 @@ JXG.Point.prototype.addConstraint = function (terms) {
         }
     }
     if (terms.length==1) { // Intersection function
-        this.updateConstraint = function() { this.coords = newfuncs[0](); };
-        if (!this.board.isSuspendedUpdate) { this.update(); }
-        return this;
+        this.updateConstraint = function() { 
+                var c = newfuncs[0](); 
+                if (JXG.isArray(c)) {      // Array
+                    this.coords.setCoordinates(JXG.COORDS_BY_USER,c);
+                } else {                   // Coords object
+                    this.coords = c;
+                }
+            };
+        // if (!this.board.isSuspendedUpdate) { this.update(); }
+        // return this;
     } else if (terms.length==2) { // Euclidean coordinates
         this.XEval = newfuncs[0];
         this.YEval = newfuncs[1];
@@ -748,9 +766,15 @@ JXG.Point.prototype.stopAnimation = function() {
  * Starts an animated point movement towards the given coordinates <tt>where</tt>. The animation is done after <tt>time</tt> milliseconds.
  * @param {Array} where Array containing the x and y coordinate of the target location.
  * @param {int} time Number of milliseconds the animation should last.
+ * If the second parameter is not given or is equal to 0, setPosition() is called, see #setPosition.
  * @see #animate
  */
 JXG.Point.prototype.moveTo = function(where, time) {
+    if (typeof time == 'undefined' || time == 0) {
+        this.setPosition(JXG.COORDS_BY_USER, where[0], where[1]);
+        this.board.update(this);
+        return this;
+    }
 	var delay = 35,
 	    steps = Math.ceil(time/(delay * 1.0)),
 		coords = new Array(steps+1),
@@ -759,7 +783,7 @@ JXG.Point.prototype.moveTo = function(where, time) {
 		dX = (where[0] - X),
 		dY = (where[1] - Y),
 	    i;
-
+    
     if(Math.abs(dX) < JXG.Math.eps && Math.abs(dY) < JXG.Math.eps)
         return this;
 	
@@ -875,7 +899,7 @@ JXG.Point.prototype._anim = function(direction, stepCount) {
             alpha = (stepCount - this.intervalCount)/stepCount * 2*Math.PI;
         }
 
-        var radius = this.slideObject.getRadius();
+        var radius = this.slideObject.Radius();
 
         this.coords.setCoordinates(JXG.COORDS_BY_USER, [this.slideObject.midpoint.coords.usrCoords[1] + radius*Math.cos(alpha), this.slideObject.midpoint.coords.usrCoords[2] + radius*Math.sin(alpha)]);
     }
@@ -1008,6 +1032,7 @@ JXG.Point.prototype.cloneToBackground = function(/** boolean */ addToTrace) {
     copy.coords = this.coords;
     copy.visProp = this.visProp;
     copy.elementClass = JXG.OBJECT_CLASS_POINT;
+    JXG.clearVisPropOld(copy);
     
     this.board.renderer.drawPoint(copy);
 
@@ -1089,6 +1114,9 @@ JXG.createPoint = function(/** JXG.Board */ board, /** array */ parents, /** obj
     if (typeof atts['withLabel'] == 'undefined') {
         atts['withLabel'] = true;
     }
+    if (typeof atts['layer'] == 'undefined') {
+        atts['layer'] = null;
+    }
         
     var isConstrained = false;
     for (var i=0;i<parents.length;i++) {
@@ -1098,21 +1126,21 @@ JXG.createPoint = function(/** JXG.Board */ board, /** array */ parents, /** obj
     }
     if (!isConstrained) {
         if ( (JXG.isNumber(parents[0])) && (JXG.isNumber(parents[1])) ) {
-            el = new JXG.Point(board, parents, atts['id'], atts['name'], (atts['visible']==undefined) || board.algebra.str2Bool(atts['visible']), atts['withLabel']);
+            el = new JXG.Point(board, parents, atts['id'], atts['name'], (atts['visible']==undefined) || board.algebra.str2Bool(atts['visible']), atts['withLabel'], atts['layer']);
             if ( atts["slideObject"] != null ) {
                 el.makeGlider(atts["slideObject"]);
             } else {
                 el.baseElement = el; // Free point
             }
         } else if ( (typeof parents[0]=='object') && (typeof parents[1]=='object') ) { // Transformation
-            el = new JXG.Point(board, [0,0], atts['id'], atts['name'], (atts['visible']==undefined) || board.algebra.str2Bool(atts['visible']), atts['withLabel']);   
+            el = new JXG.Point(board, [0,0], atts['id'], atts['name'], (atts['visible']==undefined) || board.algebra.str2Bool(atts['visible']), atts['withLabel'], atts['layer']);   
             el.addTransform(parents[0],parents[1]);
         }
         else {// Failure
             throw new Error("JSXGraph: Can't create point with parent types '" + (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'.");
         }
     } else {
-        el = new JXG.Point(board, [0,0], atts['id'], atts['name'], (atts['visible']==undefined) || board.algebra.str2Bool(atts['visible']), atts['withLabel']);
+        el = new JXG.Point(board, [0,0], atts['id'], atts['name'], (atts['visible']==undefined) || board.algebra.str2Bool(atts['visible']), atts['withLabel'], atts['layer']);
         el.addConstraint(parents);
     }
     return el;

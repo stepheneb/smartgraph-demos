@@ -95,6 +95,8 @@ JXG.GeometryElement = function() {
      * @private
      */
     this.visProp = {};
+    
+    JXG.clearVisPropOld(this); // create this.visPropOld and set default values
 
     /**
      * If element is in two dimensional real space this is true, else false.
@@ -134,7 +136,12 @@ JXG.GeometryElement = function() {
      * @private
      */
     this.hasLabel = false;
-
+    
+    /**
+     * display layer which will conting the element.
+     * Controlled in JXG.Options.
+     */
+    this.layer = 9;
 
     /**
      * Stores all Intersection Objects which in this moment are not real and
@@ -676,6 +683,7 @@ JXG.GeometryElement.prototype.setProperty = function () {
         } else {                             // pairRaw consists of array [key,value]
             pair = pairRaw;
         }
+        if (pair[1]==null) continue;
         switch(pair[0].replace(/\s+/g).toLowerCase()) {   // Whitespace entfernt und in Kleinbuchstaben umgewandelt.
             case 'strokewidth':
                 this.visProp['strokeWidth'] = pair[1];
@@ -1173,4 +1181,20 @@ JXG.GeometryElement.prototype.toJSON = function() {
     json +='}';
 
     return json;
+};
+
+/**
+  * Setting visPropOld is done in an none object oriented version 
+  * since otherwise there would be problems in cloneToBackground
+  */
+JXG.clearVisPropOld = function(el) {
+    el.visPropOld = {};
+    el.visPropOld['strokeColor']= '';
+    el.visPropOld['strokeOpacity']= '';
+    el.visPropOld['strokeWidth']= '';
+    el.visPropOld['fillColor']= '';
+    el.visPropOld['fillOpacity']= '';
+    el.visPropOld['shadow']= false;
+    el.visPropOld['firstArrow'] = false;
+    el.visPropOld['lastArrow'] = false;
 };

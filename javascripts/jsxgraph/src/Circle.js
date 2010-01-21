@@ -60,7 +60,7 @@
  * @see JXG.Board#generateName
  */            
 
-JXG.Circle = function (board, method, par1, par2, id, name, withLabel) {
+JXG.Circle = function (board, method, par1, par2, id, name, withLabel, layer) {
     /* Call the constructor of GeometryElement */
     this.constructor();
 
@@ -81,6 +81,12 @@ JXG.Circle = function (board, method, par1, par2, id, name, withLabel) {
     this.elementClass = JXG.OBJECT_CLASS_CIRCLE; 
 
     this.init(board, id, name);
+    
+    /**
+     * Set the display layer.
+     */
+    if (layer == null) layer = board.options.layer['circle'];
+    this.layer = layer;
 
     /**
      * Stores the given method.
@@ -145,7 +151,7 @@ JXG.Circle = function (board, method, par1, par2, id, name, withLabel) {
     if(method == 'twoPoints') {
         this.point2 = JXG.getReference(board,par2);
         this.point2.addChild(this);
-        this.radius = this.getRadius(); 
+        this.radius = this.Radius(); 
     }
     else if(method == 'pointRadius') {
         this.generateTerm(par2);  // Converts GEONExT syntax into JavaScript syntax
@@ -159,7 +165,7 @@ JXG.Circle = function (board, method, par1, par2, id, name, withLabel) {
     else if(method == 'pointCircle') {
         // dann ist p2 die Id eines Objekts vom Typ Circle!
         this.circle = JXG.getReference(board,par2);
-        this.radius = this.circle.getRadius();     
+        this.radius = this.circle.Radius();     
     } 
     
     // create Label
@@ -169,7 +175,7 @@ JXG.Circle = function (board, method, par1, par2, id, name, withLabel) {
     if(method == 'twoPoints') {
         //this.point2 = JXG.getReference(board,par2);
         //this.point2.addChild(this);
-        //this.radius = this.getRadius(); 
+        //this.radius = this.Radius(); 
         this.id = this.board.addCircle(this);           
     }
     else if(method == 'pointRadius') {
@@ -188,7 +194,7 @@ JXG.Circle = function (board, method, par1, par2, id, name, withLabel) {
     else if(method == 'pointCircle') {
         // dann ist p2 die Id eines Objekts vom Typ Circle!
         //this.circle = JXG.getReference(board,par2);
-        //this.radius = this.circle.getRadius();
+        //this.radius = this.circle.Radius();
         this.circle.addChild(this);
         this.id = this.board.addCircle(this);        
     }    
@@ -208,7 +214,7 @@ JXG.Circle.prototype.hasPoint = function (x, y) {
     genauigkeit = genauigkeit/(this.board.stretchX); 
     
     var checkPoint = new JXG.Coords(JXG.COORDS_BY_SCREEN, [x,y], this.board);
-    var r = this.getRadius();
+    var r = this.Radius();
     
     var dist = Math.sqrt(Math.pow(this.midpoint.coords.usrCoords[1]-checkPoint.usrCoords[1],2) + 
                          Math.pow(this.midpoint.coords.usrCoords[2]-checkPoint.usrCoords[2],2));
@@ -218,7 +224,7 @@ JXG.Circle.prototype.hasPoint = function (x, y) {
     var prec = this.board.options.precision.hasPoint/(this.board.stretchX),
         mp = this.midpoint.coords.usrCoords,
         p = new JXG.Coords(JXG.COORDS_BY_SCREEN, [x,y], this.board),
-        r = this.getRadius();
+        r = this.Radius();
     
     var dist = Math.sqrt((mp[1]-p.usrCoords[1])*(mp[1]-p.usrCoords[1]) + (mp[2]-p.usrCoords[2])*(mp[2]-p.usrCoords[2]));
     return (Math.abs(dist-r) < prec);
@@ -317,7 +323,7 @@ JXG.Circle.prototype.generateRadiusSquared = function () {
 
         rsq = '(' + p1 + '-' + q1 + ')^2 + (' + p2 + '-' + q2 + ')^2';
     } else if (this.method == "pointCircle") {
-        rsq = this.circle.getRadius();
+        rsq = this.circle.Radius();
     }
 
     return rsq;
@@ -336,7 +342,7 @@ JXG.Circle.prototype.update = function () {
             this.radius = this.line.point1.coords.distance(JXG.COORDS_BY_USER, this.line.point2.coords); 
         }
         else if(this.method == 'pointCircle') {
-            this.radius = this.circle.getRadius();
+            this.radius = this.circle.Radius();
         }
         else if(this.method == 'pointRadius') {
             this.radius = this.updateRadius();
@@ -353,10 +359,11 @@ JXG.Circle.prototype.update = function () {
  * @private
  */
 JXG.Circle.prototype.updateQuadraticform = function () {
-    var m = this.midpoint;
-    this.quadraticform = [[m.X()*m.X()+m.Y()*m.Y()-this.getRadius()*this.getRadius(),-m.X(),-m.Y()],
-                          [-m.X(),1,0],
-                          [-m.Y(),0,1]
+    var m = this.midpoint,
+        mX = m.X(), mY = m.Y(), r = this.Radius();
+    this.quadraticform = [[mX*mX+mY*mY-r*r,-mX,-mY],
+                          [-mX,1,0],
+                          [-mY,0,1]
                          ];
 };
 
@@ -366,7 +373,7 @@ JXG.Circle.prototype.updateQuadraticform = function () {
  */
 JXG.Circle.prototype.updateStdform = function () {
     this.stdform[3] = 0.5;
-    this.stdform[4] = this.getRadius();
+    this.stdform[4] = this.Radius();
     this.stdform[1] = -this.midpoint.coords.usrCoords[1];
     this.stdform[2] = -this.midpoint.coords.usrCoords[2];
     this.normalize();
@@ -385,7 +392,7 @@ JXG.Circle.prototype.updateRenderer = function () {
 */
     if (this.needsUpdate && this.visProp['visible']) {
         var wasReal = this.isReal;
-        this.isReal = (isNaN(this.midpoint.coords.usrCoords[1]+this.midpoint.coords.usrCoords[2]+this.getRadius()))?false:true;
+        this.isReal = (isNaN(this.midpoint.coords.usrCoords[1]+this.midpoint.coords.usrCoords[2]+this.Radius()))?false:true;
         if (this.isReal) {
             if (wasReal!=this.isReal) { 
                 this.board.renderer.show(this); 
@@ -446,7 +453,7 @@ JXG.Circle.prototype.notifyParents = function (contentStr) {
  * @type float
  * @return The radius of the circle
  */
-JXG.Circle.prototype.getRadius = function() {
+JXG.Circle.prototype.Radius = function() {
     if(this.method == 'twoPoints') {
         return(Math.sqrt(Math.pow(this.midpoint.coords.usrCoords[1]-this.point2.coords.usrCoords[1],2) + Math.pow(this.midpoint.coords.usrCoords[2]-this.point2.coords.usrCoords[2],2)));
     }
@@ -456,6 +463,13 @@ JXG.Circle.prototype.getRadius = function() {
     else if(this.method == 'pointRadius') {
         return this.updateRadius();
     }
+};
+
+/**
+  * @deprecated
+  */
+JXG.Circle.prototype.getRadius = function() {
+    return this.Radius();
 };
 
 /**
@@ -477,7 +491,7 @@ JXG.Circle.prototype.getLabelAnchor = function() {
         return new JXG.Coords(JXG.COORDS_BY_USER, [this.midpoint.coords.usrCoords[1]+deltaX, this.midpoint.coords.usrCoords[2]+deltaY], this.board);
     }
     else if(this.method == 'pointLine' || this.method == 'pointCircle' || this.method == 'pointRadius') {
-        return new JXG.Coords(JXG.COORDS_BY_USER, [this.midpoint.coords.usrCoords[1]-this.getRadius(),this.midpoint.coords.usrCoords[2]], this.board);
+        return new JXG.Coords(JXG.COORDS_BY_USER, [this.midpoint.coords.usrCoords[1]-this.Radius(),this.midpoint.coords.usrCoords[2]], this.board);
     }
 };
 
@@ -492,8 +506,10 @@ JXG.Circle.prototype.cloneToBackground = function(/** boolean */ addToTrace) {
     this.numTraces++;
     copy.midpoint = {};
     copy.midpoint.coords = this.midpoint.coords;
-    var r = this.getRadius();
-    copy.getRadius = function() { return r; };
+    var r = this.Radius();
+    copy.Radius = function() { return r; };
+    copy.getRadius = function() { return r; }; // deprecated
+    
     copy.board = {};
     copy.board.unitX = this.board.unitX;
     copy.board.unitY = this.board.unitY;
@@ -503,6 +519,7 @@ JXG.Circle.prototype.cloneToBackground = function(/** boolean */ addToTrace) {
     copy.board.stretchY = this.board.stretchY;
 
     copy.visProp = this.visProp;
+    JXG.clearVisPropOld(copy);
     
     this.board.renderer.drawCircle(copy);
     this.traces[copy.id] = document.getElementById(copy.id);
@@ -555,7 +572,7 @@ JXG.Circle.prototype.setPosition = function (method, x, y) {
 */
 JXG.Circle.prototype.X = function (/** float */ t) /** float */ {
     t *= 2.0*Math.PI;
-    return this.getRadius()*Math.cos(t)+this.midpoint.coords.usrCoords[1];
+    return this.Radius()*Math.cos(t)+this.midpoint.coords.usrCoords[1];
 };
 
 /**
@@ -567,7 +584,7 @@ JXG.Circle.prototype.X = function (/** float */ t) /** float */ {
 */
 JXG.Circle.prototype.Y = function (/** float */ t) /** float */ {
     t *= 2.0*Math.PI;
-    return this.getRadius()*Math.sin(t)+this.midpoint.coords.usrCoords[2];
+    return this.Radius()*Math.sin(t)+this.midpoint.coords.usrCoords[2];
 };
 
 /**
@@ -590,9 +607,9 @@ JXG.Circle.prototype.maxX = function () {
     return 1.0;
 };
 
-JXG.Circle.prototype.area = function() {
-    var area = this.getRadius()*this.getRadius()*Math.PI;
-    return area;
+JXG.Circle.prototype.Area = function() {
+    var r = this.Radius();
+    return r*r*Math.PI;
 };
 
 /**
@@ -636,6 +653,9 @@ JXG.createCircle = function(board, parentArr, atts) {
     if (typeof atts['withLabel']=='undefined') {
         atts['withLabel'] = false;
     }
+    if (typeof atts['layer'] == 'undefined') {
+        atts['layer'] = null;
+    }
     
     p = [];
     for (i=0;i<parentArr.length;i++) {
@@ -649,25 +669,25 @@ JXG.createCircle = function(board, parentArr, atts) {
     }
     if( parentArr.length==2 && JXG.isPoint(p[0]) && JXG.isPoint(p[1]) ) {
         // Point/Point
-        el = new JXG.Circle(board, 'twoPoints', p[0], p[1], atts['id'], atts['name'],atts['withLabel']);
+        el = new JXG.Circle(board, 'twoPoints', p[0], p[1], atts['id'], atts['name'],atts['withLabel'],atts['layer']);
     } else if( ( JXG.isNumber(p[0]) || JXG.isFunction(p[0]) || JXG.isString(p[0])) && JXG.isPoint(p[1]) ) {
         // Number/Point
-        el = new JXG.Circle(board, 'pointRadius', p[1], p[0], atts['id'], atts['name'],atts['withLabel']);
+        el = new JXG.Circle(board, 'pointRadius', p[1], p[0], atts['id'], atts['name'],atts['withLabel'],atts['layer']);
     } else if( ( JXG.isNumber(p[1]) || JXG.isFunction(p[1]) || JXG.isString(p[1])) && JXG.isPoint(p[0]) ) {
         // Point/Number
-        el = new JXG.Circle(board, 'pointRadius', p[0], p[1], atts['id'], atts['name'],atts['withLabel']);
+        el = new JXG.Circle(board, 'pointRadius', p[0], p[1], atts['id'], atts['name'],atts['withLabel'],atts['layer']);
     } else if( (p[0].type == JXG.OBJECT_TYPE_CIRCLE) && JXG.isPoint(p[1]) ) {
         // Circle/Point
-        el = new JXG.Circle(board, 'pointCircle', p[1], p[0], atts['id'], atts['name'],atts['withLabel']);
+        el = new JXG.Circle(board, 'pointCircle', p[1], p[0], atts['id'], atts['name'],atts['withLabel'],atts['layer']);
     } else if( (p[1].type == JXG.OBJECT_TYPE_CIRCLE) && JXG.isPoint(p[0])) {
         // Point/Circle
-        el = new JXG.Circle(board, 'pointCircle', p[0], p[1], atts['id'], atts['name'],atts['withLabel']);
+        el = new JXG.Circle(board, 'pointCircle', p[0], p[1], atts['id'], atts['name'],atts['withLabel'],atts['layer']);
     } else if( (p[0].type == JXG.OBJECT_TYPE_LINE) && JXG.isPoint(p[1])) {
         // Circle/Point
-        el = new JXG.Circle(board, 'pointLine', p[1], p[0], atts['id'], atts['name'],atts['withLabel']);
+        el = new JXG.Circle(board, 'pointLine', p[1], p[0], atts['id'], atts['name'],atts['withLabel'],atts['layer']);
     } else if( (p[1].type == JXG.OBJECT_TYPE_LINE) && JXG.isPoint(p[0])) {
         // Point/Circle
-        el = new JXG.Circle(board, 'pointLine', p[0], p[1], atts['id'], atts['name'],atts['withLabel']);
+        el = new JXG.Circle(board, 'pointLine', p[0], p[1], atts['id'], atts['name'],atts['withLabel'],atts['layer']);
     } else if( parentArr.length==3 && JXG.isPoint(p[0]) && JXG.isPoint(p[1]) && JXG.isPoint(p[2])) {
         // Circle through three points
         var arr = JXG.createCircumcircle(board, p, atts); // returns [center, circle]

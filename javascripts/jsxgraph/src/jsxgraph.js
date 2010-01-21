@@ -27,7 +27,7 @@
  * @fileoverview Class Geonext is defined in this file. Geonext controls all boards.
  * It has methods to create, save, load and free boards.
  * @author graphjs
- * @version 0.1
+ * @version 0.79
  */
 
 /**
@@ -37,16 +37,16 @@
  * @constructor
  * @param {String} forceRenderer If a specific renderer should be chosen. Possible values are 'vml', 'svg', 'silverlight'
  */
-JXG.JSXGraph = new function (forceRenderer) {
+JXG.JSXGraph = new function () {
     var ie, opera, i, arr;
-    this.licenseText = 'JSXGraph v0.78.2 Copyright (C) see http://jsxgraph.org';
+    this.licenseText = 'JSXGraph v0.80 Copyright (C) see http://jsxgraph.org';
 
     /**
             * Stores the renderer that is used to draw the board.
             * @type String
             */
     this.rendererType = '';
-    
+
     /**
             * Associative array that keeps all boards.
             * @type Object
@@ -59,20 +59,22 @@ JXG.JSXGraph = new function (forceRenderer) {
             */
     this.elements = {};
 
-    if( (forceRenderer == 'undefined') || (forceRenderer == null) || (forceRenderer == '') ) {
+    if( (typeof forceRenderer == 'undefined') || (forceRenderer == null) || (forceRenderer == '') ) {
         /* Determine the users browser */
         ie = navigator.appVersion.match(/MSIE (\d\.\d)/);
         opera = (navigator.userAgent.toLowerCase().indexOf("opera") != -1);
 
         /* and set the rendererType according to the browser */
         if ((!ie) || (opera)) {
-            this.rendererType = 'svg';
+            //this.rendererType = 'svg';
+            JXG.Options.renderer = 'svg';
         }
         else {
             //if(Silverlight.available)
             //    this.rendererType = 'silverlight';
             //else
-                this.rendererType = 'vml';
+                //this.rendererType = 'vml';
+                JXG.Options.renderer = 'vml';
                 function MouseMove(e) { //Magic!
                   document.body.scrollLeft;
                   document.body.scrollTop;
@@ -86,7 +88,7 @@ JXG.JSXGraph = new function (forceRenderer) {
 
     /* Load the source files for the renderer */
     //JXG.rendererFiles[this.rendererType].split(',').each( function(include) { JXG.require(JXG.requirePath+include+'.js'); } );
-    arr = JXG.rendererFiles[this.rendererType].split(',');
+    arr = JXG.rendererFiles[JXG.Options.renderer].split(',');
     for (i=0;i<arr.length;i++) ( function(include) { JXG.require(JXG.requirePath+include+'.js'); } )(arr[i]);
 
 
@@ -115,13 +117,13 @@ JXG.JSXGraph = new function (forceRenderer) {
             h = parseInt(dimensions.height);
             if (attributes["keepaspectratio"]) {
             /**
-                                * If the boundingbox attribute is given and the ratio of height and width of the sides defined by the bounding box and 
-                                * the ratio of the dimensions of the div tag which contains the board do not coincide, 
+                                * If the boundingbox attribute is given and the ratio of height and width of the sides defined by the bounding box and
+                                * the ratio of the dimensions of the div tag which contains the board do not coincide,
                                 * then the smaller side is chosen.
                                 */
                 unitX = w/(bbox[2]-bbox[0]);
                 unitY = h/(-bbox[3]+bbox[1]);
-                if (unitX>unitY) {
+                if (unitX<unitY) {
                     unitY = unitX;
                 } else {
                     unitX = unitY;
@@ -141,13 +143,13 @@ JXG.JSXGraph = new function (forceRenderer) {
         zoomfactor = ( (typeof attributes["zoom"]) == 'undefined' ? 1.0 : attributes["zoom"]);
         zoomX = zoomfactor*( (typeof attributes["zoomX"]) == 'undefined' ? 1.0 : attributes["zoomX"]);
         zoomY = zoomfactor*( (typeof attributes["zoomY"]) == 'undefined' ? 1.0 : attributes["zoomY"]);
-        
-        if (typeof attributes["showcopyright"] != 'undefined') attributes["showCopyright"] = attributes["showcopyright"];
-        showCopyright = ( (typeof attributes["showCopyright"]) == 'undefined' ? true : attributes["showCopyright"]);
 
-        if(this.rendererType == 'svg') {
+        // ??? if (typeof attributes["showcopyright"] != 'undefined') attributes["showCopyright"] = attributes["showcopyright"];
+        showCopyright = ( (typeof attributes["showCopyright"]) == 'undefined' ? JXG.Options.showCopyright : attributes["showCopyright"]);
+
+        if(JXG.Options.renderer == 'svg') {
             renderer = new JXG.SVGRenderer(document.getElementById(box));
-        } else if(this.rendererType == 'vml') {
+        } else if(JXG.Options.renderer == 'vml') {
             renderer = new JXG.VMLRenderer(document.getElementById(box));
         } else {
             renderer = new JXG.SilverlightRenderer(document.getElementById(box), dimensions.width, dimensions.height);
@@ -180,15 +182,15 @@ JXG.JSXGraph = new function (forceRenderer) {
     /**
      * Load a board from a file of format GEONExT or Intergeo.
      * @param {String} box Html-ID to the Html-element in which the board is painted.
-     * @param {String} file Url to the geonext-file. 
-     * @param {String} string containing the file format: 'Geonext' or 'Intergeo'. 
+     * @param {String} file Url to the geonext-file.
+     * @param {String} string containing the file format: 'Geonext' or 'Intergeo'.
      * @return {JXG.Board} Reference to the created board.
      * @see JXG.GeonextReader
      */
     this.loadBoardFromFile = function (box, file, format) {
         var renderer, board, dimensions;
-        
-        if(this.rendererType == 'svg') {
+
+        if(JXG.Options.renderer == 'svg') {
             renderer = new JXG.SVGRenderer(document.getElementById(box));
         } else {
             renderer = new JXG.VMLRenderer(document.getElementById(box));
@@ -212,14 +214,14 @@ JXG.JSXGraph = new function (forceRenderer) {
      * Load a board from a base64 encoded string containing a GEONExT or Intergeo construction.
      * @param {String} box Html-ID to the Html-element in which the board is painted.
      * @param {String} string base64 encoded string.
-     * @param {String} string containing the file format: 'Geonext' or 'Intergeo'. 
+     * @param {String} string containing the file format: 'Geonext' or 'Intergeo'.
      * @return {JXG.Board} Reference to the created board.
      * @see JXG.GeonextReader
      */
     this.loadBoardFromString = function(box, string, format) {
         var renderer, dimensions, board;
-        
-        if(this.rendererType == 'svg') {
+
+        if(JXG.Options.renderer == 'svg') {
             renderer = new JXG.SVGRenderer(document.getElementById(box));
         } else {
             renderer = new JXG.VMLRenderer(document.getElementById(box));
@@ -232,7 +234,7 @@ JXG.JSXGraph = new function (forceRenderer) {
         board.initInfobox();
         board.beforeLoad();
 
-        JXG.FileReader.parseString(string, board, format);
+        JXG.FileReader.parseString(string, board, format, true);
         if (board.options.showNavigation) {
             board.renderer.drawZoomBar(board);
         }
@@ -287,7 +289,7 @@ JXG.JSXGraph = new function (forceRenderer) {
         JXG.Board.prototype['_' + element] = function (parents, attributes) {
         	return this.createElement(element, parents, attributes);
         };
-        
+
     };
 
     this.unregisterElement = function (element) {
@@ -351,7 +353,7 @@ JXG._board = function(box, attributes) {
 JXG.createEvalFunction = function(board,param,n) {
     // convert GEONExT syntax into function
     var f = [], i, str;
-    
+
     for (i=0;i<n;i++) {
         if (typeof param[i] == 'string') {
             str = board.algebra.geonext2JS(param[i]);
@@ -377,7 +379,7 @@ JXG.createEvalFunction = function(board,param,n) {
   **/
 JXG.createFunction = function(term,board,variableName,evalGeonext) {
     var newTerm;
-    
+
     if ((evalGeonext==null || evalGeonext==true) && JXG.isString(term)) {
         // Convert GEONExT syntax into  JavaScript syntax
         newTerm = board.algebra.geonext2JS(term);
@@ -395,13 +397,13 @@ JXG.createFunction = function(term,board,variableName,evalGeonext) {
 JXG.getDimensions = function(elementId) {
     var element, display, els, originalVisibility, originalPosition,
         originalDisplay, originalWidth, originalHeight;
-    
+
     // Borrowed from prototype.js
     element = document.getElementById(elementId);
     if (element==null) {
         throw new Error("\nJSXGraph: HTML container element '" + (elementId) + "' not found.");
     }
-    
+
     display = element.style['display'];
     if (display != 'none' && display != null) {// Safari bug
         return {width: element.offsetWidth, height: element.offsetHeight};
@@ -416,7 +418,7 @@ JXG.getDimensions = function(elementId) {
     els.visibility = 'hidden';
     els.position = 'absolute';
     els.display = 'block';
-    
+
     originalWidth = element.clientWidth;
     originalHeight = element.clientHeight;
     els.display = originalDisplay;
@@ -425,7 +427,7 @@ JXG.getDimensions = function(elementId) {
     return {width: originalWidth, height: originalHeight};
 };
 
-/** 
+/**
   * addEvent.
   */
 JXG.addEvent = function( obj, type, fn, owner ) {
@@ -437,7 +439,7 @@ JXG.addEvent = function( obj, type, fn, owner ) {
     }
 };
 
-/** 
+/**
   * removeEvent.
   */
 JXG.removeEvent = function( obj, type, fn, owner ) {
@@ -458,18 +460,18 @@ JXG.bind = function(fn, owner ) {
     };
 };
 
-/** 
+/**
   * getPosition: independent from prototype and jQuery
   */
 JXG.getPosition = function (Evt) {
     var posx = 0,
         posy = 0,
         Evt;
-        
+
     if (!Evt) {
         Evt = window.event;
     }
-    
+
     if (Evt.pageX || Evt.pageY)     {
         posx = Evt.pageX;
         posy = Evt.pageY;
@@ -485,10 +487,10 @@ JXG.getPosition = function (Evt) {
   * getOffset: Abstraction layer for Prototype.js and jQuery
   */
 JXG.getOffset = function (obj) {
-    var o=obj, 
+    var o=obj,
         l=o.offsetLeft,
         t=o.offsetTop;
-        
+
     while(o=o.offsetParent) {
         l+=o.offsetLeft;
         t+=o.offsetTop;
@@ -503,7 +505,7 @@ JXG.getOffset = function (obj) {
 /*
 JXG.getOffset = function (obj) {
     var o;
-    
+
     if (typeof Prototype!='undefined' && typeof Prototype.Browser!='undefined') { // Prototype lib
         return Element.cumulativeOffset(obj);
     } else {                         // jQuery
@@ -529,12 +531,12 @@ JXG.getStyle = function (obj, stylename) {
             return $(obj).css(stylename);
         }
     }
-*/    
+*/
 };
 
 JXG.keys = function(object) {
     var keys = [], property;
-    
+
     for (property in object) {
         keys.push(property);
     }
@@ -550,10 +552,12 @@ JXG.unescapeHTML = function(str) {
 };
 
 /**
- * Outputs a copy of an existing object and not only a flat copy.
- * @param {Object} obj Object to be copied.
+ * This outputs an object with a base class reference to the given object. This is useful if
+ * you need a copy of an e.g. attributes object and want to overwrite some of the attributes
+ * without changing the original object.
+ * @param {Object} obj Object to be embedded.
  * @type Object
- * @return Copy of given object.
+ * @return An object with a base class reference to <tt>obj</tt>.
  */
 JXG.clone = function(obj) {
     var cObj = {};
@@ -569,7 +573,7 @@ JXG.clone = function(obj) {
  */
 JXG.deepCopy = function(obj) {
     var c, i, prop, j;
-    
+
     if (typeof obj !== 'object' || obj == null) {
         return obj;
     }
@@ -620,7 +624,8 @@ JXG.deepCopy = function(obj) {
 };
 
 /**
- * Outputs a copy of an existing object just like {@link #clone} and copies the contents of the second object to the new one.
+ * Embeds an existing object into another one just like {@link #clone} and copies the contents of the second object
+ * to the new one. Warning: The copied properties of obj2 are just flat copies.
  * @param {Object} obj Object to be copied.
  * @param {Object} obj2 Object with data that is to be copied to the new one as well.
  * @type Object
@@ -665,6 +670,29 @@ JXG.toJSON = function(obj) {
 JXG.capitalize = function(str) {
     return str.charAt(0).toUpperCase() + str.substring(1).toLowerCase();
 };
+
+/**
+ * Copyright 2009 Nicholas C. Zakas. All rights reserved.
+ * MIT Licensed
+ * param array items to do
+ * param function function that is applied for everyl array item
+ * param object context meaning of this in function process
+ * param function callback function called after the last array element has been processed.
+**/
+JXG.timedChunk = function(items, process, context, callback) {
+    var todo = items.concat();   //create a clone of the original
+    setTimeout(function(){
+        var start = +new Date();
+        do {
+            process.call(context, todo.shift());
+        } while (todo.length > 0 && (+new Date() - start < 300));
+        if (todo.length > 0){
+            setTimeout(arguments.callee, 1);
+        } else {
+            callback(items);
+        }
+    }, 1);
+}
 
 /*
 JXG.isSilverlightInstalled = function() {

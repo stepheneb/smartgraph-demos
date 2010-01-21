@@ -42,7 +42,7 @@
  * @see JXG.Board#generateName
  * @see JXG.Board#addCurve
   */
-JXG.Curve = function (board, parents, id, name, withLabel) {
+JXG.Curve = function (board, parents, id, name, withLabel, layer) {
     this.constructor();
  
     this.points = []; 
@@ -52,6 +52,11 @@ JXG.Curve = function (board, parents, id, name, withLabel) {
     
     this.init(board, id, name);
 
+    /**
+     * Set the display layer.
+     */
+    if (layer == null) layer = board.options.layer['curve'];
+    this.layer = layer;
 
     /** Use the algorithm by Gillam and Hohenwarter for plotting.
       * If false the naive algorithm is used.
@@ -764,7 +769,10 @@ JXG.createCurve = function(board, parents, attributes) {
     if (typeof attributes['withLabel'] == 'undefined') {
         attributes['withLabel'] = false;
     } 
-    return new JXG.Curve(board, ['x'].concat(parents), attributes['id'], attributes['name'], attributes['withLabel']);
+    if (typeof attributes['layer'] == 'undefined') {
+        attributes['layer'] = null;
+    }
+    return new JXG.Curve(board, ['x'].concat(parents), attributes['id'], attributes['name'], attributes['withLabel'],attributes['layer']);
 };
 
 JXG.JSXGraph.registerElement('curve', JXG.createCurve);
@@ -817,8 +825,11 @@ JXG.createFunctiongraph = function(board, parents, attributes) {
     if (typeof attributes['withLabel'] == 'undefined') {
         attributes['withLabel'] = false;
     } 
+    if (typeof attributes['layer'] == 'undefined') {
+        attributes['layer'] = null;
+    }
     attributes.curveType = 'functiongraph';
-    return new JXG.Curve(board, par, attributes['id'], attributes['name'],attributes['withLabel']);
+    return new JXG.Curve(board, par, attributes['id'], attributes['name'],attributes['withLabel'],attributes['layer']);
 };
 
 JXG.JSXGraph.registerElement('functiongraph', JXG.createFunctiongraph);
@@ -840,6 +851,9 @@ JXG.createSpline = function(board, parents, attributes) {
     if (typeof attributes['withLabel'] == 'undefined') {
         attributes['withLabel'] = false;
     } 
+    if (typeof attributes['layer'] == 'undefined') {
+        attributes['layer'] = null;
+    }
     
     F = function() {
         var D, x=[], y=[];
@@ -892,9 +906,7 @@ JXG.createSpline = function(board, parents, attributes) {
         };
         return fct;
     };
-    
-    
-    return new JXG.Curve(board, ["x","x", F()], attributes["id"], attributes["name"], attributes['withLabel']);
+    return new JXG.Curve(board, ["x","x", F()], attributes["id"], attributes["name"], attributes['withLabel'],attributes['layer']);
 };
 
 /**
@@ -950,6 +962,9 @@ JXG.createRiemannsum = function(board, parents, attributes) {
     if (typeof attributes['withLabel'] == 'undefined') {
         attributes['withLabel'] = false;
     }     
+    if (typeof attributes['layer'] == 'undefined') {
+        attributes['layer'] = null;
+    }
     attributes.fillOpacity   = attributes.fillOpacity || 0.3;
     attributes.fillColor = attributes.fillColor || '#ffff00';
     attributes.curveType = 'plot';
@@ -968,7 +983,7 @@ JXG.createRiemannsum = function(board, parents, attributes) {
     /**
      * @private
      */
-    c = new JXG.Curve(board, par, attributes['id'], attributes['name'], attributes['withLabel']);
+    c = new JXG.Curve(board, par, attributes['id'], attributes['name'], attributes['withLabel'],attributes['layer']);
     /**
      * @private
      */

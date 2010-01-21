@@ -73,18 +73,14 @@ JXG.VMLRenderer.prototype.setAttr = function(node, key, val, val2) {
     }
 };
 
-JXG.VMLRenderer.prototype.eval = function(val) {
-    if (typeof val=='function') {
-        return val();
-    } else {
-        return val;
-    }
-};
-
-JXG.VMLRenderer.prototype.setShadow = function(element) {
-    var nodeShadow = element.rendNodeShadow;
+JXG.VMLRenderer.prototype.setShadow = function(el) {
+    var nodeShadow = el.rendNodeShadow;
+    
     if (!nodeShadow) return;                          // Added 29.9.09. A.W.
-    if(element.visProp['shadow']) {
+    if (el.visPropOld['shadow']==el.visProp['shadow']) {
+        return;
+    }
+    if(el.visProp['shadow']) {
         this.setAttr(nodeShadow, 'On', 'True');
         this.setAttr(nodeShadow, 'Offset', '3pt,3pt');
         this.setAttr(nodeShadow, 'Opacity', '60%');
@@ -93,6 +89,7 @@ JXG.VMLRenderer.prototype.setShadow = function(element) {
     else {
         this.setAttr(nodeShadow, 'On', 'False');
     }
+    el.visPropOld['shadow']=el.visProp['shadow'];
 };
 
 JXG.VMLRenderer.prototype.setGradient = function(el) {
@@ -168,9 +165,8 @@ JXG.VMLRenderer.prototype.displayCopyright = function(str,fontsize) {
     
     t = document.createTextNode(str);
     node.appendChild(t);
-    this.appendChildPrimitive(node,'images');
+    this.appendChildPrimitive(node,0);
 };
-
 JXG.VMLRenderer.prototype.drawInternalText = function(el) {
     var node;
     node = this.createNode('textbox');
@@ -178,11 +174,11 @@ JXG.VMLRenderer.prototype.drawInternalText = function(el) {
     if (document.documentMode==8) {    
         node.setAttribute('class', 'JXGtext');
     } else {
-        node.setAttribute('className', 'JXGtext');
+        node.setAttribute('className', 9);
     }
     el.rendNodeText = document.createTextNode('');
     node.appendChild(el.rendNodeText);
-    this.appendChildPrimitive(node,'points');
+    this.appendChildPrimitive(node,9);
     return node;
 };
 
@@ -196,10 +192,9 @@ JXG.VMLRenderer.prototype.updateInternalText = function(/** JXG.Text */ el) {
     }
 };
 
-
 JXG.VMLRenderer.prototype.drawTicks = function(ticks) {
     var ticksNode = this.createPrimitive('path', ticks.id);
-    this.appendChildPrimitive(ticksNode,'lines');
+    this.appendChildPrimitive(ticksNode,ticks.layer);
     //ticks.rendNode = ticksNode;
     this.appendNodesToElement(ticks, 'path');
 };
@@ -227,7 +222,7 @@ JXG.VMLRenderer.prototype.updateTicks = function(axis,dxMaj,dyMaj,dxMin,dyMin) {
     ticks = document.getElementById(axis.id);
     if(ticks == null) {
         ticks = this.createPrimitive('path', axis.id);
-        this.appendChildPrimitive(ticks,'lines');
+        this.appendChildPrimitive(ticks,axis.layer);
         this.appendNodesToElement(axis,'path');
     } 
     this.setAttr(ticks,'stroked', 'true');
@@ -321,11 +316,13 @@ JXG.VMLRenderer.prototype.drawArcFill = function(id, radius, midpoint, point2, p
     return node2;
 };
 
-
 JXG.VMLRenderer.prototype.drawArc = function(el) { 
     var radius, p = {}, angle1, angle2, node, nodeStroke, node2, p4 = {};
+
+    JXG.clearVisPropOld(el);
+
     /* some computations */
-    radius = el.getRadius();  
+    radius = el.Radius();  
     p.coords = new JXG.Coords(JXG.COORDS_BY_USER, 
                           [el.midpoint.coords.usrCoords[1], el.board.origin.scrCoords[2]/el.board.stretchY],
                           el.board);
@@ -366,8 +363,8 @@ JXG.VMLRenderer.prototype.drawArc = function(el) {
     this.setGradient(el);    
     
     /* append nodes */
-    this.appendChildPrimitive(node,'lines'); //arc
-    this.appendChildPrimitive(node2,'angles'); //fill
+    this.appendChildPrimitive(node,el.layer); //arc
+    this.appendChildPrimitive(node2,el.layer); //fill
     
     /* draft mode */
     if(el.visProp['draft']) {
@@ -397,13 +394,20 @@ JXG.VMLRenderer.prototype.drawAngle = function(el) {
         angle1, angle2, node, tmp, nodeStroke,
         p1 = {}, p3 = {}, node2;
 
+    JXG.clearVisPropOld(el);
+    
     /* some computations */
-  
     // um projectToCircle benutzen zu koennen...
     circle.midpoint = el.point2;
+    circle.Radius = function() {
+        return el.radius;
+    };
+    //-----------------
+    // deprecated:
     circle.getRadius = function() {
         return el.radius;
     };
+    //-----------------
     projectedP1 = el.board.algebra.projectPointToCircle(el.point1,circle);
     projectedP3 = el.board.algebra.projectPointToCircle(el.point3,circle);  
     
@@ -438,8 +442,8 @@ JXG.VMLRenderer.prototype.drawAngle = function(el) {
     this.setObjectFillColor(el, el.visProp['fillColor'], el.visProp['fillOpacity']);
     
     /* append nodes */
-    this.appendChildPrimitive(node,'lines'); //arc
-    this.appendChildPrimitive(node2,'angles'); //fill
+    this.appendChildPrimitive(node,el.layer); //arc
+    this.appendChildPrimitive(node2,el.layer); //fill
     
     /* draft mode */
     if(el.visProp['draft']) {
@@ -461,17 +465,15 @@ JXG.VMLRenderer.prototype.updateAngle = function(el) {
 
 JXG.VMLRenderer.prototype.drawImage = function(el) {
     // IE 8: Bilder ueber data URIs werden bis 32kB unterstuetzt.
-    var node,imageBase64;
-    
-    imageBase64 = 'data:image/png;base64,' + el.imageBase64String;    
+    var node, url = el.url; //'data:image/png;base64,' + el.imageBase64String;    
     
     node = this.container.ownerDocument.createElement('img');
     node.style.position = 'absolute';
     this.setAttr(node,'id', el.id);
 
-    this.setAttr(node,'src',imageBase64);
+    this.setAttr(node,'src',url);
     this.container.appendChild(node);
-    this.appendChildPrimitive(node,el.displayLevel);
+    this.appendChildPrimitive(node,el.layer);
     node.style.filter = "progid:DXImageTransform.Microsoft.Matrix(M11='1.0', sizingMethod='auto expand')";
     el.rendNode = node;
     this.updateImage(el);
@@ -502,6 +504,7 @@ JXG.VMLRenderer.prototype.joinTransforms = function(el,t) {
 
 JXG.VMLRenderer.prototype.transformImageParent = function(el,m) {};
 
+/*
 JXG.VMLRenderer.prototype.removeGrid = function(board) { 
     var c = document.getElementById('gridx');
     this.remove(c);
@@ -511,6 +514,7 @@ JXG.VMLRenderer.prototype.removeGrid = function(board) {
 
     board.hasGrid = false;
 };
+*/
 
 JXG.VMLRenderer.prototype.hide = function(el) {
     var node = el.rendNode;
@@ -544,6 +548,10 @@ JXG.VMLRenderer.prototype.setObjectStrokeColor = function(el, color, opacity) {
         node, nodeStroke;
 
     o = (o>0)?o:0;
+
+    if (el.visPropOld['strokeColor']==c && el.visPropOld['strokeOpacity']==o) {
+        return;
+    }
     if(el.type == JXG.OBJECT_TYPE_TEXT) {
         el.rendNode.style.color = c;
     }        
@@ -563,8 +571,11 @@ JXG.VMLRenderer.prototype.setObjectStrokeColor = function(el, color, opacity) {
         }
         if (o!=undefined) {
             this.setAttr(nodeStroke,'opacity', (o*100)+'%');  
+            
         }
     }
+    el.visPropOld['strokeColor'] = c;
+    el.visPropOld['strokeOpacity'] = o;
 };
 
 JXG.VMLRenderer.prototype.setObjectFillColor = function(el, color, opacity) {
@@ -572,6 +583,11 @@ JXG.VMLRenderer.prototype.setObjectFillColor = function(el, color, opacity) {
         o = this.eval(opacity);
 
     o = (o>0)?o:0;
+
+    if (el.visPropOld['fillColor']==c && el.visPropOld['fillOpacity']==o) {
+        return;
+    }
+    
     if(el.type == JXG.OBJECT_TYPE_ARC || el.type == JXG.OBJECT_TYPE_ANGLE) {
         if(c == 'none') {
              this.setAttr(el.rendNode2,'filled', 'false');
@@ -596,6 +612,8 @@ JXG.VMLRenderer.prototype.setObjectFillColor = function(el, color, opacity) {
             }
         }
     }
+    el.visPropOld['fillColor'] = c;
+    el.visPropOld['fillOpacity'] = o;
 };
 
 JXG.VMLRenderer.prototype.remove = function(node) {
@@ -639,20 +657,16 @@ JXG.VMLRenderer.prototype.setObjectStrokeWidth = function(el, width) {
         node;
     //w = (w>0)?w:0;
     
-    if(el.elementClass != JXG.OBJECT_CLASS_POINT) {
-        node = el.rendNode;
-        this.setPropertyPrimitive(node,'stroked', 'true');
-        if (w!=null) { 
-            this.setPropertyPrimitive(node,'stroke-width',w);    
-        }
+    if (el.visPropOld['strokeWidth']==w) {
+        return;
     }
-    else {
-        node = el.rendNode;
-        this.setPropertyPrimitive(node,'stroked', 'true');
-        if (w!=null) { 
-            this.setPropertyPrimitive(node,'stroke-width',w); 
-        }
+    
+    node = el.rendNode;
+    this.setPropertyPrimitive(node,'stroked', 'true');
+    if (w!=null) { 
+        this.setPropertyPrimitive(node,'stroke-width',w); 
     }
+    el.visPropOld['strokeWidth'] = w;
 };
 
 JXG.VMLRenderer.prototype.createPrimitive = function(type, id) {
@@ -710,6 +724,10 @@ JXG.VMLRenderer.prototype.makeArrow = function(node,el,idAppendix) {
 JXG.VMLRenderer.prototype.makeArrows = function(el) {
     var nodeStroke;
     
+    if (el.visPropOld['firstArrow']==el.visProp['firstArrow'] && el.visPropOld['lastArrow']==el.visProp['lastArrow']) {
+        return;
+    }
+
     if(el.visProp['firstArrow']) {
         nodeStroke = el.rendNodeStroke;
         this.setAttr(nodeStroke, 'startarrow', 'block');
@@ -733,6 +751,8 @@ JXG.VMLRenderer.prototype.makeArrows = function(el) {
             this.setAttr(nodeStroke, 'endarrow', 'none');
         }        
     }    
+    el.visPropOld['firstArrow'] = el.visProp['firstArrow'];
+    el.visPropOld['lastArrow'] = el.visProp['lastArrow'];
 };
 
 JXG.VMLRenderer.prototype.updateLinePrimitive = function(node,p1x,p1y,p2x,p2y,board) {
@@ -887,6 +907,9 @@ JXG.VMLRenderer.prototype.updatePolygonePrimitive = function(node,el) {
 };
 
 JXG.VMLRenderer.prototype.appendChildPrimitive = function(node,level) {
+    if (typeof level=='undefined') level = 0;   // For trace nodes    
+    node.style.zIndex = level;
+    /*
     switch (level) {
         case 'images': node.style.zIndex = "1"; break;
         case 'grid': node.style.zIndex = "1"; break;
@@ -899,6 +922,7 @@ JXG.VMLRenderer.prototype.appendChildPrimitive = function(node,level) {
         case 'arcs': node.style.zIndex = "4"; break;
         case 'points': node.style.zIndex = "5"; break;
     }
+    */
     this.container.appendChild(node);
 };
 
@@ -945,10 +969,3 @@ JXG.VMLRenderer.prototype.drawHorizontalGrid = function(topLeft, bottomRight, gy
     this.updatePathPrimitive(node, gridArr, board);
     return node;
 };
-/*
-JXG.VMLRenderer.prototype.cloneSubTree = function(el,id,type) {
-    var node = el.rendNode.cloneNode(true);
-    node.setAttribute('id', id);
-    this.appendChildPrimitive(node,type);
-};
-*/

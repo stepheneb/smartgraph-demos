@@ -425,6 +425,18 @@ JXG.Board = function(container, renderer, id, origin, zoomX, zoomY, unitX, unitY
     * @private
     */
    this.drag_dy = 0;
+   
+   /**
+     * Absolute position of the mouse pointer in screen pixel from the top left corner
+     * of the HTML window.
+     */
+   this.mousePosAbs = [0,0];
+
+    /**
+     * Relative position of the mouse pointer in screen pixel from the top left corner
+     * of the JSXGraph canvas (the div element contining the board)-
+     */
+   this.mousePosRel = [0,0];
 
    /**
     * A reference to the object that is dragged on the board.
@@ -741,6 +753,8 @@ JXG.Board.prototype.mouseDownListener = function (Evt) {
     absPos = JXG.getPosition(Evt);
     dx = absPos[0]-cPos[0]; //Event.pointerX(Evt) - cPos[0];
     dy = absPos[1]-cPos[1]; //Event.pointerY(Evt) - cPos[1];
+    this.mousePosAbs = absPos; // Save the mouse position
+    this.mousePosRel = [dx,dy];
 
     if(Evt.shiftKey) {
         this.drag_dx = dx - this.origin.scrCoords[1];
@@ -765,10 +779,10 @@ JXG.Board.prototype.mouseDownListener = function (Evt) {
                     && (!pEl.fixed)
                     && (pEl.hasPoint(dx, dy))
                     ) {
-                this.drag_obj = this.objects[el];
                 // Points are preferred:
                 if ((pEl.type == JXG.OBJECT_TYPE_POINT) || (pEl.type == JXG.OBJECT_TYPE_GLIDER)) {
-                    break;
+                    this.drag_obj = this.objects[el];
+                    if (this.options.takeFirst) break;
                 }
             }
         }
@@ -793,34 +807,40 @@ JXG.Board.prototype.mouseDownListener = function (Evt) {
  * @private
  */
 JXG.Board.prototype.mouseMoveListener = function (Event) {
-    var el, pEl, cPos, absPos, dx, dy, newPos;
+    var el, pEl, cPos, absPos, newPos, dx, dy;
 
     cPos = this.getRelativeMouseCoordinates(Event);
-
     // position of mouse cursor relative to containers position of container
     absPos = JXG.getPosition(Event);
-    x = absPos[0]-cPos[0]; //Event.pointerX(Evt) - cPos[0];
-    y = absPos[1]-cPos[1]; //Event.pointerY(Evt) - cPos[1];
+    dx = absPos[0]-cPos[0]; //Event.pointerX(Evt) - cPos[0];
+    dy = absPos[1]-cPos[1]; //Event.pointerY(Evt) - cPos[1];
+
+    this.mousePosAbs = absPos; // Save the mouse position
+    this.mousePosRel = [dx,dy];
 
     this.updateQuality = this.BOARD_QUALITY_LOW;
 
-    this.dehighlightAll(x,y);
+    this.dehighlightAll(dx,dy);
     if(this.mode != this.BOARD_MODE_DRAG) {
         this.renderer.hide(this.infobox);
     }
 
     if(this.mode == this.BOARD_MODE_MOVE_ORIGIN) {
-        this.origin.scrCoords[1] = x - this.drag_dx;
-        this.origin.scrCoords[2] = y - this.drag_dy;
+        this.origin.scrCoords[1] = dx - this.drag_dx;
+        this.origin.scrCoords[2] = dy - this.drag_dy;
         this.moveOrigin();
     }
     else if(this.mode == this.BOARD_MODE_DRAG) {
-        newPos = new JXG.Coords(JXG.COORDS_BY_SCREEN, this.getScrCoordsOfMouse(x,y), this);
+        newPos = new JXG.Coords(JXG.COORDS_BY_SCREEN, this.getScrCoordsOfMouse(dx,dy), this);
         if (this.drag_obj.type == JXG.OBJECT_TYPE_POINT
             || this.drag_obj.type == JXG.OBJECT_TYPE_LINE
             || this.drag_obj.type == JXG.OBJECT_TYPE_CIRCLE
             || this.drag_obj.type == JXG.OBJECT_TYPE_CURVE) {
 
+/*
+            // Do not use setPositionByTransform at the moment!
+            // This concept still has to be worked out.
+            
             if ((this.geonextCompatibilityMode && this.drag_obj.type==JXG.OBJECT_TYPE_POINT) || this.drag_obj.group.length != 0) {
                 // This is for performance reasons with GEONExT files and for groups (transformations do not work yet with groups)
                 this.drag_obj.setPositionDirectly(JXG.COORDS_BY_USER,newPos.usrCoords[1],newPos.usrCoords[2]);
@@ -831,6 +851,8 @@ JXG.Board.prototype.mouseMoveListener = function (Event) {
                 // Save new mouse position in screen coordinates.
                 this.dragObjCoords = newPos;
             }
+*/            
+            this.drag_obj.setPositionDirectly(JXG.COORDS_BY_USER,newPos.usrCoords[1],newPos.usrCoords[2]);
             this.update(this.drag_obj);
         } else if(this.drag_obj.type == JXG.OBJECT_TYPE_GLIDER) {
             var oldCoords = this.drag_obj.coords;
@@ -856,7 +878,7 @@ JXG.Board.prototype.mouseMoveListener = function (Event) {
         // Elements  below the mouse pointer which are not highlighted are highlighted.
         for(el in this.objects) {
             pEl = this.objects[el];
-            if( pEl.hasPoint!=undefined && pEl.visProp['visible']==true && pEl.hasPoint(x, y)) {
+            if( pEl.hasPoint!=undefined && pEl.visProp['visible']==true && pEl.hasPoint(dx, dy)) {
                 //this.renderer.highlight(pEl);
 
                 // this is required in any case because otherwise the box won't be shown until the point is dragged
@@ -878,7 +900,10 @@ JXG.Board.prototype.mouseMoveListener = function (Event) {
  */
 JXG.Board.prototype.updateInfobox = function(el) {
     var x, y, xc, yc;
-    if((el.elementClass == JXG.OBJECT_CLASS_POINT) && el.showInfobox) {
+    if (!el.showInfobox) {
+        return this;
+    }
+    if (el.elementClass == JXG.OBJECT_CLASS_POINT) {
         xc = el.coords.usrCoords[1]*1;
         yc = el.coords.usrCoords[2]*1;
         this.infobox.setCoords(xc+this.infobox.distanceX/(this.stretchX),
@@ -904,8 +929,6 @@ JXG.Board.prototype.updateInfobox = function(el) {
             y = yc;
         }
 
-        //this.infobox.nameHTML = '<span style="color:#bbbbbb;">(' + x + ', ' + y + ')</span>';
-        //this.infobox.nameHTML = '(' + el.coords.usrCoords[1] + ', ' + el.coords.usrCoords[2] + ')';
         this.highlightInfobox(x,y,el);
         this.renderer.show(this.infobox);
         this.renderer.updateText(this.infobox);
@@ -1457,120 +1480,6 @@ JXG.Board.prototype.addImage = function (obj) {
 };
 
 /**
- * Draws an integral on the board.
- * @param {Array} interval Integration limits
- * @param {JXG.Curve} curve Integrated curve, must be of type 'function graph'.
- * @type JXG.Curve
- * @return Reference to the created curve object.
- * @private
- */
-JXG.Board.prototype.addIntegral = function (interval, curve, ids, names, atts) {
-    var attribs = {},
-        start = 0, end = 0,
-        pa_on_curve, pa_on_axis, pb_on_curve, pb_on_axis,
-        Int, t, p
-
-
-    if(!JXG.isArray(ids) || (ids.length != 5)) {
-        ids = ['','','','',''];
-    }
-    if(!JXG.isArray(names) || (names.length != 5)) {
-       names = ['','','','',''];
-    }
-
-    if( (typeof atts != 'undefined') && (atts != null))
-        attribs = atts;
-
-    attribs.name = names[0];
-    attribs.id = ids[0];
-
-    // Correct the interval if necessary
-    if(interval[0] > curve.points[0].usrCoords[1])
-        start = interval[0];
-    else
-        start = curve.points[0].usrCoords[1];
-
-    if(interval[1] < curve.points[curve.points.length-1].usrCoords[1])
-        end = interval[1];
-    else
-        end = curve.points[curve.points.length-1].usrCoords[1];
-
-    pa_on_curve = this.createElement('glider', [start, curve.yterm(start), curve], attribs);
-
-    attribs.name = names[1];
-    attribs.id = ids[1];
-    attribs.visible = false;
-    pa_on_axis = this.createElement('point', [function () { return pa_on_curve.X(); }, 0], attribs);
-
-    pa_on_curve.addChild(pa_on_axis);
-
-    attribs.name = names[2];
-    attribs.id = ids[2];
-    attribs.visible = true;
-    pb_on_curve = this.createElement('glider', [end, curve.yterm(end), curve], attribs);
-
-    attribs.name = names[3];
-    attribs.id = ids[3];
-    attribs.visible = false;
-    pb_on_axis = this.createElement('point', [function () { return pb_on_curve.X(); }, 0], attribs);
-
-    pb_on_curve.addChild(pb_on_axis);
-
-    Int = JXG.Math.Numerics.I([start, end], curve.yterm);
-    t = this.createElement('text', [
-        function () { return pb_on_curve.X() + 0.2; },
-        function () { return pb_on_curve.Y() - 0.8; },
-        function () {
-                var Int = JXG.Math.Numerics.I([pa_on_axis.X(), pb_on_axis.X()], curve.yterm);
-                return '&int; = ' + (Int).toFixed(4);
-            }
-        ],{labelColor:atts['labelColor']});
-
-    attribs = {};
-    if( (typeof atts != 'undefined') && (atts != null))
-        attribs = atts;
-    attribs.name = names[4];
-    attribs.id = ids[4];
-    attribs.visible = true;
-    attribs.fillColor = attribs.fillColor || this.options.polygon.fillColor;
-    attribs.highlightFillColor = attribs.highlightFillColor || this.options.polygon.highlightFillColor;
-    attribs.fillOpacity = attribs.fillOpacity || this.options.polygon.fillOpacity;
-    attribs.highlightFillOpacity = attribs.highlightFillOpacity || this.options.polygon.highlightFillOpacity;
-    attribs.strokeWidth = 0;
-    attribs.strokeOpacity = 0;
-
-    p = this.createElement('curve', [[0],[0]], attribs);
-    p.updateDataArray = function() {
-        var x = [pa_on_axis.coords.usrCoords[1], pa_on_curve.coords.usrCoords[1]],
-            y = [pa_on_axis.coords.usrCoords[2], pa_on_curve.coords.usrCoords[2]],
-            i;
-
-        for(i=0; i < curve.numberPoints; i++) {
-            if( (pa_on_axis.X() <= curve.points[i].usrCoords[1]) && (curve.points[i].usrCoords[1] <= pb_on_axis.X()) ) {
-                x.push(curve.points[i].usrCoords[1]);
-                y.push(curve.points[i].usrCoords[2]);
-            }
-        }
-        x.push(pb_on_curve.coords.usrCoords[1]);
-        y.push(pb_on_curve.coords.usrCoords[2]);
-        x.push(pb_on_axis.coords.usrCoords[1]);
-        y.push(pb_on_axis.coords.usrCoords[2]);
-
-        x.push(pa_on_axis.coords.usrCoords[1]); // close the curve
-        y.push(pa_on_axis.coords.usrCoords[2]);
-
-        this.dataX = x;
-        this.dataY = y;
-    }
-    pa_on_curve.addChild(p);
-    pb_on_curve.addChild(p);
-    pa_on_curve.addChild(t);
-    pb_on_curve.addChild(t);
-
-    return p;//[pa_on_axis, pb_on_axis, p, t];
-};
-
-/**
  * Calculates adequate snap sizes.
  * @private
  */
@@ -1627,8 +1536,12 @@ JXG.Board.prototype.applyZoom = function() {
  * Zooms into the board.
  */
 JXG.Board.prototype.zoomIn = function() {
+    var oX, oY;
     this.zoomX *= this.options.zoom.factor;
     this.zoomY *= this.options.zoom.factor;
+    oX = this.origin.scrCoords[1]*this.options.zoom.factor;
+    oY = this.origin.scrCoords[2]*this.options.zoom.factor;
+    this.origin = new JXG.Coords(JXG.COORDS_BY_SCREEN, [oX, oY], this);
     this.stretchX = this.zoomX*this.unitX;
     this.stretchY = this.zoomY*this.unitY;
     this.applyZoom();
@@ -1639,8 +1552,13 @@ JXG.Board.prototype.zoomIn = function() {
  * Zooms out of the board.
  */
 JXG.Board.prototype.zoomOut = function() {
+    var oX, oY;
     this.zoomX /= this.options.zoom.factor;
     this.zoomY /= this.options.zoom.factor;
+    oX = this.origin.scrCoords[1]/this.options.zoom.factor;
+    oY = this.origin.scrCoords[2]/this.options.zoom.factor;
+    this.origin = new JXG.Coords(JXG.COORDS_BY_SCREEN, [oX, oY], this);
+    
     this.stretchX = this.zoomX*this.unitX;
     this.stretchY = this.zoomY*this.unitY;
     this.applyZoom();
@@ -1651,8 +1569,17 @@ JXG.Board.prototype.zoomOut = function() {
  * Resets zoom factor zu 1.
  */
 JXG.Board.prototype.zoom100 = function() {
+    var oX, oY, zX, zY;
+    
+    zX = this.zoomX;
+    zY = this.zoomY;
     this.zoomX = 1.0;
     this.zoomY = 1.0;
+
+    oX = this.origin.scrCoords[1]/zX;
+    oY = this.origin.scrCoords[2]/zY;
+    this.origin = new JXG.Coords(JXG.COORDS_BY_SCREEN, [oX, oY], this);
+
     this.stretchX = this.zoomX*this.unitX;
     this.stretchY = this.zoomY*this.unitY;
     this.applyZoom();
@@ -1890,9 +1817,7 @@ JXG.Board.prototype.updateElements = function(drag) {
   */
 JXG.Board.prototype.updateRenderer = function(drag) {
     var el, pEl;
-
     drag = JXG.getReference(this, drag);
-
     for(el in this.objects) {
         pEl = this.objects[el];
         if (!this.needsFullUpdate && !pEl.needsRegularUpdate) { continue; }
@@ -2170,13 +2095,13 @@ JXG.Board.prototype.unsuspendUpdate = function() {
  */
 JXG.Board.prototype.setBoundingBox = function(bbox,keepaspectratio) {
     if (!JXG.isArray(bbox)) return;
-    var h,w;
+    var h,w,oX,oY;
     w = this.canvasWidth;
     h = this.canvasHeight;
     if (keepaspectratio) {
         this.unitX = w/(bbox[2]-bbox[0]);
         this.unitY = h/(-bbox[3]+bbox[1]);
-        if (this.unitX>this.unitY) {
+        if (this.unitX<this.unitY) {
             this.unitY = this.unitX;
         } else {
             this.unitX = this.unitY;
@@ -2185,8 +2110,9 @@ JXG.Board.prototype.setBoundingBox = function(bbox,keepaspectratio) {
         this.unitX = w/(bbox[2]-bbox[0]);
         this.unitY = h/(-bbox[3]+bbox[1]);
     }
-    this.originX = -this.unitX*bbox[0];
-    this.originY = this.unitY*bbox[1];
+    oX = -this.unitX*bbox[0]*this.zoomX;
+    oY = this.unitY*bbox[1]*this.zoomY;
+    this.origin = new JXG.Coords(JXG.COORDS_BY_SCREEN, [oX, oY], this);
     this.stretchX = this.zoomX*this.unitX;
     this.stretchY = this.zoomY*this.unitY;
 

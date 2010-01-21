@@ -33,7 +33,8 @@ JXG.Options = {
     fontSize : 12,
     showCopyright : true,
     showNavigation : true,
-    takeSizeFromFile : true, // If true, the construction - when read from a file or string - the size of the div can be changed.
+    takeSizeFromFile : false, // If true, the construction - when read from a file or string - the size of the div can be changed.
+    renderer: 'svg',
 
     /* grid options */
     grid : {
@@ -78,32 +79,33 @@ JXG.Options = {
             strokeWidth : '1px'
         }
     },
-    
+
     /* special point options */
     point : {
         style : 5, //1;
         fillColor : '#ff0000',
         highlightFillColor : '#EEEEEE',
-        strokeColor : '#0000ff',         //elements.color.strokeColor,
-        highlightStrokeColor : '#C3D9FF' //this.elements.color.highlightStrokeColor
+        strokeColor : '#ff0000', //'#0000ff',
+        highlightStrokeColor : '#C3D9FF',
+        zoom: false             // Change the point size on zoom
     },
 
     /* special line options */
-    line : {    
+    line : {
         firstArrow : false,
         lastArrow : false,
         straightFirst : true,
         straightLast : true,
-        fillColor : '#000000',            //this.elements.color.fillColor,
-        highlightFillColor : 'none',      //this.elements.color.highlightFillColor,
-        strokeColor : '#0000ff',          //this.elements.color.strokeColor,
-        highlightStrokeColor : '#888888', //this.elements.color.highlightStrokeColor,
+        fillColor : '#000000',
+        highlightFillColor : 'none',
+        strokeColor : '#0000ff',
+        highlightStrokeColor : '#888888',
         /* line ticks options */
         ticks : {
             drawLabels : true,
             drawZero : false,
             insertTicks : false,
-            minTicksDistance : 50, //100, (AW)
+            minTicksDistance : 50,
             maxTicksDistance : 300,
             minorHeight : 4,
             majorHeight : 10,
@@ -111,13 +113,19 @@ JXG.Options = {
             defaultDistance : 1
         }
     },
+
+    /* special axis options */
+    axis : {
+        strokeColor : '#666666',
+        highlightStrokeColor : '#888888'
+    },
     
     /*special circle options */
     circle : {
-        fillColor : 'none',              //this.elements.color.fillColor,
-        highlightFillColor : 'none',     //this.elements.color.highlightFillColor,
-        strokeColor : '#0000ff',         //this.elements.color.strokeColor,
-        highlightStrokeColor : '#C3D9FF' //this.elements.color.highlightStrokeColor
+        fillColor : 'none',
+        highlightFillColor : 'none',
+        strokeColor : '#0000ff',
+        highlightStrokeColor : '#C3D9FF'
     },
 
     /* special angle options */
@@ -134,12 +142,12 @@ JXG.Options = {
     arc : {
         firstArrow : false,
         lastArrow : false,
-        fillColor : 'none',               //this.elements.color.fillColor,
-        highlightFillColor : 'none',      //this.elements.color.highlightFillColor,
-        strokeColor : '#0000ff',          //this.elements.color.strokeColor,
-        highlightStrokeColor : '#C3D9FF'  //this.elements.color.highlightStrokeColor
+        fillColor : 'none',
+        highlightFillColor : 'none',
+        strokeColor : '#0000ff',
+        highlightStrokeColor : '#C3D9FF'
     },
-    
+
     /* special polygon options */
     polygon : {
         fillColor : '#00FF00',
@@ -147,7 +155,7 @@ JXG.Options = {
         fillOpacity : 0.3,
         highlightFillOpacity : 0.3
     },
-    
+
     /* special sector options */
     sector : {
         fillColor : '#00FF00',
@@ -155,29 +163,45 @@ JXG.Options = {
         fillOpacity : 0.3,
         highlightFillOpacity : 0.3
     },
-    
+
     /* special text options */
     text : {
         strokeColor : '#000000',
         useASCIIMathML : false,
-        defaultType : 'html' //'html' or 'internal'
+        defaultDisplay : 'html' //'html' or 'internal'
     },
 
     /* special curve options */
     curve : {
         strokeWidth : '1px',
-        strokeColor : '#0000ff',//this.elements.color.strokeColor,
-        RDPsmoothing : false, // Apply the Ramen-Douglas-Peuker algorithm
+        strokeColor : '#0000ff',
+        RDPsmoothing : false,    // Apply the Ramen-Douglas-Peuker algorithm
         numberPointsHigh : 1600, // Number of points on curves after mouseUp
         numberPointsLow : 400,   // Number of points on curves after mousemove
-        doAdvancedPlot : true   // Use the algorithm by Gillam and Hohenwarter
-                                    // It is much slower, but the result is better
-    }, 
-    
+        doAdvancedPlot : true    // Use the algorithm by Gillam and Hohenwarter
+                                 // It is much slower, but the result is better
+    },
+
     /* precision options */
     precision : {
         hasPoint : 4,
         epsilon : 0.0001
+    },
+
+    // Default ordering of the layers
+    layer : {
+        numlayers:20, // only important in SVG
+        text  : 9,
+        point : 9,
+        arc   : 8,
+        line  : 7,
+        circle: 6, 
+        curve : 5,
+        polygon: 4,
+        sector: 3,
+        angle : 2,
+        grid  : 1,
+        image : 0 
     }
 };
 
@@ -189,7 +213,7 @@ JXG.useStandardOptions = function(board) {
     var o = JXG.Options,
         boardHadGrid = board.hasGrid,
         el, t;
-        
+
     board.hasGrid = o.grid.hasGrid;
     board.gridX = o.grid.gridX;
     board.gridY = o.grid.gridY;

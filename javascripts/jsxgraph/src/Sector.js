@@ -45,7 +45,7 @@
  */
 
  /* Sector legt nur die benoetigten Unterelemente an und verwaltet diese als Kinder, wird nicht mehr direkt gezeichnet */
-JXG.Sector = function (board, p1, p2, p3, ids, names, id) {
+JXG.Sector = function (board, p1, p2, p3, ids, names, id, layer) {
     /* Call the constructor of GeometryElement */
     this.constructor();
     /**
@@ -57,6 +57,11 @@ JXG.Sector = function (board, p1, p2, p3, ids, names, id) {
     this.elementClass = JXG.OBJECT_CLASS_AREA;                
 
     this.init(board, id, '');
+    /**
+     * Set the display layer.
+     */
+    if (layer == null) layer = board.options.layer['sector'];
+    this.layer = layer;
     
     if(!JXG.isArray(ids)) {
         ids = [null, null, null, null];
@@ -94,10 +99,16 @@ JXG.Sector = function (board, p1, p2, p3, ids, names, id) {
 
     var circle = {}; // um projectToCircle benutzen zu koennen
     circle.midpoint = this.point1;
-    var radius = this.getRadius();
+    var radius = this.Radius();
+    circle.Radius = function() {
+        return radius;
+    };
+    //-----------------
+    // deprecated:
     circle.getRadius = function() {
         return radius;
     };
+    //-----------------
     var p4coords = this.board.algebra.projectPointToCircle(this.point3,circle);
     
     var p = new JXG.Point(board, [p4coords.usrCoords[1], p4coords.usrCoords[2]], ids[1], names[1], true);
@@ -108,9 +119,15 @@ JXG.Sector = function (board, p1, p2, p3, ids, names, id) {
         circle.midpoint = JXG.getReference(this.board, p1);
         var radius = (Math.sqrt(Math.pow(JXG.getReference(this.board, p1).coords.usrCoords[1]-JXG.getReference(this.board, p2).coords.usrCoords[1],2) + Math.pow(JXG.getReference(this.board, p1).coords.usrCoords[2]-JXG.getReference(this.board, p2).coords.usrCoords[2],2)));
 
+        circle.Radius = function() {
+            return radius;
+        };
+        //-------------------
+        // deprecated
         circle.getRadius = function() {
             return radius;
         };
+        //-------------------
         p4coords = this.board.algebra.projectPointToCircle(JXG.getReference(this.board, p3),circle);
         this.coords = p4coords;
         this.board.renderer.updatePoint(this);
@@ -183,8 +200,15 @@ JXG.Sector.prototype.hasPoint = function (x, y) {
  * @type float
  * @return The sectors radius
  */
-JXG.Sector.prototype.getRadius = function() {
+JXG.Sector.prototype.Radius = function() {
     return(Math.sqrt(Math.pow(this.point1.coords.usrCoords[1]-this.point2.coords.usrCoords[1],2) + Math.pow(this.point1.coords.usrCoords[2]-this.point2.coords.usrCoords[2],2)));
+};
+
+/**
+ *@deprecated
+ */
+JXG.Sector.prototype.getRadius = function() {
+    return this.Radius();
 };
 
 /**
@@ -196,9 +220,15 @@ JXG.Sector.prototype.getRadius = function() {
 
 JXG.createSector = function(board, parentArr, atts) {
     var el;
+    if (atts==null) {
+        atts = {};
+    }
+    if (typeof atts['layer'] == 'undefined') {
+        atts['layer'] = null;
+    }
     // Alles 3 Punkte?
     if ( (JXG.isPoint(parentArr[0])) && (JXG.isPoint(parentArr[1])) && (JXG.isPoint(parentArr[2]))) {
-        el = new JXG.Sector(board, parentArr[0], parentArr[1], parentArr[2], atts["ids"], atts["names"], atts['id']);
+        el = new JXG.Sector(board, parentArr[0], parentArr[1], parentArr[2], atts["ids"], atts["names"], atts['id'], atts['layer']);
     } // Ansonsten eine fette Exception um die Ohren hauen
     else
         throw new Error("JSXGraph: Can't create sector with parent types '" + (typeof parentArr[0]) + "' and '" + (typeof parentArr[1]) + "' and '" + (typeof parentArr[2]) + "'.");
@@ -219,6 +249,9 @@ JXG.JSXGraph.registerElement('sector', JXG.createSector);
  JXG.createCircumcircleSector = function(board, parents, attributes) {
     var el, mp, idmp, det;
     
+    if (attributes==null) {
+        attributes = {};
+    }
     if (typeof attributes['withLabel'] == 'undefined') {
         attributes['withLabel'] = false;
     }    
@@ -232,10 +265,10 @@ JXG.JSXGraph.registerElement('sector', JXG.createSector);
         det = (parents[0].coords.usrCoords[1]-parents[2].coords.usrCoords[1])*(parents[0].coords.usrCoords[2]-parents[1].coords.usrCoords[2]) -
               (parents[0].coords.usrCoords[2]-parents[2].coords.usrCoords[2])*(parents[0].coords.usrCoords[1]-parents[1].coords.usrCoords[1]);
         if(det < 0) {
-            el = new JXG.Sector(board, mp, parents[0], parents[2], attributes['id'], attributes['name'],attributes['withLabel']);
+            el = new JXG.Sector(board, mp, parents[0], parents[2], attributes['id'], attributes['name'],attributes['withLabel'],attributes['layer']);
         }
         else {
-            el = new JXG.Sector(board, mp, parents[2], parents[0], attributes['id'], attributes['name'],attributes['withLabel']);         
+            el = new JXG.Sector(board, mp, parents[2], parents[0], attributes['id'], attributes['name'],attributes['withLabel'],attributes['layer']);         
         }
         
         el.arc.update = function() {

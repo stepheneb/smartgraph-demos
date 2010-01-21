@@ -40,7 +40,7 @@
  * @extends JXG.GeometryElement
  */
 
-JXG.Polygon = function (board, vertices, borders, id, name, withLines, withLabel, lineLabels) {
+JXG.Polygon = function (board, vertices, borders, id, name, withLines, withLabel, lineLabels, layer) {
     /* Call the constructor of GeometryElement */
     this.constructor();
     /**
@@ -52,6 +52,11 @@ JXG.Polygon = function (board, vertices, borders, id, name, withLines, withLabel
     this.elementClass = JXG.OBJECT_CLASS_AREA;                
     
     this.init(board, id, name);
+    /**
+     * Set the display layer.
+     */
+    if (layer == null) layer = board.options.layer['polygon'];
+    this.layer = layer;
     
     if( (typeof withLines == 'undefined') || (withLines == null) ) {
         withLines = true;
@@ -106,7 +111,7 @@ JXG.Polygon = function (board, vertices, borders, id, name, withLines, withLabel
     if(withLines) {
         for(var i=0; i<this.vertices.length-1; i++) {
             /* create the borderlines */
-            l = new JXG.Line(board, this.vertices[i], this.vertices[i+1], borders[i].id, borders[i].name, lineLabels); // keine Labels?
+            l = new JXG.Line(board, this.vertices[i], this.vertices[i+1], borders[i].id, borders[i].name, lineLabels, this.layer); // keine Labels?
             l.setStraight(false,false); // Strecke
             this.borders[i] = l;
             l.parentPolygon = this;
@@ -205,6 +210,7 @@ JXG.Polygon.prototype.cloneToBackground = function(addToTrace) {
     this.numTraces++;
     copy.vertices = this.vertices;
     copy.visProp = this.visProp;
+    JXG.clearVisPropOld(copy);
     
     this.board.renderer.drawPolygon(copy);
 
@@ -216,9 +222,15 @@ JXG.Polygon.prototype.cloneToBackground = function(addToTrace) {
 JXG.createPolygon = function(board, parents, atts) {
     var el;
 
+    if (atts==null) {
+        atts = {};
+    } 
     if (typeof atts['withLabel']=='undefined') {
         atts['withLabel'] = false;
     }    
+    if (typeof atts['layer'] == 'undefined') {
+        atts['layer'] = null;
+    }
     
     // Sind alles Punkte?
     for(var i=0; i<parents.length; i++) {
@@ -227,7 +239,7 @@ JXG.createPolygon = function(board, parents, atts) {
             throw new Error("JSXGraph: Can't create polygon with parent types other than 'point'.");
     }
     
-    el = new JXG.Polygon(board, parents, atts["borders"], atts["id"], atts["name"], atts["withLines"],atts['withLabel'],atts['lineLabels']);
+    el = new JXG.Polygon(board, parents, atts["borders"], atts["id"], atts["name"], atts["withLines"],atts['withLabel'],atts['lineLabels'],atts['layer']);
 
     return el;
 };
@@ -263,7 +275,7 @@ JXG.Polygon.prototype.showElement = function() {
     }
 };
 
-JXG.Polygon.prototype.area = function() {
+JXG.Polygon.prototype.Area = function() {
     //Surveyor's Formula
     var area=0, i;
     for(i=0; i<this.vertices.length-1; i++) {
@@ -272,3 +284,65 @@ JXG.Polygon.prototype.area = function() {
     area /= 2.0;
     return Math.abs(area);
 };
+
+/**
+ * @class Constructs a regular polygon. It needs two points which define the base line and the number of vertices.
+ * @pseudo
+ * @description Constructs a regular polygon. It needs two points which define the base line and the number of vertices.
+ * @constructor
+ * @name RegularPolygon
+ * @type JXG.Polygon
+ * @augments JXG.Polygon
+ * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
+ * @param {JXG.Point_JXG.Point_Number} p1,p2,n The constructed regular polygon has n vertices and the base line defined by p1 and p2.
+ * @example
+ * var p1 = board.createElement('point', [0.0, 2.0]);
+ * var p2 = board.createElement('point', [2.0, 1.0]);
+ *
+ * var pol = board.createElement('regularpolygon', [p1, p2, 5]);
+ * </pre><div id="682069e9-9e2c-4f63-9b73-e26f8a2b2bb1" style="width: 400px; height: 400px;"></div>
+ * <script type="text/javascript">
+ *   var regpol_board = JXG.JSXGraph.initBoard('682069e9-9e2c-4f63-9b73-e26f8a2b2bb1', {boundingbox: [-1, 9, 9, -1], axis: false, showcopyright: false, shownavigation: false});
+ *   var regpol_p1 = ccmex1_board.createElement('point', [0.0, 2.0]);
+ *   var regpol_p2 = ccmex1_board.createElement('point', [2.0, 1.0]);
+ *   var regpol_cc1 = ccmex1_board.createElement('regularpolygon', [ccmex1_p1, ccmex1_p2, 5]);
+ * </script><pre>
+ */
+JXG.createRegularPolygon = function(board, parents, atts) {
+    var el, i, n, p = [], rot, c;
+
+    if (atts==null) {
+        atts = {};
+    }
+    if (typeof atts['withLabel']=='undefined') {
+        atts['withLabel'] = false;
+    }    
+    
+    if (parents.length!=3) {
+            throw new Error("JSXGraph: A regular polygon needs two point and a number as input.");
+    }
+
+    n = parents[2];
+    if (!JXG.isNumber(n) || n<3) {
+            throw new Error("JSXGraph: The third parameter has to be number greater than 2.");
+    }
+    
+    // Sind alles Punkte? 
+    for(i=0; i<parents.length-1; i++) {
+        parents[i] = JXG.getReference(board, parents[i]);
+        if(!JXG.isPoint(parents[i]))
+            throw new Error("JSXGraph: Can't create regular polygon if the first two parameters aren't points.");
+    }
+
+    p[0] = parents[0];
+    p[1] = parents[1];
+    for (i=2;i<n;i++) {
+        rot = board.createElement('transform', [Math.PI*(2.0-(n-2)/n),p[i-1]], {type:'rotate'});
+        p[i] = board.createElement('point',[p[i-2],rot],{name:'', withLabel:false,fixed:true,face:'o',size:1});
+    }
+    el = board.createElement('polygon',p,atts);
+
+    return el;
+};
+
+JXG.JSXGraph.registerElement('regularpolygon', JXG.createRegularPolygon);
