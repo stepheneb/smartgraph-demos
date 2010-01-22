@@ -116,7 +116,7 @@
 
       hideRightAngleSymbol();
       var mp1Dragging = false;
-      var tolerance = 0.2; 
+      var tolerance = 0.5; 
       
       var arrowSnapped = function () {
         return ((Math.abs(mp1.X() - p1.X()) < tolerance) && (Math.abs(mp1.Y() - p2.Y()) < tolerance));
@@ -190,8 +190,8 @@
         
         $("#next p").unwrap().addClass('faded');
         
-        var mp2 = b.createElement('point', [1.5, f(3)]);
-        var arrow2 = b.createElement('arrow', [p2, mp2]);
+        var mp2 = b.createElement('point', [mp1.X()+1.5, mp1.Y()]);
+        var arrow2 = b.createElement('arrow', [mp1, mp2]);
       });
       
     });
@@ -211,7 +211,7 @@
         <hr>
         <div id="page1">
           <p class="prepend-1">
-            First, let's measure the y-distance. Pull the arrowhead until you form a right angle (When you see the right angle symbol, let go.)
+            First, let's measure the y-distance. Pull the arrowhead to make a straight line up. (When you've made a right angle, you should see the right angle symbol. When that happens, let go.)
           </p>
         </div>
         <div id="page2" style="display: none">
