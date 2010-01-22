@@ -9,7 +9,14 @@
   <link rel="stylesheet" href="../stylesheets/jsxgraph/jsxgraph.css" type="text/css">
   <script type="text/javascript" src="../javascripts/jsxgraph/jsxgraph_uncompressed.js"></script>
   <script type="text/javascript" src="../javascripts/jquery-1.4.0/jquery.min.js"></script>
+  <script type="text/javascript" src="../javascripts/jqueryui-1.7.2/jquery-ui.js"></script>
   
+  <style type="text/css">
+    .faded {
+      color: #cccccc;
+    }
+  </style>
+     
   <script type="text/javascript">
     
     JXG.Options.grid.hasGrid = true;
@@ -47,8 +54,8 @@
       // 'moveable point 1'. Idea is that there'll be a second movable point when this one gets fixed.
       
       var mp1 = b.createElement('point', [-3, f(-3)+1.5]);
-      var arrow1 = b.createElement('arrow', [p1, mp1]);
-      var dotted1 = b.createElement('line', [p2, mp1], { 
+      var arrow = b.createElement('arrow', [p1, mp1]);
+      var dotted = b.createElement('line', [p2, mp1], { 
         strokeColor: '#aaaaaa',
         visible: false,
         dash: 2
@@ -82,21 +89,21 @@
         return midpoint.Y() - deltaY;
       };
       
-      var pdotted1 = b.createElement('point', [
+      var pDotted = b.createElement('point', [
         function () { return arcPointX(mp1, p1) },
         function () { return arcPointY(mp1, p1) }
       ], { visible: false });
 
-      var parrow1 = b.createElement('point', [
+      var pArrow = b.createElement('point', [
         function () { return arcPointX(mp1, p2) },
         function () { return arcPointY(mp1, p2) }
       ], { visible: false });
 
-      var angleSymbol = b.createElement('arc', [mp1, pdotted1, parrow1], { strokeColor: '#aaaaaa', visible: false });
-      var pmiddle = b.createElement('point', [function () { return parrow1.X(); } , function () { return pdotted1.Y(); }], { visible: false });
+      var angleSymbol = b.createElement('arc', [mp1, pDotted, pArrow], { strokeColor: '#aaaaaa', visible: false });
+      var pMiddle = b.createElement('point', [function () { return pArrow.X(); } , function () { return pDotted.Y(); }], { visible: false });
       
-      var l1 = b.createElement('segment', [pdotted1, pmiddle], { strokeColor: "#aaaaaa" });
-      var l2 = b.createElement('segment', [pmiddle, parrow1], { strokeColor: "#aaaaaa" });
+      var l1 = b.createElement('segment', [pDotted, pMiddle], { strokeColor: "#cc0000" });
+      var l2 = b.createElement('segment', [pMiddle, pArrow], { strokeColor: "#cc0000" });
       
       var hideRightAngleSymbol = function () {
         l1.setProperty('visible:false');
@@ -106,26 +113,33 @@
         l1.setProperty('visible:true');
         l2.setProperty('visible:true');
       };
-      
-      
+
       hideRightAngleSymbol();
       var mp1Dragging = false;
       var tolerance = 0.2;   
       
-      var arrow1Snapped = function () {
+      var arrowSnapped = function () {
         return ((Math.abs(mp1.X() - p1.X()) < tolerance) && (Math.abs(mp1.Y() - p2.Y()) < tolerance));
-      }
+      };
       
-      // we'll make the 
       mp1.highlight = function () {
         $(document).bind('mousedown.mp1', function () {
           mp1Dragging = true;
-          angleSymbol.setProperty('visible:true');
-          dotted1.setProperty('visible:true');
+          
+          if (arrowSnapped()) {
+            angleSymbol.setProperty('visible:false');
+            showRightAngleSymbol();
+          }
+          else {
+            angleSymbol.setProperty('visible:true');
+            hideRightAngleSymbol();
+          }
+          
+          dotted.setProperty('visible:true');
           
           $(document).bind('mousemove.mp1', function () {
             if (mp1Dragging) {
-              if (arrow1Snapped()) {
+              if (arrowSnapped()) {
                 angleSymbol.setProperty('visible:false');
                 showRightAngleSymbol();
               }
@@ -139,16 +153,17 @@
           $(document).bind('mouseup.mp1', function () {
             mp1Dragging = false;
             
-            if (arrow1Snapped()) {
-              mp1.setPosition(p1.X(), p2.Y());
+            if (arrowSnapped()) {
+              mp1.moveTo([p1.X(), p2.Y()]);
               showRightAngleSymbol();
-              // okay, let the user proceed...
+              
+              $("#deltay").focus().animate({backgroundColor: '#F9F3C3'}, 2000);
+              $("#next").removeClass('faded').wrapInner("<a href='#'/>");
+              mp1.setProperty('fixed:true');
             }
 
             angleSymbol.setProperty('visible:false');
-
-            dotted1.setProperty('visible:false');
-            $(document).unbind('.mp1');
+            dotted.setProperty('visible:false');
           });
         });
       };
@@ -159,7 +174,15 @@
         }
       };
       
-
+      
+      
+      $("#next a").live('click', function () {
+        $("#page1").hide();
+        $("#page2").show();
+        
+        var mp2 = b.createElement('point', [1.5, f(3)]);
+        var arrow2 = b.createElement('arrow', [p2, mp2]);
+      });
       
     });
     
@@ -170,18 +193,37 @@
 <body>
 
   <div class="container">
-    <h1 class="prepend-2">Slopes</h1>
+    <h1 class="prepend-1">Slopes</h1>
     <div class="span-16">
       <div class="span-1" style="height:500px"></div>
-      <div class="span-15 last" style="height: 300px; background-color: #acc">
+      <div  class="span-15 last" style="height: 300px">
         <h2>Let's Measure the Slope</h2>
-          First, let's measure the y-distance. Pull the arrowhead until you form a right angle (When you see the right angle symbol, let go.)
-        </h2>
+        <hr>
+        <div id="page1">
+          <p class="prepend-1">
+            First, let's measure the y-distance. Pull the arrowhead until you form a right angle (When you see the right angle symbol, let go.)
+          </p>
+        </div>
+        <div id="page2" style="display: none">
+          <p class="prepend-1">
+            Now, let's measure the x-distance. Pull the arrowhead to the left.
+          </p>
+        </div>
       </div>
-      <div class="span-15 last" style="height:100px; background-color: #cac">Another div (answer box goes here?)</div>
-      <div class="span-15 last" style="height:100px; background-color: #aac">Yet another div (next/last buttons go here?)</div>
+      <div class="span-15 last" style="height:150px">
+        <h2>Your Answer</h2>
+        <hr>
+        <pclass="prepend-1">
+          <label for="deltay">Y-Distance</label>
+          <input id="deltay" class="text" type="text"></input>
+        </p>
+      </div>
+      <div class="span-15 last" style="height:50px">
+        <h2 style="float:left"><a href="#">&lt;&lt;BACK</a></h2>
+        <h2 id="next" class="faded" style="float:right">NEXT&gt;&gt;</h2>
+      </div>
     </div>
-    <div id="box" class="span-7 jxgbox" style="height:500px;">
+    <div id="box" class="span-7 jxgbox last" style="height:500px;">
     </div>
   </div>
 
