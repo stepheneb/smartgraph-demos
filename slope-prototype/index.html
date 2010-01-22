@@ -44,6 +44,7 @@
       p1.setProperty('fixed: true');
       p2.setProperty('fixed: true');
       
+      // 'moveable point 1'. Idea is that there'll be a second movable point when this one gets fixed.
       
       var mp1 = b.createElement('point', [-3, f(-3)+1.5]);
       var arrow1 = b.createElement('arrow', [p1, mp1]);
@@ -92,24 +93,66 @@
       ], { visible: false });
 
       var angleSymbol = b.createElement('arc', [mp1, pdotted1, parrow1], { strokeColor: '#aaaaaa', visible: false });
+      var pmiddle = b.createElement('point', [function () { return parrow1.X(); } , function () { return pdotted1.Y(); }], { visible: false });
       
-  
+      var l1 = b.createElement('segment', [pdotted1, pmiddle], { strokeColor: "#aaaaaa" });
+      var l2 = b.createElement('segment', [pmiddle, parrow1], { strokeColor: "#aaaaaa" });
+      
+      var hideRightAngleSymbol = function () {
+        l1.setProperty('visible:false');
+        l2.setProperty('visible:false');
+      };
+      var showRightAngleSymbol = function () {
+        l1.setProperty('visible:true');
+        l2.setProperty('visible:true');
+      };
+      
+      
+      hideRightAngleSymbol();
       var mp1Dragging = false;
+      var tolerance = 0.2;   
       
+      var arrow1Snapped = function () {
+        return ((Math.abs(mp1.X() - p1.X()) < tolerance) && (Math.abs(mp1.Y() - p2.Y()) < tolerance));
+      }
+      
+      // we'll make the 
       mp1.highlight = function () {
         $(document).bind('mousedown.mp1', function () {
           mp1Dragging = true;
           angleSymbol.setProperty('visible:true');
           dotted1.setProperty('visible:true');
           
+          $(document).bind('mousemove.mp1', function () {
+            if (mp1Dragging) {
+              if (arrow1Snapped()) {
+                angleSymbol.setProperty('visible:false');
+                showRightAngleSymbol();
+              }
+              else {
+                angleSymbol.setProperty('visible:true');
+                hideRightAngleSymbol();
+              }
+            }
+          });
+              
           $(document).bind('mouseup.mp1', function () {
             mp1Dragging = false;
+            
+            if (arrow1Snapped()) {
+              mp1.setPosition(p1.X(), p2.Y());
+              showRightAngleSymbol();
+              // okay, let the user proceed...
+            }
+
             angleSymbol.setProperty('visible:false');
+
             dotted1.setProperty('visible:false');
             $(document).unbind('.mp1');
           });
         });
       };
+      
       mp1.noHighlight = function () {
         if (!mp1Dragging) {
           $(document).unbind('.mp1');
