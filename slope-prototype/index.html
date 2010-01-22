@@ -116,7 +116,8 @@
 
       hideRightAngleSymbol();
       var mp1Dragging = false;
-      var tolerance = 0.2;   
+      var tolerance = 0.2; 
+      var oldDeltaYColor;  
       
       var arrowSnapped = function () {
         return ((Math.abs(mp1.X() - p1.X()) < tolerance) && (Math.abs(mp1.Y() - p2.Y()) < tolerance));
@@ -157,8 +158,10 @@
               mp1.moveTo([p1.X(), p2.Y()]);
               showRightAngleSymbol();
               
+              oldDeltaYColor = $("deltay").css('background-color');
+              
               $("#deltay").focus().animate({backgroundColor: '#F9F3C3'}, 2000);
-              $("#next").removeClass('faded').wrapInner("<a href='#'/>");
+              $("#next > p").removeClass('faded').wrap("<a href='#'/>");
               mp1.setProperty('fixed:true');
             }
 
@@ -174,11 +177,21 @@
         }
       };
       
-      
+      // when the "NEXT" link is clicked...
       
       $("#next a").live('click', function () {
-        $("#page1").hide();
-        $("#page2").show();
+        
+        $("#page1").fadeOut('slow', function () {
+          $("#page2").fadeIn('slow');
+        });
+        
+        $("#deltay").css('background-color', oldDeltaYColor);
+        
+        $('.deltax').fadeIn('slow', function () {
+          $(this).focus();
+        });
+        
+        $("#next p").unwrap().addClass('faded');
         
         var mp2 = b.createElement('point', [1.5, f(3)]);
         var arrow2 = b.createElement('arrow', [p2, mp2]);
@@ -213,14 +226,17 @@
       <div class="span-15 last" style="height:150px">
         <h2>Your Answer</h2>
         <hr>
-        <pclass="prepend-1">
+        <p class="prepend-1">
           <label for="deltay">Y-Distance</label>
           <input id="deltay" class="text" type="text"></input>
-        </p>
+          <br>
+          <label class="deltax" id="deltax" style="display:none">X-Distance</label>
+          <input class="deltax text" id="deltax" style="display:none" type="text"></input>
+        </p>        
       </div>
       <div class="span-15 last" style="height:50px">
         <h2 style="float:left"><a href="#">&lt;&lt;BACK</a></h2>
-        <h2 id="next" class="faded" style="float:right">NEXT&gt;&gt;</h2>
+        <h2 id="next" style="float:right"><p class="faded">NEXT&gt;&gt;</p></h2>
       </div>
     </div>
     <div id="box" class="span-7 jxgbox last" style="height:500px;">
