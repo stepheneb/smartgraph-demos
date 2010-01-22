@@ -117,7 +117,6 @@
       hideRightAngleSymbol();
       var mp1Dragging = false;
       var tolerance = 0.2; 
-      var oldDeltaYColor;  
       
       var arrowSnapped = function () {
         return ((Math.abs(mp1.X() - p1.X()) < tolerance) && (Math.abs(mp1.Y() - p2.Y()) < tolerance));
@@ -158,8 +157,6 @@
               mp1.moveTo([p1.X(), p2.Y()]);
               showRightAngleSymbol();
               
-              oldDeltaYColor = $("deltay").css('background-color');
-              
               $("#deltay").focus().animate({backgroundColor: '#F9F3C3'}, 2000);
               $("#next > p").removeClass('faded').wrap("<a href='#'/>");
               mp1.setProperty('fixed:true');
@@ -185,7 +182,7 @@
           $("#page2").fadeIn('slow');
         });
         
-        $("#deltay").css('background-color', oldDeltaYColor);
+        $("#deltay").animate({backgroundColor: "#ffffff"});
         
         $('.deltax').fadeIn('slow', function () {
           $(this).focus();
