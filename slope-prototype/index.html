@@ -25,7 +25,6 @@
     JXG.Options.grid.gridOpacity="0.5";
     JXG.Options.grid.gridColor="#000000";
     
-    
     $(document).ready(function () {
       var b = JXG.JSXGraph.initBoard('box', { 
         originX: 135, 
@@ -122,53 +121,62 @@
         return ((Math.abs(mp1.X() - p1.X()) < tolerance) && (Math.abs(mp1.Y() - p2.Y()) < tolerance));
       };
       
+      var page = 1;
+      
       mp1.highlight = function () {
-        $(document).bind('mousedown.mp1', function () {
-          mp1Dragging = true;
-          
-          if (arrowSnapped()) {
-            angleSymbol.setProperty('visible:false');
-            showRightAngleSymbol();
-          }
-          else {
-            angleSymbol.setProperty('visible:true');
-            hideRightAngleSymbol();
-          }
-          
-          dotted.setProperty('visible:true');
-          
-          $(document).bind('mousemove.mp1', function () {
-            if (mp1Dragging) {
-              if (arrowSnapped()) {
-                angleSymbol.setProperty('visible:false');
-                showRightAngleSymbol();
-              }
-              else {
-                angleSymbol.setProperty('visible:true');
-                hideRightAngleSymbol();
-              }
-            }
-          });
-              
-          $(document).bind('mouseup.mp1', function () {
-            mp1Dragging = false;
-            
-            if (arrowSnapped()) {
-              mp1.moveTo([p1.X(), p2.Y()]);
-              showRightAngleSymbol();
-              
-              $("#deltay").focus().animate({backgroundColor: '#F9F3C3'}, 2000);
-              $("#next > p").removeClass('faded').wrap("<a href='#'/>");
-              mp1.setProperty('fixed:true');
-            }
+        // i.e., "super.highlight()"
+        this.constructor.prototype.highlight.call(this);
 
-            angleSymbol.setProperty('visible:false');
-            dotted.setProperty('visible:false');
+        if (page == 1) {
+          $(document).bind('mousedown.mp1', function () {
+            mp1Dragging = true;
+          
+            if (arrowSnapped()) {
+              angleSymbol.setProperty('visible:false');
+              showRightAngleSymbol();
+            }
+            else {
+              angleSymbol.setProperty('visible:true');
+              hideRightAngleSymbol();
+            }
+          
+            dotted.setProperty('visible:true');
+          
+            $(document).bind('mousemove.mp1', function () {
+              if (mp1Dragging) {
+                if (arrowSnapped()) {
+                  angleSymbol.setProperty('visible:false');
+                  showRightAngleSymbol();
+                }
+                else {
+                  angleSymbol.setProperty('visible:true');
+                  hideRightAngleSymbol();
+                }
+              }
+            });
+              
+            $(document).bind('mouseup.mp1', function () {
+              mp1Dragging = false;
+              $(document).unbind('.mp1');
+              
+              if (arrowSnapped()) {
+                mp1.moveTo([p1.X(), p2.Y()]);
+                showRightAngleSymbol();
+
+                $("#deltay").focus().animate({backgroundColor: '#F9F3C3'}, 2000);
+                $("#next > p").removeClass('faded').wrap("<a href='#'/>");
+                mp1.setProperty('fixed:true');
+              }
+
+              angleSymbol.setProperty('visible:false');
+              dotted.setProperty('visible:false');
+            });
           });
-        });
+        }
       };
       
       mp1.noHighlight = function () {
+        this.constructor.prototype.noHighlight.call(this);
         if (!mp1Dragging) {
           $(document).unbind('.mp1');
         }
@@ -177,7 +185,8 @@
       // when the "NEXT" link is clicked...
       
       $("#next a").live('click', function () {
-        
+        page = 2;
+  
         $("#page1").fadeOut('slow', function () {
           $("#page2").fadeIn('slow');
         });
