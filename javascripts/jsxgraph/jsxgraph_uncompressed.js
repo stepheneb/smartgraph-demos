@@ -5703,7 +5703,7 @@ this.fixXML = function(str) {
 }; // end: GeonextReader()
 
 /*
-    Copyright 2008,2009
+    Copyright 2008-2010
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -6209,6 +6209,16 @@ JXG.Board = function(container, renderer, id, origin, zoomX, zoomY, unitX, unitY
 
    JXG.addEvent(document,'mousedown', this.mouseDownListener, this);
    JXG.addEvent(this.containerObj, 'mousemove', this.mouseMoveListener, this);
+
+   
+   /**
+	* iPhone-Events
+	*/
+	 
+   //JXG.addEvent(document,'touchstart', this.touchStartListener, this);
+   JXG.addEvent(this.containerObj,'touchstart', this.touchStartListener, this);
+   JXG.addEvent(this.containerObj, 'touchmove', this.touchMoveListener, this);
+   JXG.addEvent(this.containerObj, 'touchend', this.touchEndListener, this);
 };
 
 /**
@@ -6417,6 +6427,32 @@ JXG.Board.prototype.clickDownArrow = function (Event) {
     this.moveOrigin();
     return this;
 };
+
+
+/**
+ * iPhone-Events
+ */
+ 
+JXG.Board.prototype.touchStartListener = function (evt) {
+	var e = document.createEvent("MouseEvents");   
+    this.options.precision.hasPoint = this.options.precision.touch;
+	e.initMouseEvent('mousedown', true, false, this.containerObj, 0, evt.targetTouches[0].screenX, evt.targetTouches[0].screenY, evt.targetTouches[0].clientX, evt.targetTouches[0].clientY, false, false, evt.targetTouches.length == 1 ? false: true, false, 0, null);
+	this.mouseDownListener(e);
+}
+
+JXG.Board.prototype.touchMoveListener = function (evt) {
+	evt.preventDefault();	
+	var e = document.createEvent("MouseEvents");   
+	e.initMouseEvent('mousemove', true, false, this.containerObj, 0, evt.targetTouches[0].screenX, evt.targetTouches[0].screenY, evt.targetTouches[0].clientX, evt.targetTouches[0].clientY, false, false, evt.targetTouches.length == 1 ? false: true, false, 0, null);
+	this.mouseMoveListener(e);
+}
+
+JXG.Board.prototype.touchEndListener = function (evt) {
+	var e = document.createEvent("MouseEvents");   
+	e.initMouseEvent('mouseup', true, false, this.containerObj, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+	this.mouseUpListener(e);
+    this.options.precision.hasPoint = this.options.precision.mouse;
+}
 
 /**
  * This method is called by the browser when the left mouse button is released.
@@ -7843,7 +7879,8 @@ JXG.Board.prototype.animate = function() {
             if(typeof newCoords  == 'undefined') {
                 delete(o.animationPath);
             } else {
-                o.setPositionByTransform(JXG.COORDS_BY_USER, newCoords[0] - o.coords.usrCoords[1], newCoords[1] - o.coords.usrCoords[2]);
+                //o.setPositionByTransform(JXG.COORDS_BY_USER, newCoords[0] - o.coords.usrCoords[1], newCoords[1] - o.coords.usrCoords[2]);
+                o.setPositionDirectly(JXG.COORDS_BY_USER, newCoords[0], newCoords[1]);
             }
         }
         if(o.animationData) {
@@ -8062,8 +8099,10 @@ JXG.Options = {
 
     /* precision options */
     precision : {
-        hasPoint : 4,
-        epsilon : 0.0001
+        touch    : 20,
+        mouse    : 4,
+        epsilon  : 0.0001,
+        hasPoint : 4
     },
 
     // Default ordering of the layers
@@ -10436,7 +10475,7 @@ JXG.Coords.prototype.setCoordinates = function(method, crd, doRound) {
 };
 
 /*
-    Copyright 2008,2009
+    Copyright 2008-2010
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -10651,7 +10690,7 @@ JXG.Point = function (board, coordinates, id, name, show, withLabel, layer) {
      * @type number
      * @private
      */
-    this.r = this.board.options.precision.hasPoint;
+    //this.r = this.board.options.precision.hasPoint;
     
     /*
      * The visprop properties are documented in JXG.GeometryElement
@@ -10699,8 +10738,8 @@ JXG.Point.prototype = new JXG.GeometryElement();
 JXG.Point.prototype.hasPoint = function (x,y) {
     var coordsScr = this.coords.scrCoords, r;
     r = this.visProp['size'];
-    if(r < this.r) {
-        r = this.r;
+    if(r < this.board.options.precision.hasPoint) {
+        r = this.board.options.precision.hasPoint;
     }
     return ((Math.abs(coordsScr[1]-x) < r+2) && (Math.abs(coordsScr[2]-y)) < r+2);
 };
@@ -10821,7 +10860,7 @@ JXG.Point.prototype.update = function (fromParent) {
             if(this.onPolygon) {
                 var p1 = this.slideObject.point1.coords;
                 var p2 = this.slideObject.point2.coords;
-                if(Math.abs(this.coords.scrCoords[1]-p1.scrCoords[1])<this.r && Math.abs(this.coords.scrCoords[2]-p1.scrCoords[2])<this.r) {
+                if(Math.abs(this.coords.scrCoords[1]-p1.scrCoords[1])<this.board.options.precision.hasPoint && Math.abs(this.coords.scrCoords[2]-p1.scrCoords[2])<this.board.options.precision.hasPoint) {
                     var poly = this.slideObject.parentPolygon;
                     for(var i=0; i<poly.borders.length; i++) {
                         if(this.slideObject == poly.borders[i]) {
@@ -10830,7 +10869,7 @@ JXG.Point.prototype.update = function (fromParent) {
                         }
                     }
                 }
-                else if(Math.abs(this.coords.scrCoords[1]-p2.scrCoords[1])<this.r && Math.abs(this.coords.scrCoords[2]-p2.scrCoords[2])<this.r) {
+                else if(Math.abs(this.coords.scrCoords[1]-p2.scrCoords[1])<this.board.options.precision.hasPoint && Math.abs(this.coords.scrCoords[2]-p2.scrCoords[2])<this.board.options.precision.hasPoint) {
                     var poly = this.slideObject.parentPolygon;
                     for(var i=0; i<poly.borders.length; i++) {
                         if(this.slideObject == poly.borders[i]) {
@@ -11882,7 +11921,7 @@ JXG.Line = function (board, p1, p2, id, name, withLabel, layer) {
      * @type int
      * @private
      */
-    this.r = this.board.options.precision.hasPoint;
+    //this.r = this.board.options.precision.hasPoint;
 
     /* Wurde in GeometryElement schon dokumentiert. */
     this.visProp['fillColor'] = this.board.options.line.fillColor;
@@ -12003,8 +12042,8 @@ JXG.Line.prototype = new JXG.GeometryElement;
 
     // The point is too far away from the line
     // dist(v,vnew)^2 projective
-    //if (this.board.algebra.distance(v,vnew)>this.r) {
-    if ((v[0]-vnew[0])*(v[0]-vnew[0])+(v[1]-vnew[1])*(v[1]-vnew[1])+(v[2]-vnew[2])*(v[2]-vnew[2])>this.r*this.r) {
+    //if (this.board.algebra.distance(v,vnew)>this.board.options.precision.hasPoint) {
+    if ((v[0]-vnew[0])*(v[0]-vnew[0])+(v[1]-vnew[1])*(v[1]-vnew[1])+(v[2]-vnew[2])*(v[2]-vnew[2])>this.board.options.precision.hasPoint*this.board.options.precision.hasPoint) {
         return false;
     }
 
@@ -14308,7 +14347,7 @@ JXG.Curve = function (board, parents, id, name, withLabel, layer) {
      * This is just for the hasPoint() method.
      * @type int
      */
-    this.r = this.board.options.precision.hasPoint;
+    //this.r = this.board.options.precision.hasPoint;
     
     /**
      * The curveType is set in @see generateTerm and used in 
@@ -14390,7 +14429,7 @@ JXG.Curve.prototype.hasPoint = function (x,y) {
         lbda, x0, y0, x1, y1, xy, den,
         steps = this.numberPointsLow, 
         d = (this.maxX()-this.minX())/steps,
-        prec = this.r/(this.board.unitX*this.board.zoomX),
+        prec = this.board.options.precision.hasPoint/(this.board.unitX*this.board.zoomX),
         checkPoint, len,
         suspendUpdate = true;
 
@@ -15307,7 +15346,7 @@ JXG.Arc = function (board, p1, p2, p3, id, name, withLabel, layer) {
      * This is just for the hasPoint() method. Precision for highlighting.
      * @type int
      */
-    this.r = this.board.options.precision.hasPoint;
+    //this.r = this.board.options.precision.hasPoint;
 
     this.visProp['visible'] = true;
     
@@ -15340,7 +15379,7 @@ JXG.Arc.prototype = new JXG.GeometryElement;
  * @return {bool} True if (x,y) is near the arc, False otherwise.
  */
 JXG.Arc.prototype.hasPoint = function (x, y) { 
-    var genauigkeit = this.r/(this.board.stretchX);
+    var genauigkeit = this.board.options.precision.hasPoint/(this.board.stretchX);
     
     var checkPoint = new JXG.Coords(JXG.COORDS_BY_SCREEN, [x,y], this.board);
     var r = this.Radius();
@@ -15384,7 +15423,7 @@ JXG.Arc.prototype.hasPoint = function (x, y) {
  * @return {bool} True if (x,y) is within the sector defined by the arc, False otherwise.
  */
 JXG.Arc.prototype.hasPointSector = function (x, y) { 
-    var genauigkeit = this.r/(this.board.stretchX);
+    var genauigkeit = this.board.options.precision.hasPoint/(this.board.stretchX);
     
     var checkPoint = new JXG.Coords(JXG.COORDS_BY_SCREEN, [x,y], this.board);
     var r = this.Radius();
@@ -15635,6 +15674,7 @@ JXG.createCircumcircleArc = function(board, parents, attributes) {
 };
 
 JXG.JSXGraph.registerElement('circumcirclearc', JXG.createCircumcircleArc);
+
 /*
     Copyright 2008,2009
         Matthias Ehmann,
@@ -15730,7 +15770,7 @@ JXG.Sector = function (board, p1, p2, p3, ids, names, id, layer) {
      * This is just for the hasPoint() method. Precision for highlighting.
      * @type int
      */    
-    this.r = this.board.options.precision.hasPoint;
+    //this.r = this.board.options.precision.hasPoint;
   
     this.visProp['visible'] = true;
 
