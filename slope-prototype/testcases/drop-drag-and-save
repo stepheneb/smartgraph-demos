@@ -29,7 +29,7 @@
 <tr>
 	<td>captureEntirePageScreenshot</td>
 	<td>/tmp/screen.png</td>
-	<td>background=#CCFFDD</td>
+	<td></td>
 </tr>
 
 </tbody></table>
