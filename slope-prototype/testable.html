@@ -1,0 +1,102 @@
+<html>
+<head>
+  <title>Testing Testing Mouse Clicks aned SVG Rendering with Selenium</title>
+  
+  <link rel="stylesheet" href="blueprint/screen.css" type="text/css" media="screen, projection">
+  <link rel="stylesheet" href="blueprint/print.css" type="text/css" media="print">
+  <!--[if lt IE 8]><link rel="stylesheet" href="blueprint/ie.css" type="text/css" media="screen, projection"><![endif]-->
+  
+  <link rel="stylesheet" href="../stylesheets/jsxgraph/jsxgraph.css" type="text/css">
+  <script type="text/javascript" src="../javascripts/jsxgraph/jsxgraph_uncompressed.js"></script>
+  <script type="text/javascript" src="../javascripts/jquery-1.4.0/jquery.min.js"></script>
+  <script type="text/javascript" src="../javascripts/jqueryui-1.7.2/jquery-ui.js"></script>
+  
+  <style type="text/css">
+    .faded {
+      color: #cccccc;
+    }
+  </style>
+     
+  <script type="text/javascript">
+    
+    JXG.Options.grid.hasGrid = true;
+    JXG.Options.grid.gridX = 1;
+    JXG.Options.grid.gridY = 1;
+    JXG.Options.grid.gridOpacity="0.5";
+    JXG.Options.grid.gridColor="#000000";
+    
+    
+    $(document).ready(function () {
+      var b = JXG.JSXGraph.initBoard('box', { 
+        originX: 475, 
+        originY: 250, 
+        unitX: 25, 
+        unitY: 25, 
+        axis: true,
+        showCopyright: false,
+        showNavigation: false
+      });
+      
+      // this line is required to actually set the options defined using JXG.Option above
+      JXG.useStandardOptions(b);
+      
+      // some useful debugging info
+      var svg_offset = $("#box > svg").offset();
+      var box_offset = $("#box").offset();
+
+      $("#boxinfo").html("'box' div top: " + box_offset.top + "<br>'box' div left: " + box_offset.left + "<br>svg node top: " +
+        svg_offset.top + "<br>svg node left: " + svg_offset.left);
+      
+      // on first click: instantiate a moveable point p1, draw arrow from origin p0 to point p1
+      
+      var clicked = false;
+      var p0 = b.createElement('point', [0,0]);
+      
+      $("#box").click(function (e) {
+        if (!clicked) {
+          clicked = true;
+          
+          // x and y of click relative to whole page
+          var px = e.pageX;
+          var py = e.pageY;
+        
+          // x and y of click relative to div#box
+          var bx = px - box_offset.left;
+          var by = py - box_offset.top;
+        
+          // click x and y converted to coordinate space being graphed by jxgbox. Note hardocded constants.
+          var x = bx / 950 * 38 - 19;
+          var y = (1 - (by / 500)) * 20 - 10;        
+        
+          $("#clickinfo").html("click pageX: " + px + "<br>click pageY: " + py);
+        
+          var p1 = b.createElement('point', [x, y]);
+          var arrow = b.createElement('arrow', [p0, p1]);
+        
+          $("#pointinfo").html("point x: " + x + "<br>point y: " + y);
+        }
+      });
+    });
+    
+    
+  </script>
+  
+</head>
+<body>
+
+  <div class="container">
+    <a href="../index.html">back</a>
+    <h1 class="prepend-1">A JSXGraph+Blueprint 'box' to test</h1>
+
+    <div class="span-24">
+      <div id="box" class="span-24 jxgbox last" style="height:500px;"></div>
+    </div>
+    
+    <p id="boxinfo"></p>
+    <p id="clickinfo">No click yet.</p>
+    <p id="pointinfo">No point yet.</p>
+    
+  </div>
+
+</body>
+</html>
