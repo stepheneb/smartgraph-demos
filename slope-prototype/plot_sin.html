@@ -40,8 +40,14 @@
       
       // this line is required to actually set the options defined using JXG.Option above
       JXG.useStandardOptions(b);
+
       
+      // ****
+      // ****     This is the line we'll break "accidentally" when testing testing.
+      // ****
+      var oops;
       
+
       $("#plot-button").bind('click.plot-once', function () {
         var sin_curve = b.createElement('functiongraph', [function (x) { return 5 * Math.sin(x); }]);
         var p = b.createElement('glider', [0, 0, sin_curve]);  
