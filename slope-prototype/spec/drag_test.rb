@@ -41,9 +41,9 @@ describe "JSXGraph Test Box" do
     # see http://www.imagemagick.org/Usage/compare/
 
     diff = IO.popen("compare -metric ae results/after_drag.png fixtures/after_drag.png results/after_drag.diff.png 2>&1") do |f|
-      f.gets.to_i
+      f.gets.rstrip
     end
 
-    diff.should == 0
+    diff.should == "0"
   end
 end
