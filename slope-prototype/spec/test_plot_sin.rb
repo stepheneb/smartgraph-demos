@@ -4,7 +4,7 @@ gem "selenium-client"
 require "selenium/client"
 require "selenium/rspec/spec_helper"
 
-describe "plot_sin.html" do
+describe "Page: plot_sin.html" do
   attr_reader :selenium_driver
   alias :page :selenium_driver
 
