@@ -35,10 +35,12 @@ describe "JSXGraph Test Box" do
     page.capture_entire_page_screenshot Dir.getwd + "/results/after_drag.png", ""
 
     # the following expression runs ImageMagick's compare command, using "average error" (ae) metric, which prints the
-    # number of different pixels between results/after_drag.png and fixtures/after_drag.png to std error (redirected
-    # here to stdin so we can read it.
+    # number of different pixels between results/after_drag.png and fixtures/after_drag.png to stderr (redirected
+    # here to stdin so we can read it.)
+    
+    # see http://www.imagemagick.org/Usage/compare/
 
-    diff = IO.popen("compare -metric ae results/after_drag.png fixtures/after_drag.png diff.png 2>&1") do |f|
+    diff = IO.popen("compare -metric ae results/after_drag.png fixtures/after_drag.png results/after_drag.diff.png 2>&1") do |f|
       f.gets.to_i
     end
 
