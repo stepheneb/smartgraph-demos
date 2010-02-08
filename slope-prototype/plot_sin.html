@@ -1,0 +1,103 @@
+<html>
+<head>
+  <title>JSXGraph Diagram for Testing Mouse Input Automation and Image Output Comparison in Selenium</title>
+  
+  <link rel="stylesheet" href="blueprint/screen.css" type="text/css" media="screen, projection">
+  <link rel="stylesheet" href="blueprint/print.css" type="text/css" media="print">
+  <!--[if lt IE 8]><link rel="stylesheet" href="blueprint/ie.css" type="text/css" media="screen, projection"><![endif]-->
+  
+  <link rel="stylesheet" href="../stylesheets/jsxgraph/jsxgraph.css" type="text/css">
+  <script type="text/javascript" src="../javascripts/jsxgraph/jsxgraph_uncompressed.js"></script>
+  <script type="text/javascript" src="../javascripts/jquery-1.4.0/jquery.min.js"></script>
+  <script type="text/javascript" src="../javascripts/jqueryui-1.7.2/jquery-ui.js"></script>
+  
+  <style type="text/css">
+    .faded {
+      color: #cccccc;
+    }
+  </style>
+     
+  <script type="text/javascript">
+    
+    JXG.Options.grid.hasGrid = true;
+    JXG.Options.grid.gridX = 1;
+    JXG.Options.grid.gridY = 1;
+    JXG.Options.grid.gridOpacity="0.5";
+    JXG.Options.grid.gridColor="#000000";
+    
+    
+    $(document).ready(function () {
+      var b = JXG.JSXGraph.initBoard('box', { 
+        originX: 475, 
+        originY: 250, 
+        unitX: 25, 
+        unitY: 25, 
+        axis: true,
+        showCopyright: false,
+        showNavigation: false
+      });
+      
+      // this line is required to actually set the options defined using JXG.Option above
+      JXG.useStandardOptions(b);
+      
+      
+      $("#plot-button").bind('click.plot-once', function () {
+        var sin_curve = b.createElement('functiongraph', [function (x) { return 5 * Math.sin(x); }]);
+        var p = b.createElement('glider', [0, 0, sin_curve]);  
+        $("#plot-button").unbind(".plot-once");
+      });
+            
+
+      // some useful debugging info
+      var svg_offset = $("#box > svg").offset();
+      var box_offset = $("#box").offset();
+
+      $("#boxinfo").html("'box' div top: " + box_offset.top + "<br>'box' div left: " + box_offset.left + "<br>svg node top: " +
+        svg_offset.top + "<br>svg node left: " + svg_offset.left);
+        
+      $("#box").mousemove(function (e) {
+        // x and y of click relative to whole page
+        var px = e.pageX;
+        var py = e.pageY;
+      
+        // x and y of click relative to div#box
+        var bx = px - box_offset.left;
+        var by = py - box_offset.top;
+      
+        // click x and y converted to coordinate space being graphed by jxgbox. Note hardocded constants.
+        var x = bx / 950 * 38 - 19;
+        var y = (1 - (by / 500)) * 20 - 10;        
+      
+        $("#mouseinfo").html("mouse boxX: " + bx + "<br>mouse boxY: " + by);
+      }); 
+    });
+    
+    
+  </script>
+  
+</head>
+<body>
+
+  <div class="container">
+    <a href="../index.html">back</a>
+
+    <h1 class="prepend-1">A JSXGraph+Blueprint 'box' to test</h1>
+
+    <div class="span-24">
+      <div id="box" class="span-24 jxgbox last" style="height:500px;"></div>
+    </div>
+
+    <div class="prepend-11 span-2">
+        <p></p>
+        <button id="plot-button">Plot Graph</button>
+    </div>
+    
+    <div class="span-24">
+      <p id="boxinfo"></p>
+      <p id="mouseinfo">No mouseover yet.</p>
+    </div>
+    
+  </div>
+
+</body>
+</html>
