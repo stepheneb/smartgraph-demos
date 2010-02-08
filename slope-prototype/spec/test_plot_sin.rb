@@ -63,6 +63,7 @@ describe "Page: plot_sin.html" do
     page.capture_entire_page_screenshot "/Users/rklancer/dev/smartgraph-demos/slope-prototype/spec/results/sin_plotted_and_drag_missed.png", ""
  
     # compare sin_plotted_and_drag_missed.png to sin_plotted_and_dragged.png: they should NOT be identical
+    
     diff = IO.popen("compare -metric ae results/sin_plotted_and_drag_missed.png fixtures/sin_plotted_and_dragged.png diffs/sin_plotted_and_drag_missed.png 2>&1") do |f|
       f.gets.rstrip
     end
