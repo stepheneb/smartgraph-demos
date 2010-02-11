@@ -1,0 +1,8 @@
+#!/bin/sh
+#
+cd slope-prototype/spec/
+PATH=$PATH:/opt/local/bin/
+spec test_plot_sin.rb --require 'rubygems,selenium/rspec/reporting/selenium_test_report_formatter' --format=Selenium::RSpec::SeleniumTestReportFormatter:reports/test_plot_sin_report.html
+status=$?
+open reports/test_plot_sin_report.html
+exit $status
