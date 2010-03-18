@@ -22,7 +22,7 @@
                   <ul class="method-details-list-h">
                     <li class="method-description">
                       <label>y = </label>
-                      <input type="text" id="exp" class="expression" value="Math.tan(x)" />
+                      <input type="text" id="exp" class="expression" value="3*x*Math.cos(x) " />
                     </li>
                     <li class="method-description">
                       <label>update interval(ms): </label>
@@ -61,17 +61,17 @@
             var board, axisx, axisy, graph, f, g, timer, interval,
                 xvalue, xdata, ydata, index;
 
+            eval("function f(x){ return "+document.getElementById("exp").value+";}");
+            
             var resetCurveData = function () {
                 xdata = [-5];
-                ydata = [0];
+                ydata = [f(xdata[0])];
                 index = 0;
             };
+
+            JXG.Options.fontSize = 14;
             
             resetCurveData();
-            JXG.Options.fontSize = 14;
-
-            eval("function f(x){ return "+document.getElementById("exp").value+";}");
-
             board = JXG.JSXGraph.initBoard('jxgbox', {originX: 300, originY: 150, unitX: 60, unitY: 15, showNavigation: false, showCopyright: false, grid: false});
             axisx = board.createElement('axis', [[0,0], [1,0]], {strokeColor:'black'});
             axisy = board.createElement('axis', [[0,0], [0,1]], {strokeColor:'black'});
