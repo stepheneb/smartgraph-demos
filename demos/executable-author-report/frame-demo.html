@@ -1,0 +1,138 @@
+<!doctype html>
+
+<html lang='en'>
+
+<head>
+  <meta charset='utf-8'>
+  <title>Example markup for Smartgraph container and its contained frames.</title>
+
+  <!-- allows one to use these html5 element types with impunity w/o breaking IE6-IE8 -->
+  <!--[if IE]>
+  <script>
+    var e = ('abbr,article,aside,audio,canvas,datalist,details,' +
+      'figure,footer,header,hgroup,mark,menu,meter,nav,output,' +
+      'progress,section,time,video').split(',');
+    for (var i = 0; i < e.length; i++) {
+      document.createElement(e[i]);
+    }
+  </script>
+  <![endif]-->
+
+  <!--<link rel='stylesheet' href='css/reset.css'>-->
+
+  <style>
+    article, aside, dialog, figure, footer, header, hgroup, menu, nav, section {
+      display: block;
+    }
+  </style>
+
+  <link rel='stylesheet' href='css/ui-darkness/jquery-ui-1.8.custom.css'>
+  <link rel='stylesheet' href='css/frame-demo.css'>
+</head>
+
+<body>
+
+  <article id='sg-content'>
+    <h1>Example Smartgraph Activity</h1>
+    <section id='page1'>
+      <h2>Introduction of Equation</h2>
+      <div class='sg-text left'>
+        In this section, we'll explore the equation <span id='equation-here'>(equation goes here)</span>
+      </div>
+
+      <div class='sg-object-refs right'>
+        <a href='#graph1'></a>
+        <a href='#series1'></a>
+      </div>
+
+      <a rel='next' href='#page2'>Forward.</a>
+    </section>
+
+
+    <section id='page2'>
+      <h2>First Question about Equation</h2>
+
+      <div class='sg-text left'>
+        Click on the graph where the value of the function is less than zero.
+      </div>
+
+      <div class='sg-object-refs right'>
+        <a href='#graph1'></a>
+        <a href='#series1'></a>
+        <a href='#question1'></a>
+      </div>
+
+      <a rel='prev' href='#page1'>Forward.</a>
+      <a rel='next' href='#page3'>Back.</a>
+    </section>
+
+
+    <section id='page3'>
+
+      <h2>Explanation of Correct Answer</h2>
+
+      <div class='sg-object-refs left'>
+        <a href='#graph1'></a>
+        <a href='#series1'></a>
+        <a href='#question1'></a>
+      </div>
+
+      <div class='sg-text right'>
+        You answered the question correctly!
+      </div>
+      <a rel='prev' href='#page2'>Back.</a>
+    </section>
+
+
+    <aside class='sg-object-defs'>
+      <h2>(Objects being used in this exercise:)</h2>
+      <div id='graph1' itemscope itemtype='sg-graph'>
+        <h3>Graph</h3>
+        <ul>
+          <li><a itemprop='url' href="/graph/37">permalink</a> for editing
+          <li>The x axis goes from: <span itemprop='xmin'>-5</span> to: <span itemprop='xmax'>5</span>
+          <li>The y axis is labeled?: <span itemprop='axes-y'>True</span>
+          <li>The x axis is labeled?: <span itemprop='axis-x'>True</span>
+        </ul>
+      </div>
+
+
+      <div id='series1' itemscope itemtype='sg-series'>
+        <h3>Data Series</h3>
+        The series displayed will be f(x) = <span itemprop='equation'>Math.sin(x)</span>
+      </div>
+
+
+      <div id='question1' itemscope itemtype='sg-question'>
+        <h3>Question</h3>
+        <ul>
+          <li>Asked in reference to <a itemprop='series' href='#series1'>series 1</a>
+          <li>Defined <a itemprop='url' href='/activity/47/question/1/'>here</a>
+          <li>Acceptable answers satisfy <span itemprop='answer-expression'>f(x) &lt; 0</span>
+        </ul>
+        <form>
+          <label>Answer goes here: <input type='number' disabled></label>
+        </form>
+      </div>
+    </aside>
+  </article>
+
+  <div id='sg-panel' style='display: none'>
+    <!--add display classes dynamically-->
+  </div>
+
+
+  <script src='js/jquery.js'></script>
+  <script src='js/jquery-ui-1.8.js'></script>
+  <script src='js/jquery.microdata.js'></script>
+  <script src='js/jquery.microdata.json.js'></script>
+  
+  <script src="js/raphael.js"></script>
+  <script src="js/g.raphael/g.raphael.js"></script>
+  <script src="js/g.raphael/g.line.js"></script>
+
+  <script src='js/frame-demo.js'></script>
+
+</body>
+
+</html>

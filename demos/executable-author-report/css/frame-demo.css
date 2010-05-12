@@ -1,0 +1,46 @@
+body {
+  font-family: Verdana, Arial, sans-serif;
+}
+
+#sg-panel {
+  position: absolute;
+  width: 1004px;
+  height: 630px;
+  background-color: #666666;
+  color: white;
+  font-weight: bold;
+}
+
+#sg-panel .left {
+  position: absolute;
+  margin: 0;
+  top: 20px;
+  left: 20px;
+  width: 472px;
+  height: 590px;
+  background-color: #999999;    
+}
+
+#sg-panel .right {
+  position: absolute;
+  margin: 0;
+  top: 20px;
+  left: 512px;
+  width: 472px;
+  height: 590px;
+  background-color: #999999;
+}
+
+#sg-panel a.nextlink {
+  position: absolute;
+  top: 307px;
+  left: 986px;
+  color: white;
+}
+
+#sg-panel a.prevlink {
+  position: absolute;
+  top: 307px;
+  left: 2px;
+  color: white;
+}

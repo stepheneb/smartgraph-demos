@@ -1,0 +1,125 @@
+html {
+  font-family: Verdana, Arial, sans-serif;
+  color: #333333;
+}
+
+h1 {
+  font-size: 1.8em;
+  margin: 0.2em 0;
+}
+
+h2 {
+  font-size: 1.4em;
+  margin: 0.2em 0;
+}
+
+h3 {
+  font-size: 1.2em;
+  margin: 0.2em 0;
+}
+
+h4, h5, h6 {
+  font-size: 1.1em;
+  margin: 0.2em 0;
+}
+
+header {
+  margin-left: 0.2em;
+  margin-bottom: 0.4em;
+}
+
+header h1, header h2 {
+  margin-bottom: 0;
+}
+
+header p {
+  margin-left: 0.1em;
+  font-style: italic;
+}
+
+article {
+  /* overflow & width declarations to make floats work 'correctly'; see http://www.quirksmode.org/css/clearing.html */
+  overflow: auto;
+  width: 100%;
+}
+
+article aside {
+  width: 35em;
+  background-color: #eeeeee;
+  border: 1px solid #cccccc;
+  margin: 1em 3em;
+  padding: 0.4em 1em;
+}
+
+article aside h1, aside h2, aside h3, aside h4, aside h5, aside h6 {
+  font-style: italic;
+}
+
+article section {
+  border-top: 1px solid #aaaaaa;
+  border-bottom: 1px solid #aaaaaa;
+  background-color: #efefff;
+  margin: 2em 1.5em;
+}
+
+article section header {
+  margin-left: 0;
+}
+
+/* remember this child selector won't work in IE6 */
+
+article section > * {
+  margin-left: 2em;
+  clear: both;
+}
+
+/* restating above rule 'article selection *' in a less-maintainable form for the benefit of IE6 */
+
+article section ul, article section div {
+  margin-left: 2em;
+  clear: both;
+}
+
+ul {
+  padding: 0.3em 1em;
+}
+
+ol {
+  padding: 0 2.5em;
+  list-style-type: decimal;
+}
+
+ul.sg-inclusion {
+  font-style: italic;
+  background-color: #eeeeee;
+  border: 1px solid #cccccc;
+  float: left;
+  /* display declaration required to fix IE6 doubled-margin float bug:
+     see http://www.positioniseverything.net/explorer/doubled-margin.html */
+  display: inline;
+  padding: 0.4em 2em;
+  margin-top: 1em;
+  margin-bottom: 1em;
+  margin-right: 1em;
+}
+
+ul.sg-nav {
+  list-style-type: none;
+  padding: 0;
+  margin-top: 0.4em;
+  margin-bottom: 0.4em;
+}
+
+.sg-substitution {
+  font-style: italic;
+  background-color: #eeffee;
+}
+
+em {
+  font-weight: bold;
+  font-style: italic;
+}
+
+[itemprop] {
+  background-color: #ffffcc;
+}

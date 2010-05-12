@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+
+<html lang='en'>
+
+<head>
+  <meta charset='utf-8'>
+  <title>Example markup for Smartgraph container and its contained frames.</title>
+
+  <link rel='stylesheet' href='css/reset.css'>
+  <link rel='stylesheet' href='css/microdata-author-view-demo.css'>
+
+  <!-- the html5 shiv: runs in IE and magically allows css rules to work on these unknown-to-IE element types -->
+  <!--[if IE]>
+  <script>
+    var e = ('abbr,article,aside,audio,canvas,datalist,details,' +
+      'figure,footer,header,hgroup,mark,menu,meter,nav,output,' +
+      'progress,section,time,video').split(',');
+    for (var i = 0; i < e.length; i++) {
+      document.createElement(e[i]);
+    }
+  </script>
+  <![endif]-->
+</head>
+
+<body>
+
+  <article class='sg-activity'>
+    <header>
+      <h1>Example Smartgraph Activity</h1>
+      <p>Author: <a href='#'>Richard Klancer</a></p>
+      <!-- remember to close your <p>s or Firefox (!) gets confused and parses
+           </section> or </header> as closing the <p>, INSTEAD of considering it to close the <section>!  -->
+    </header>
+
+
+    <section id='page1'>
+      <header>
+        <h2>Introduction of Equation</h2>
+        <p>Page 1</p>
+      </header>
+
+      <!-- this substitution idea is a little extreme and unnecessary - surely the template engine on the back end
+           will be able to substitute the equation text - but it's worth exploring the pattern.
+
+           displayName is supposed to be 'computed property' computed from the expression in #series1 -->
+
+      <div class='sg-display-left'>
+        <p>
+          In this section, we'll explore the equation
+          <span class='sg-substitution'>
+            (<span class='key'>displayName</span> taken from <a class='item' href='#series1'>series 1</a>)
+          </span>.
+        </p>
+        <p>
+          You will discover many interesting things by exploring this equation closely:
+          <ol>
+            <li>Whether there were lobsters in the <a href='http://en.wikipedia.org/wiki/Pleistocene'>Pleistocene</a>
+            <li>How to clear your <em>co</em>sinuses when you have a cold
+            <li>How many times you can answer the same question without going crazy
+          </ol>
+      </div>
+
+      <ul class='sg-inclusion sg-display-right'>
+        <li><a href='#graph1'>Graph 1</a> will be shown here.
+        <li><a href='#series1'>Series 1</a> will be plotted.
+      </ul>
+
+      <ul class='sg-nav'>
+        <li><a rel='next' href='#page2'>Next Step</a>
+      </ul>
+    </section>
+
+
+    <aside class='sg-def' id='graph1' itemscope itemtype='sg-graph'>
+      <h3>Definition of Graph 1</h3>
+      <ul>
+        <li>Permalink (click for other uses of this graph): <a itemprop='url' href="/graph/37">/graph/37</a>
+        <li>The x axis goes from: <span itemprop='xmin'>-5</span> to: <span itemprop='xmax'>5</span>
+        <li>The y axis is labeled?: <span itemprop='axis-y'>True</span>
+        <li>The x axis is labeled?: <span itemprop='axis-x'>True</span>
+        <li>The X-axis scale type is: <span itemprop='x-loglinear'>Linear</span>
+        <li>(etc.)
+      </ul>
+    </aside>
+
+
+    <aside class='sg-def' id='series1' itemscope itemtype='sg-series'>
+      <h3>Definition of Data Series 1</h3>
+
+      <p>
+        The series displayed will be <span itemprop='dependent'>f</span>(<span itemprop='independent'>x</span>) =
+        <span itemprop='expression'>Math.sin(x)</span>.
+        (See permalink at <a itemprop='url' href='/series/1'>/series/1</a> to see other activities which use this
+        series.)
+      </p>
+    </aside>
+
+
+    <section id='page2'>
+      <header>
+        <h2>First Question about Equation</h2>
+        <p>Page 2</p>
+      </header>
+
+      <div class='sg-display-left'>
+        <p>Click on the graph where the value of the function is less than zero.</p>
+      </div>
+
+      <ul class='sg-inclusion sg-display-right'>
+        <li><a href='#graph1'>Graph 1</a> will be shown here.
+        <li><a href='#series1'>Series 1</a> will be plotted.
+        <li><a href='#response1'>Learner Response 1</a> will be indicated by the location of the click on the graph
+      </ul>
+
+      <ul class='sg-nav'>
+        <li><a rel='prev' href='#page1'>Previous Step</a>
+        <li><span class='conditional-link'>
+              <a rel='next' href='#page3'>Next Step</a> (only when
+              <a class='criterion' href='#criterion1'>Criterion 1</a> is satisfied.)
+            </span>
+      </ul>
+    </section>
+
+
+    <aside class='sg-def' id='response1' itemscope itemtype='sg-input'>
+      <h3>Definition of Learner Response 1</h3>
+
+      <p>
+        The learner's response will be indicated by the <span itemprop="variable">x</span> value of the learner's 
+        <span itemprop='method'>click</span> on <a itemprop='series' href='#series1'>Series 1</a>
+      </p>
+
+      <form>
+        <label>The response will be stored in this form field: <input type='number' disabled></label>
+      </form>
+    </aside>
+
+
+    <aside class='sg-def' id='criterion1' itemscope itemtype='sg-criterion'>
+      <h3>Definition of Answer Criterion 1</h3>
+
+      <p>
+        Progress will be allowed when the the following expression is satisfied:
+        <code itemprop='expression'>x &gt; 0</code>
+      </p>
+    </aside>
+
+
+    <section id='page3'>
+      <header>
+        <h2>Confirmation of Correct Answer</h2>
+        <p>Page 3</p>
+      </header>
+
+      <ul class='sg-inclusion sg-display-left'>
+        <li><a href='#graph1'>Graph 1</a> will be shown here.
+        <li><a href='#series1'>Series 1</a> will be plotted.
+        <li><a href='#callou1'>Callout 1</a> will be indicated on the graph
+      </ul>
+
+      <div class='sg-display-right'>
+        <p>You answered the question correctly!</p>
+      </div>
+
+      <ul class='sg-nav'>
+        <li><a rel='prev' href='#page2'>Previous Step</a>
+      </ul>
+    </section>
+
+
+    <aside class='sg-def' id='callout1' itemscope itemtype='sg-callout'>
+      <h3>Definition of Callout 1</h3>
+
+      <p>
+        The value of the learner's response to <a itemprop='source' href='#response1'>Response 1</a> will be indicated
+        by a (fixed) <span itemprop='type'>dot</span>.
+      </p>
+    </aside>
+
+  </article>
+  
+
+  <div id='sg-panel' style='display: none'>
+    <!-- I suppose this can be appended dynamically; or the html above could be loaded via ajax -->
+  </div>
+
+
+  <script src='js/jquery.js'></script>
+  <script src='js/jquery-ui-1.8.js'></script>
+  <script src='js/jquery.microdata.js'></script>
+  <script src='js/jquery.microdata.json.js'></script>
+
+  <script src="js/raphael.js"></script>
+  <script src="js/g.raphael/g.raphael.js"></script>
+  <script src="js/g.raphael/g.line.js"></script>
+
+  <script src='js/modified-frame-demo.js'></script>
+  
+</body>
+</html>
