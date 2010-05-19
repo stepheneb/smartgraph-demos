@@ -1,6 +1,6 @@
 # SmartGraph Technology Experiments
 
-Live versions of the demos in this repository are hosted here [http://smartgraph-demos.dev.concord.org].
+Live versions of the demos in this repository are hosted here [http://smartgraph-demos.dev.concord.org](http://smartgraph-demos.dev.concord.org).
 
 Experiments in lightweight smartgraphs by the people working on the [SmartGraphs](http://smartgraphs.concord.org/) project at the [Concord Consortium](http://www.concord.org).
 
