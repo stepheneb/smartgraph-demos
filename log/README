@@ -1,0 +1,3 @@
+# The log directory should exist so Apache (and any other services can write here)
+# but git should ignore any *.log files in here.
+# This README is here so that the directory itself can be checked into git.
