@@ -7,10 +7,10 @@
 }
 
 body.sc-theme {
-    background-color: #B4C0D7;
-font-family:"Lucida Sans","Lucida Grande",Verdana,Arial,sans-serif;
-font-size:12px;
-line-height:1.4;
+	background-color: #B4C0D7;
+	font-family:"Lucida Sans", "Lucida Grande", Verdana, Arial, sans-serif;
+	font-size:12px;
+	line-height:1.4;
 }
 
 .sc-view.smartgraph-pane {

@@ -7,116 +7,174 @@
 </head>
 <body class="sc-theme">
 <form id="form1" method="post" action="">
-    <label>Activity Title:
-    <input name="textfield" type="text" accesskey="1" tabindex="1" value="Maria's Run" />
-    </label>
+  <label>Activity Title:
+  <input name="textfield" type="text" accesskey="1" tabindex="1" value="Maria's Run" />
+  </label>
   <div class="guidePage">
     <input name="removeGuidePage" type="button" value="Move This Guide Page Up ^" />
     <input name="removeGuidePage2" type="button" value="Move This Guide Page Down v" />
     <input name="removeGuidePage3" type="button" value="Remove This Guide Page" />
     <p>
-    <label>Guide Page Title:
-    <input name="textfield2" type="text" accesskey="2" tabindex="2" value="6" />
-    </label>
-  </p>
-  <p>
-    <label>Introduction Text:<br/>
-    <textarea name="textarea" cols="80" rows="6" accesskey="3" tabindex="3">Now you that you’ve had a chance to create position versus time graphs from your own motions, let’s look at some graphs that were created by someone running.
+      <label>Guide Page Title:
+      <input name="textfield2" type="text" accesskey="2" tabindex="2" value="6" />
+      </label>
+    </p>
+    <p>
+      <label>Introduction Text:<br/>
+      <textarea name="textarea" cols="80" rows="6" accesskey="3" tabindex="3">Now you that you have had a chance to create position versus time graphs from your own motions, let's look at some graphs that were created by someone running.
 Maria ran practice laps around the school track. Her coach recorded the distances she ran after each minute. These data are shown in the graph and the table at right. Remember that the time was recorded in minutes rather than seconds.</textarea>
+      </label>
+    </p>
+    <table border="1" summary="Specify here the settings for the X and Y axes of the graph.">
+      <caption>
+      Graph Axes Specifications:
+      </caption>
+      <tr>
+        <td><label>x Minimum
+          <input name="xMin" type="text" value="0" />
+          </label></td>
+        <td><label>y Minimum
+          <input name="yMin" type="text" value="0" />
+          </label></td>
+      </tr>
+      <tr>
+        <td><label>x Maximum
+          <input name="xMax" type="text" value="10" />
+          </label></td>
+        <td><label>y Maximum
+          <input name="yMax" type="text" value="2000" />
+          </label></td>
+      </tr>
+      <tr>
+        <td><label>x Steps
+          <input name="xSteps" type="text" value="10" />
+          </label></td>
+        <td><label>y Steps
+          <input name="ySteps" type="text" value="10" />
+          </label></td>
+      </tr>
+      <tr>
+        <td><label>x Label
+          <input name="xLabel" type="text" value="Time (minutes)" />
+          </label></td>
+        <td><label>y Label
+          <input name="yLabel" type="text" value="Position (meters)" />
+          </label></td>
+      </tr>
+      <tr>
+        <td><label>x Label Abbreviated
+          <input name="xLabelAbbreviated" type="text" value="Time (min)" />
+          </label></td>
+        <td><label>y Label Abbreviated
+          <input name="yLabelAbbreviated" type="text" value="Position (m)" />
+          </label></td>
+      </tr>
+    </table>
+    <label>Graph Data Points:
+    <textarea name="points" rows="10" id="points">1,200
+2,400
+3,600
+4,800
+5,800
+6,800
+7,1050
+8,1300
+9,1550
+10,1800</textarea>
     </label>
-  </p>
-  <div class="dialogTurns" id="dialogTurns">
-    <p>Dialog Turns:</p>
-    <div class="dialogTurn">
-      <p>First Dialog Turn:<br/>
-        <label>Text shown before an optional text input field:<br />
-        <textarea name="textarea2" cols="80" rows="6" accesskey="4" tabindex="4">How many meters did Maria run before she stopped to talk to her coach?</textarea>
-        </label>
-        <br />
-        <label>Student can respond with:
-        <select name="select" accesskey="f" tabindex="5">
-          <option value="GraphSelection">A Graph or Table Selection</option>
-          <option value="TextArea">Some Text in an Input Field</option>
-          <option value="Number">A Number in an Input Field</option>
-        </select>
-        </label>
-        <label>Correct Response:
-        <input name="textfield3" type="text" accesskey="c" tabindex="6" value="x: 4" />
-        </label>
-        <br />
-        <label>Text shown after an optional text input field:<br/>
-        <textarea name="textarea3" cols="80" accesskey="a" tabindex="8"></textarea>
-        </label>
-      </p>
-    </div>
-    <div class="dialogTurn">
-      <p>Hint 1 Dialog Turn:<br/>
-        <label>Text shown before an optional text input field:<br />
-        <textarea name="textarea4" cols="80" rows="6" accesskey="4" tabindex="4">Incorrect.
+    <div class="dialogTurns" id="dialogTurns">
+      <p>Dialog Turns:</p>
+      <div class="dialogTurn">
+        <p>First Dialog Turn:<br/>
+          <label>Text shown before an optional text input field:<br />
+          <textarea name="textarea2" cols="80" rows="6" accesskey="4" tabindex="4">How many meters did Maria run before she stopped to talk to her coach?</textarea>
+          </label>
+          <br />
+          <label>Student can respond with:
+          <select name="select" accesskey="f" tabindex="5">
+            <option value="GraphSelection">A Graph or Table Selection</option>
+            <option value="TextArea">Some Text in an Input Field</option>
+            <option value="Number">A Number in an Input Field</option>
+          </select>
+          </label>
+          <label>Correct Response:
+          <input name="textfield3" type="text" accesskey="c" tabindex="6" value="x: 4" />
+          </label>
+          <br />
+          <label>Text shown after an optional text input field:<br/>
+          <textarea name="textarea3" cols="80" accesskey="a" tabindex="8"></textarea>
+          </label>
+        </p>
+      </div>
+      <div class="dialogTurn">
+        <p>Hint 1 Dialog Turn:<br/>
+          <label>Text shown before an optional text input field:<br />
+          <textarea name="textarea4" cols="80" rows="6" accesskey="4" tabindex="4">Incorrect.
 Hint 1: Look at the data and find how many minutes passed before Maria stopped.
 Try again. How many meters did Maria run before she stopped to talk to her coach?</textarea>
-        </label>
-        <br />
-        <label>Text shown after an optional text input field:<br/>
-        <textarea name="textarea4" cols="80" accesskey="a" tabindex="8"></textarea>
-        </label>
-      </p>
-    </div>
-    <div class="dialogTurn">
-      <p>Hint 2 Dialog Turn:<br/>
-        <label>Text shown before an optional text input field:<br />
-        <textarea name="textarea5" cols="80" rows="6" accesskey="4" tabindex="4">Incorrect.
+          </label>
+          <br />
+          <label>Text shown after an optional text input field:<br/>
+          <textarea name="textarea4" cols="80" accesskey="a" tabindex="8"></textarea>
+          </label>
+        </p>
+      </div>
+      <div class="dialogTurn">
+        <p>Hint 2 Dialog Turn:<br/>
+          <label>Text shown before an optional text input field:<br />
+          <textarea name="textarea5" cols="80" rows="6" accesskey="4" tabindex="4">Incorrect.
 Hint 2: Here is where Maria stopped. Find her position from the start of the track.
 Try again. How many meters did Maria run before she stopped to talk to her coach?</textarea>
-        </label>
-        <br />
-        <label>Text shown after an optional text input field:<br/>
-        <textarea name="textarea5" cols="80" accesskey="a" tabindex="8"></textarea>
-        </label>
-      </p>
-    </div>
-    <div class="dialogTurn">
-      <p>Hint 3 Dialog Turn:<br/>
-        <label>Text shown before an optional text input field:<br />
-        <textarea name="textarea6" cols="80" rows="6" accesskey="4" tabindex="4">Incorrect.
+          </label>
+          <br />
+          <label>Text shown after an optional text input field:<br/>
+          <textarea name="textarea5" cols="80" accesskey="a" tabindex="8"></textarea>
+          </label>
+        </p>
+      </div>
+      <div class="dialogTurn">
+        <p>Hint 3 Dialog Turn:<br/>
+          <label>Text shown before an optional text input field:<br />
+          <textarea name="textarea6" cols="80" rows="6" accesskey="4" tabindex="4">Incorrect.
 Hint 3: Here is where Maria stopped. Find her position from the start of the track.
 Try again. Find the y value (position) of this point?</textarea>
-        </label>
-        <br />
-        <label>Text shown after an optional text input field:<br/>
-        <textarea name="textarea6" cols="80" accesskey="a" tabindex="8"></textarea>
-        </label>
-      </p>
-    </div>
-    <div class="dialogTurn">
-      <p>Dialog Turn After 3 Incorrect Answers:<br/>
-        <label>Text shown before an optional text input field:<br />
-        <textarea name="textarea7" cols="80" rows="6" accesskey="4" tabindex="4">Four minutes into her run, Maria stopped. At that point, Maria was 800 meters away from the start line.
+          </label>
+          <br />
+          <label>Text shown after an optional text input field:<br/>
+          <textarea name="textarea6" cols="80" accesskey="a" tabindex="8"></textarea>
+          </label>
+        </p>
+      </div>
+      <div class="dialogTurn">
+        <p>Dialog Turn After 3 Incorrect Answers:<br/>
+          <label>Text shown before an optional text input field:<br />
+          <textarea name="textarea7" cols="80" rows="6" accesskey="4" tabindex="4">Four minutes into her run, Maria stopped. At that point, Maria was 800 meters away from the start line.
 Click Next >> when you are ready.</textarea>
-        </label>
-        <br />
-        <label>Text shown after an optional text input field:<br/>
-        <textarea name="textarea7" cols="80" accesskey="a" tabindex="8"></textarea>
-        </label>
-      </p>
-    </div>
-    <div class="dialogTurn">
-      <p>Dialog Turn After Correct Answer:<br/>
-        <label>Text:<br />
-        <textarea name="textarea8" cols="80" rows="6" accesskey="4" tabindex="4">Correct! Four minutes into her run, Maria stopped. At that point, " + "Maria’s was 800 meters away from the start line.
+          </label>
+          <br />
+          <label>Text shown after an optional text input field:<br/>
+          <textarea name="textarea7" cols="80" accesskey="a" tabindex="8"></textarea>
+          </label>
+        </p>
+      </div>
+      <div class="dialogTurn">
+        <p>Dialog Turn After Correct Answer:<br/>
+          <label>Text:<br />
+          <textarea name="textarea8" cols="80" rows="6" accesskey="4" tabindex="4">Correct! Four minutes into her run, Maria stopped. At that point, " + "Maria's was 800 meters away from the start line.
 " + "
 Click Next >> when you are ready.</textarea>
-        </label>
-        <br />
-      </p>
+          </label>
+          <br />
+        </p>
+      </div>
     </div>
-  </div>
   </div>
   <p class="guidePage">
     <input name="removeGuidePage4" type="button" value="Add Another Guide Page" />
-</p>
+  </p>
   <p class="guidePage">
-    <hr/><input type="submit" name="Submit" value="Quit" />
+  <hr/>
+  <input type="submit" name="Submit" value="Quit" />
   </p>
 </form>
 </body>
