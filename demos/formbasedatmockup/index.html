@@ -104,6 +104,9 @@ Maria ran practice laps around the school track. Her coach recorded the distance
           <label>Text shown after an optional text input field:<br/>
           <textarea name="textarea3" cols="80" accesskey="a" tabindex="8"></textarea>
           </label>
+        <div class="annotations">
+          <input type="submit" name="addAnnotation2" value="Add an Annotation" />
+        </div>
         </p>
       </div>
       <div class="dialogTurn">
@@ -117,6 +120,9 @@ Try again. How many meters did Maria run before she stopped to talk to her coach
           <label>Text shown after an optional text input field:<br/>
           <textarea name="textarea4" cols="80" accesskey="a" tabindex="8"></textarea>
           </label>
+        <div class="annotations">
+          <input type="submit" name="addAnnotation2" value="Add an Annotation" />
+        </div>
         </p>
       </div>
       <div class="dialogTurn">
@@ -131,6 +137,21 @@ Try again. How many meters did Maria run before she stopped to talk to her coach
           <textarea name="textarea5" cols="80" accesskey="a" tabindex="8"></textarea>
           </label>
         </p>
+        <div class="annotations">
+          <input type="submit" name="addAnnotation" value="Add an Annotation" />
+          <div class="annotation">
+            <label>Type:
+            <select name="type" id="type">
+              <option value="segment">Segment</option>
+              <option value="points" selected="selected">Point(s)</option>
+              <option value="xline">Line to X Axis</option>
+              <option value="yline">Line to Y Axis</option>
+            </select>
+            <input name="points" type="text" value="4" />
+            </label>
+            <input type="submit" name="removeAnnotation" value="Remove this Annotation" />
+          </div>
+        </div>
       </div>
       <div class="dialogTurn">
         <p>Hint 3 Dialog Turn:<br/>
@@ -143,6 +164,33 @@ Try again. Find the y value (position) of this point?</textarea>
           <label>Text shown after an optional text input field:<br/>
           <textarea name="textarea6" cols="80" accesskey="a" tabindex="8"></textarea>
           </label>
+        <div class="annotations">
+          <input type="submit" name="addAnnotation3" value="Add an Annotation" />
+          <div class="annotation">
+            <label>Type:
+            <select name="select2" id="select">
+              <option value="segment">Segment</option>
+              <option value="points" selected="selected">Point(s)</option>
+              <option value="xline">Line to X Axis</option>
+              <option value="yline">Line to Y Axis</option>
+            </select>
+            <input name="points2" type="text" value="4" />
+            </label>
+            <input type="submit" name="removeAnnotation2" value="Remove this Annotation" />
+          </div>
+          <div class="annotation">
+            <label>Type:
+            <select name="select3" id="select2">
+              <option value="segment">Segment</option>
+              <option value="points">Point(s)</option>
+              <option value="xline" selected="selected">Line to X Axis</option>
+              <option value="yline">Line to Y Axis</option>
+            </select>
+            <input name="points22" type="text" value="4" />
+            </label>
+            <input type="submit" name="removeAnnotation22" value="Remove this Annotation" />
+          </div>
+        </div>
         </p>
       </div>
       <div class="dialogTurn">
@@ -155,6 +203,9 @@ Click Next >> when you are ready.</textarea>
           <label>Text shown after an optional text input field:<br/>
           <textarea name="textarea7" cols="80" accesskey="a" tabindex="8"></textarea>
           </label>
+        <div class="annotations">
+          <input type="submit" name="addAnnotation2" value="Add an Annotation" />
+        </div>
         </p>
       </div>
       <div class="dialogTurn">
@@ -164,7 +215,9 @@ Click Next >> when you are ready.</textarea>
 " + "
 Click Next >> when you are ready.</textarea>
           </label>
-          <br />
+        <div class="annotations">
+          <input type="submit" name="addAnnotation2" value="Add an Annotation" />
+        </div>
         </p>
       </div>
     </div>
