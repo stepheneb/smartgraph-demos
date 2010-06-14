@@ -87,8 +87,10 @@ div.dialogTurn {
 	border-left-style: inset;
 }
 div.guidePage {
-	border-top-style: solid;
-	border-right-style: solid;
-	border-bottom-style: solid;
-	border-left-style: solid;
+	border-top-style: ridge;
+	border-right-style: ridge;
+	border-bottom-style: ridge;
+	border-left-style: ridge;
 }
+
+.boldStyle {font-weight: bold}

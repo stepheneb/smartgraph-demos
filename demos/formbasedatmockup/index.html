@@ -4,13 +4,65 @@
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
 <title>Form-Based Authoring Tool Mock-Up 1</title>
 <link href="stylesheet.css" rel="stylesheet" type="text/css" />
+<style type="text/css">
+</style>
 </head>
 <body class="sc-theme">
 <form id="form1" method="post" action="">
-  <label>Activity Title:
-  <input name="textfield" type="text" accesskey="1" tabindex="1" value="Maria's Run" />
+  <span class="style1">
+  <label class="boldStyle">
+  <div align="center">Activity Title:
+    <input name="textfield" type="text" accesskey="1" tabindex="1" value="Maria's Run" />
+  </div>
   </label>
+  </span>
   <div class="guidePage">
+    <input name="expand" type="submit" id="expand" value="Expand This Guide Page" />
+    <input name="removeGuidePage6" type="button" value="Move This Guide Page Up ^" />
+    <input name="removeGuidePage23" type="button" value="Move This Guide Page Down v" />
+    <br />
+    <label>Guide Page Title:
+    <input name="textfield2" type="text" accesskey="2" tabindex="2" value="1" />
+    </label>
+  </div>
+  <div class="guidePage">
+    <input name="expand" type="submit" id="expand" value="Expand This Guide Page" />
+    <input name="removeGuidePage7" type="button" value="Move This Guide Page Up ^" />
+    <input name="removeGuidePage24" type="button" value="Move This Guide Page Down v" />
+    <br />
+    <label>Guide Page Title:
+    <input name="textfield2" type="text" accesskey="2" tabindex="2" value="2" />
+    </label>
+  </div>
+  <div class="guidePage">
+    <input name="expand" type="submit" id="expand" value="Expand This Guide Page" />
+    <input name="removeGuidePage8" type="button" value="Move This Guide Page Up ^" />
+    <input name="removeGuidePage25" type="button" value="Move This Guide Page Down v" />
+    <br />
+    <label>Guide Page Title:
+    <input name="textfield2" type="text" accesskey="2" tabindex="2" value="3" />
+    </label>
+  </div>
+  <div class="guidePage">
+    <input name="expand" type="submit" id="expand" value="Expand This Guide Page" />
+    <input name="removeGuidePage9" type="button" value="Move This Guide Page Up ^" />
+    <input name="removeGuidePage26" type="button" value="Move This Guide Page Down v" />
+    <br />
+    <label>Guide Page Title:
+    <input name="textfield2" type="text" accesskey="2" tabindex="2" value="4" />
+    </label>
+  </div>
+  <div class="guidePage">
+    <input name="expand" type="submit" id="expand" value="Expand This Guide Page" />
+    <input name="removeGuidePage10" type="button" value="Move This Guide Page Up ^" />
+    <input name="removeGuidePage27" type="button" value="Move This Guide Page Down v" />
+    <br />
+    <label>Guide Page Title:
+    <input name="textfield2" type="text" accesskey="2" tabindex="2" value="5" />
+    </label>
+  </div>
+  <div class="guidePage">
+    <input type="submit" name="collapse" value="Collapse This Guide Page" />
     <input name="removeGuidePage" type="button" value="Move This Guide Page Up ^" />
     <input name="removeGuidePage2" type="button" value="Move This Guide Page Down v" />
     <input name="removeGuidePage3" type="button" value="Remove This Guide Page" />
@@ -21,7 +73,7 @@
     </p>
     <p>
       <label>Introduction Text:<br/>
-      <textarea name="textarea" cols="80" rows="6" accesskey="3" tabindex="3">Now you that you have had a chance to create position versus time graphs from your own motions, let's look at some graphs that were created by someone running.
+      <textarea name="textarea" cols="80" rows="6" class="text-field-view-wrapper" accesskey="3" tabindex="3">Now you that you have had a chance to create position versus time graphs from your own motions, let's look at some graphs that were created by someone running.
 Maria ran practice laps around the school track. Her coach recorded the distances she ran after each minute. These data are shown in the graph and the table at right. Remember that the time was recorded in minutes rather than seconds.</textarea>
       </label>
     </p>
@@ -94,16 +146,17 @@ Maria ran practice laps around the school track. Her coach recorded the distance
           <select name="select" accesskey="f" tabindex="5">
             <option value="GraphSelection">A Graph or Table Selection</option>
             <option value="TextArea">Some Text in an Input Field</option>
-            <option value="Number">A Number in an Input Field</option>
+            <option value="Number" selected="selected">A Number in an Input Field</option>
           </select>
           </label>
           <label>Correct Response:
-          <input name="textfield3" type="text" accesskey="c" tabindex="6" value="x: 4" />
+          <input name="textfield3" type="text" accesskey="c" tabindex="6" value="800" />
           </label>
           <br />
           <label>Text shown after an optional text input field:<br/>
           <textarea name="textarea3" cols="80" accesskey="a" tabindex="8"></textarea>
           </label>
+        </p>
         <div class="annotations">
           <input type="submit" name="addAnnotation2" value="Add an Annotation" />
         </div>
@@ -120,6 +173,7 @@ Try again. How many meters did Maria run before she stopped to talk to her coach
           <label>Text shown after an optional text input field:<br/>
           <textarea name="textarea4" cols="80" accesskey="a" tabindex="8"></textarea>
           </label>
+        </p>
         <div class="annotations">
           <input type="submit" name="addAnnotation2" value="Add an Annotation" />
         </div>
@@ -147,8 +201,8 @@ Try again. How many meters did Maria run before she stopped to talk to her coach
               <option value="xline">Line to X Axis</option>
               <option value="yline">Line to Y Axis</option>
             </select>
-            <input name="points" type="text" value="4" />
             </label>
+            <input name="points" type="text" value="(4,800)" />
             <input type="submit" name="removeAnnotation" value="Remove this Annotation" />
           </div>
         </div>
@@ -164,6 +218,7 @@ Try again. Find the y value (position) of this point?</textarea>
           <label>Text shown after an optional text input field:<br/>
           <textarea name="textarea6" cols="80" accesskey="a" tabindex="8"></textarea>
           </label>
+        </p>
         <div class="annotations">
           <input type="submit" name="addAnnotation3" value="Add an Annotation" />
           <div class="annotation">
@@ -174,8 +229,8 @@ Try again. Find the y value (position) of this point?</textarea>
               <option value="xline">Line to X Axis</option>
               <option value="yline">Line to Y Axis</option>
             </select>
-            <input name="points2" type="text" value="4" />
             </label>
+            <input name="points2" type="text" value="(4,800)" />
             <input type="submit" name="removeAnnotation2" value="Remove this Annotation" />
           </div>
           <div class="annotation">
@@ -186,8 +241,8 @@ Try again. Find the y value (position) of this point?</textarea>
               <option value="xline" selected="selected">Line to X Axis</option>
               <option value="yline">Line to Y Axis</option>
             </select>
-            <input name="points22" type="text" value="4" />
             </label>
+            <input name="points22" type="text" value="(4,800)" />
             <input type="submit" name="removeAnnotation22" value="Remove this Annotation" />
           </div>
         </div>
@@ -197,12 +252,13 @@ Try again. Find the y value (position) of this point?</textarea>
         <p>Dialog Turn After 3 Incorrect Answers:<br/>
           <label>Text shown before an optional text input field:<br />
           <textarea name="textarea7" cols="80" rows="6" accesskey="4" tabindex="4">Four minutes into her run, Maria stopped. At that point, Maria was 800 meters away from the start line.
-Click Next >> when you are ready.</textarea>
+Click Next &gt;&gt; when you are ready.</textarea>
           </label>
           <br />
           <label>Text shown after an optional text input field:<br/>
           <textarea name="textarea7" cols="80" accesskey="a" tabindex="8"></textarea>
           </label>
+        </p>
         <div class="annotations">
           <input type="submit" name="addAnnotation2" value="Add an Annotation" />
         </div>
@@ -211,16 +267,35 @@ Click Next >> when you are ready.</textarea>
       <div class="dialogTurn">
         <p>Dialog Turn After Correct Answer:<br/>
           <label>Text:<br />
-          <textarea name="textarea8" cols="80" rows="6" accesskey="4" tabindex="4">Correct! Four minutes into her run, Maria stopped. At that point, " + "Maria's was 800 meters away from the start line.
-" + "
-Click Next >> when you are ready.</textarea>
+          <textarea name="textarea8" cols="80" rows="6" accesskey="4" tabindex="4">Correct! Four minutes into her run, Maria stopped. At that point, &quot; + &quot;Maria's was 800 meters away from the start line.
+&quot; + &quot;
+Click Next &gt;&gt; when you are ready.</textarea>
           </label>
+        </p>
         <div class="annotations">
           <input type="submit" name="addAnnotation2" value="Add an Annotation" />
         </div>
         </p>
       </div>
     </div>
+  </div>
+  <div class="guidePage">
+    <input name="expand2" type="submit" id="expand2" value="Expand This Guide Page" />
+    <input name="removeGuidePage62" type="button" value="Move This Guide Page Up ^" />
+    <input name="removeGuidePage232" type="button" value="Move This Guide Page Down v" />
+    <br />
+    <label>Guide Page Title:
+    <input name="textfield23" type="text" accesskey="2" tabindex="2" value="7" />
+    </label>
+  </div>
+  <div class="guidePage">
+    <input name="expand3" type="submit" id="expand3" value="Expand This Guide Page" />
+    <input name="removeGuidePage63" type="button" value="Move This Guide Page Up ^" />
+    <input name="removeGuidePage233" type="button" value="Move This Guide Page Down v" />
+    <br />
+    <label>Guide Page Title:
+    <input name="textfield24" type="text" accesskey="2" tabindex="2" value="8" />
+    </label>
   </div>
   <p class="guidePage">
     <input name="removeGuidePage4" type="button" value="Add Another Guide Page" />
