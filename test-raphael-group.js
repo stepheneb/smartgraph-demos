@@ -27,7 +27,7 @@ $(function () {
       w = $container.width(),
       h = $container.height();
 
-  // set up the Raphael 'canvas' and add 3 horizontally-alighted shapes to it.
+  // set up the Raphael 'canvas' and add 3 horizontally-alighned shapes to it.
 
   r = Raphael($container[0]);
 
@@ -47,12 +47,14 @@ $(function () {
   $(r.canvas).append($(group));
   group.id = "the-group";             // test that we can set an id and retrieve the group by its id
   var $group = $("#the-group");
+             
+  // Reparent every node with the just-created group node.
 
-  // reparent every node with the just-created group node.
-  // What's going on here? Raphael puts every VML shape node into a group node which Raphael creates.
+  // What's going on here? Raphael wraps every VML shape node with its very own VML group node.
+  // This group node is created by Raphael in order to apply style correctly to the VML shape node it contains.
   // However point.node doesn't point at this group node. Instead it points at the shape node inside the group node.
-  // Therefore we find the group node created by Raphael, if it exists, and reparent that with the grouping node *we*
-  // created.
+  // We need to move not just point.node, but also the 'style-applying' group node it is contained within, into the
+  // 'grouping-together' group node that we created above.
 
   $.each(points.items, function (index, point) {
     var node, groupNode;
