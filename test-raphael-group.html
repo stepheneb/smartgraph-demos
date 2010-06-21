@@ -5,39 +5,60 @@
     <title>Raphael graphs</title>
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.1/jquery.min.js"></script>
     <script type="text/javascript" src="javascripts/raphael/raphael.js"></script>
-    <script type="text/javascript" src="javascripts/g-raphael/g.raphael.js"></script>
-    <script type="text/javascript" src="javascripts/g-raphael/g.line.js" charset="utf-8"></script>
     
     <link rel="stylesheet" media="screen, projection" href="stylesheets/apidocs.css">
     <link rel="stylesheet" href="demo.css" media="screen">
 
     <script type="text/javascript">
-        /*globals Raphael */
+        /*globals $ Raphael */
+
+        // make these accessible to the console
+        var r, group, p1, p2;
         
-        $(document).ready(function () {
-
-            var $container = $("#container"),
-                canvas_width = $container.width(),
-                canvas_height = $container.height();
-                
-            var r = Raphael("container");                
-
-            var point = r.circle(canvas_width/2, canvas_height/2, 3).attr({
+        $(function () {
+          
+            var unhighlighted = {
                 stroke: "#aa0000",
                 fill: "#aa0000",
                 opacity: 0.5,
                 r: 6
-            });
+            };
+            var highlighted = $.extend({}, unhighlighted, {opacity: 1.0, r: 8});
             
-            $(point.node).mousedown(function () {
-              point.attr({opacity: 1.0});
+            var $container = $("#container"),
+                w = $container.width(),
+                h = $container.height();
+                
+            r = Raphael($container[0]);                
+
+            var p1 = r.circle(w/2 + 20, h/2, 3).attr(unhighlighted);
+            var p2 = r.circle(w/2 - 20, h/2, 3).attr(unhighlighted);
+            
+            // define a group node containing p1 & p2
+            
+            group = r.raphael.vml ? 
+              document.createElement("vml:group") : 
+              document.createElementNS("http://www.w3.org/2000/svg", "g");
+            var $group = $(group);
+            
+            $(r.canvas).append($group);
+            $group.append($(p1.node));
+            $group.append($(p2.node));
+            
+            
+            // attach events to the group node
+            
+            $group.mousedown(function () {
+              p1.attr(highlighted);
               return false;
             });
             
-            $(point.node).mouseup(function () {
-              point.attr({opacity: 0.5});
+            var done = function () {
+              p1.attr(unhighlighted);
               return false;
-            });
+            };
+            $group.mouseup(done);
+            $group.mouseleave(done);
         });
     </script>
 </head>
