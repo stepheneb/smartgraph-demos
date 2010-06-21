@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Raphael graphs</title>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.1/jquery.min.js"></script>
+    <script type="text/javascript" src="javascripts/raphael/raphael.js"></script>
+    <script type="text/javascript" src="javascripts/g-raphael/g.raphael.js"></script>
+    <script type="text/javascript" src="javascripts/g-raphael/g.line.js" charset="utf-8"></script>
+    
+    <link rel="stylesheet" media="screen, projection" href="stylesheets/apidocs.css">
+    <link rel="stylesheet" href="demo.css" media="screen">
+
+    <script type="text/javascript">
+        /*globals Raphael */
+        
+        $(document).ready(function () {
+
+            var $container = $("#container"),
+                canvas_width = $container.width(),
+                canvas_height = $container.height();
+                
+            var r = Raphael("container");                
+
+            var point = r.circle(canvas_width/2, canvas_height/2, 3).attr({
+                stroke: "#aa0000",
+                fill: "#aa0000",
+                opacity: 0.5,
+                r: 6
+            });
+            
+            $(point.node).mousedown(function () {
+              point.attr({opacity: 1.0});
+              return false;
+            });
+            
+            $(point.node).mouseup(function () {
+              point.attr({opacity: 0.5});
+              return false;
+            });
+        });
+    </script>
+</head>
+<body> 
+    <div id="main" class="page-content">
+        <h3 class="page-title namespace">
+            Raphael test
+        </h3>
+        <div id="container" style="width:400px; height:250px; border: 1px solid #cccccc"></div>
+    </div>
+</body>
+</html>
