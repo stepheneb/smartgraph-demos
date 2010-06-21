@@ -1,73 +1,93 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="utf-8">
-    <title>Raphael graphs</title>
-    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.1/jquery.min.js"></script>
-    <script type="text/javascript" src="javascripts/raphael/raphael.js"></script>
+  <meta charset="utf-8">
+  <title>Raphael graphs</title>
+  <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.1/jquery.min.js"></script>
+  <script type="text/javascript" src="javascripts/raphael/raphael.js"></script>
+  
+  <link rel="stylesheet" href="stylesheets/apidocs.css">
+
+  <script type="text/javascript">
+    /*globals $ Raphael */
+
+    // make these accessible at the Firebug/Web Inspector console
+    var r, group;
     
-    <link rel="stylesheet" media="screen, projection" href="stylesheets/apidocs.css">
-    <link rel="stylesheet" href="demo.css" media="screen">
+    $(function () {
+      
+      var notHighlighted = {
+            stroke: "#aaaaaa",
+            fill: "#aaaaaa"
+          },
+          highlighted = {
+            stroke: "#aa0000",
+            fill: "#aa0000"            
+          },
+          notClicked = {
+            opacity: 0.5,
+            r: 6
+          },
+          clicked = {
+            opacity: 1.0, 
+            r: 8
+          };
 
-    <script type="text/javascript">
-        /*globals $ Raphael */
+      var $container = $("#container"),
+          w = $container.width(),
+          h = $container.height();      
+      
+      // set up the Raphael 'canvas' and add 3 horizontally-alighted points to it.
+      
+      r = Raphael($container[0]);       
 
-        // make these accessible to the console
-        var r, group, p1, p2;
-        
-        $(function () {
-          
-            var unhighlighted = {
-                stroke: "#aa0000",
-                fill: "#aa0000",
-                opacity: 0.5,
-                r: 6
-            };
-            var highlighted = $.extend({}, unhighlighted, {opacity: 1.0, r: 8});
-            
-            var $container = $("#container"),
-                w = $container.width(),
-                h = $container.height();
-                
-            r = Raphael($container[0]);                
+      var points = [r.circle(w/2 + 50, h/2), r.circle(w/2, h/2), r.circle(w/2 - 50, h/2)];
+      $.each(points, function (i, p) { p.attr(notClicked).attr(notHighlighted); });
+      
+      
+      // interpose a group node (using SVG or VML semantics as appropriate) between the canvas & the 3 points
+      
+      group = r.raphael.vml ? 
+        document.createElement("vml:group") : 
+        document.createElementNS("http://www.w3.org/2000/svg", "g"); // (jQuery can't create namespaced DOM nodes)
 
-            var p1 = r.circle(w/2 + 20, h/2, 3).attr(unhighlighted);
-            var p2 = r.circle(w/2 - 20, h/2, 3).attr(unhighlighted);
-            
-            // define a group node containing p1 & p2
-            
-            group = r.raphael.vml ? 
-              document.createElement("vml:group") : 
-              document.createElementNS("http://www.w3.org/2000/svg", "g");
-            var $group = $(group);
-            
-            $(r.canvas).append($group);
-            $group.append($(p1.node));
-            $group.append($(p2.node));
-            
-            
-            // attach events to the group node
-            
-            $group.mousedown(function () {
-              p1.attr(highlighted);
-              return false;
-            });
-            
-            var done = function () {
-              p1.attr(unhighlighted);
-              return false;
-            };
-            $group.mouseup(done);
-            $group.mouseleave(done);
-        });
-    </script>
+      var $group = $(group);
+      $(r.canvas).append($group);
+      $.each(points, function (index, point) { $group.append($(point.node)); });
+
+      
+      // and attach event handlers to the group node
+      
+      var addHighlight = function (index, point) {
+        point.attr(highlighted);
+      };
+      var removeHighlight = function (index, point) {
+        point.attr(notHighlighted);
+      };
+      
+      $group.mousedown(function (evt) {
+        $.each(points, addHighlight);       // highlight all the points
+        evt.target.raphael.attr(clicked);   // but call out the clicked node (this is event delegation)
+        return false;
+      });
+      
+      var done = function (evt) {
+        $.each(points, removeHighlight);
+        evt.target.raphael.attr(notClicked);        
+        return false;
+      };
+      $group.mouseup(done);
+      $group.mouseleave(done);
+    });
+  </script>
+  
 </head>
 <body> 
-    <div id="main" class="page-content">
-        <h3 class="page-title namespace">
-            Raphael test
-        </h3>
-        <div id="container" style="width:400px; height:250px; border: 1px solid #cccccc"></div>
-    </div>
+  <div id="main" class="page-content">
+    <h3 class="page-title namespace">
+      Cross-browser Raphaël event delegation using a group node
+    </h3>
+    <div id="container" style="width:400px; height:250px; border: 1px solid #cccccc; margin: auto"></div>
+  </div>
 </body>
 </html>
