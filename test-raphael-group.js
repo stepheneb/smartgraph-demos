@@ -33,7 +33,7 @@ $(function () {
 
   points = r.set().push(
     r.circle(w/2 + 50, h/2, 6),
-    r.path("M " + (w/2-6) + " " + (h/2-6) + "l 0 12 l 12 0 l 0 -12 z").rotate(45),
+    r.rect(-6, -6, 12, 12).rotate(45).translate(w/2, h/2),
     r.circle(w/2 - 50, h/2, 6)
   );
 
