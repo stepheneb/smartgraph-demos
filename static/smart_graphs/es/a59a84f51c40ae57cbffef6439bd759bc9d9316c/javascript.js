@@ -1,5 +1,5 @@
 (function(){var a="sproutcore/standard_theme";if(!SC.BUNDLE_INFO){throw"SC.BUNDLE_INFO is not defined!"
-}if(SC.BUNDLE_INFO[a]){return}SC.BUNDLE_INFO[a]={requires:["sproutcore/empty_theme"],styles:["/static/sproutcore/standard_theme/es/52920dfdad7f0329367ed5692a2fc96881122edb/stylesheet-packed.css","/static/sproutcore/standard_theme/es/52920dfdad7f0329367ed5692a2fc96881122edb/stylesheet.css"],scripts:["/static/sproutcore/standard_theme/es/52920dfdad7f0329367ed5692a2fc96881122edb/javascript-packed.js"]}
+}if(SC.BUNDLE_INFO[a]){return}SC.BUNDLE_INFO[a]={requires:["sproutcore/empty_theme"],styles:["/smartgraph-demos/static/sproutcore/standard_theme/es/52920dfdad7f0329367ed5692a2fc96881122edb/stylesheet-packed.css","/smartgraph-demos/static/sproutcore/standard_theme/es/52920dfdad7f0329367ed5692a2fc96881122edb/stylesheet.css"],scripts:["/smartgraph-demos/static/sproutcore/standard_theme/es/52920dfdad7f0329367ed5692a2fc96881122edb/javascript-packed.js"]}
 })();SmartGraphs=SC.Application.create({NAMESPACE:"SmartGraphs",VERSION:"0.1.0",store:SC.Store.create().from(SC.Record.fixtures)});
 SmartGraphs.DataSeries=SC.Record.extend({series:SC.Record.attr(Array)});sc_require("models/data_series");
 SmartGraphs.DataSeries.FIXTURES=[{guid:1,series:[[1,1],[2,20],[3,10],[4,5]]}];

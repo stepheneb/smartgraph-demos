@@ -1,5 +1,5 @@
 (function(){var a="sproutcore/standard_theme";if(!SC.BUNDLE_INFO){throw"SC.BUNDLE_INFO is not defined!"
-}if(SC.BUNDLE_INFO[a]){return}SC.BUNDLE_INFO[a]={requires:["sproutcore/empty_theme"],styles:["/static/sproutcore/standard_theme/en/52920dfdad7f0329367ed5692a2fc96881122edb/stylesheet-packed.css","/static/sproutcore/standard_theme/en/52920dfdad7f0329367ed5692a2fc96881122edb/stylesheet.css"],scripts:["/static/sproutcore/standard_theme/en/52920dfdad7f0329367ed5692a2fc96881122edb/javascript-packed.js"]}
+}if(SC.BUNDLE_INFO[a]){return}SC.BUNDLE_INFO[a]={requires:["sproutcore/empty_theme"],styles:["/smartgraph-demos/static/sproutcore/standard_theme/en/52920dfdad7f0329367ed5692a2fc96881122edb/stylesheet-packed.css","/smartgraph-demos/static/sproutcore/standard_theme/en/52920dfdad7f0329367ed5692a2fc96881122edb/stylesheet.css"],scripts:["/smartgraph-demos/static/sproutcore/standard_theme/en/52920dfdad7f0329367ed5692a2fc96881122edb/javascript-packed.js"]}
 })();SmartGraphs=SC.Application.create({NAMESPACE:"SmartGraphs",VERSION:"0.1.0",store:SC.Store.create().from(SC.Record.fixtures)});
 SmartGraphs.axesController=SC.ObjectController.create({padding:{top:20,right:20,bottom:20,left:20}});
 SmartGraphs.dataSeriesController=SC.ArrayController.create({totalChanges:0,_valuesDidChange:function(){this.incrementProperty("totalChanges")

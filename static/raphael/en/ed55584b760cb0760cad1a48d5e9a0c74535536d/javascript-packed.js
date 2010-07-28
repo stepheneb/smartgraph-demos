@@ -3491,7 +3491,7 @@ if(a===SC.CONTENT_SET_DIRECTLY){return}if(SC.typeOf(a)===SC.T_STRING&&a.length>0
 }.observes("contentView")});sc_require("views/view");sc_require("mixins/control");
 SC.IMAGE_STATE_NONE="none";SC.IMAGE_STATE_LOADING="loading";SC.IMAGE_STATE_LOADED="loaded";
 SC.IMAGE_STATE_FAILED="failed";SC.IMAGE_STATE_SPRITE="sprite";SC.BLANK_IMAGE_DATAURL="data:image/gif;base64,R0lGODlhAQABAJAAAP///wAAACH5BAUQAAAALAAAAAABAAEAAAICBAEAOw==";
-SC.BLANK_IMAGE_URL=SC.browser.msie&&SC.browser.msie<8?"/static/sproutcore/foundation/en/8ac9b6c3c47a116e4e6e37701c1f2c8b44a21c26/blank.gif":SC.BLANK_IMAGE_DATAURL;
+SC.BLANK_IMAGE_URL=SC.browser.msie&&SC.browser.msie<8?"/smartgraph-demos/static/sproutcore/foundation/en/8ac9b6c3c47a116e4e6e37701c1f2c8b44a21c26/blank.gif":SC.BLANK_IMAGE_DATAURL;
 SC.ImageView=SC.View.extend(SC.Control,{classNames:"sc-image-view",tagName:"img",status:SC.IMAGE_STATE_NONE,value:null,useImageCache:YES,canLoadInBackground:NO,localize:YES,displayProperties:"status toolTip".w(),render:function(c,g){var a=this.get("status"),e=this.get("value");
 if(a===SC.IMAGE_STATE_NONE&&e){this._image_valueDidChange()}a=this.get("status");
 var f=(a===SC.IMAGE_STATE_LOADED)?e:SC.BLANK_IMAGE_URL;if(a===SC.IMAGE_STATE_SPRITE){c.addClass(e)
