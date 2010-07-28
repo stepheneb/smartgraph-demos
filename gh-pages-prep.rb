@@ -15,7 +15,7 @@
 #   git push origin gh-pages
 #
 
-# follow symbolic links and return real file
+# Follow symbolic link(s) and return path to real file
 def extract_real_link(file_link)
   cwd = Dir.pwd
   begin
@@ -32,6 +32,9 @@ end
 
 FIND_PATH = /(['"])\/static\//
 REPLACE_PATH = '\1/smartgraph-demos/static/'
+
+# Replace path references that start with /static/
+# with /smartgraph-demos/static/
 def replace_paths(path_to_file)
   content = File.read(path_to_file)
   File.open(path_to_file, 'w') do |f|
@@ -40,11 +43,11 @@ def replace_paths(path_to_file)
 end
 
 # replace hrefs to symbolic links in index.htrml
-# with paths to real files
+# with paths to the real files
 index_html = File.read("index.html")
 symbolic_links = Dir["sproutcore/*"].collect { |p| [p, extract_real_link(p).gsub(/^\.\.\//, '')] }
 symbolic_links.each { |i| index_html.gsub!("'#{i[0]}'", "'/smartgraph-demos/#{i[1]}'") }
 File.open("index.html", 'w') { |f| f.write index_html }
 
-# update paths in all files that might have links to static resources
+# Update paths in all files that might have links to resources
 Dir["static/**/*.{css,html,js}"].each { |content_path| replace_paths(content_path) }
