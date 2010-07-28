@@ -30,8 +30,8 @@ def extract_real_link(file_link)
   file_link
 end
 
-FIND_PATH = /'\/static\//
-REPLACE_PATH = "'/smartgraph-demos/static/"
+FIND_PATH = /(['"])\/static\//
+REPLACE_PATH = '\1/smartgraph-demos/static/'
 def replace_paths(path_to_file)
   content = File.read(path_to_file)
   File.open(path_to_file, 'w') do |f|
