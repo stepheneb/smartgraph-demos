@@ -11,6 +11,7 @@
 #   git checkout gh-pages
 #   git merge -s recursive -X theirs master
 #   ruby gh-pages-prep.rb
+#   git commit -am 'gh-pages: re-write paths in static content files'
 #   git push origin gh-pages
 #
 
