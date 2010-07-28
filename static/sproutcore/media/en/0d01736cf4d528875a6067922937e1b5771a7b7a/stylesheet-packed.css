@@ -53,11 +53,11 @@
 .sc-view.allow-select{-moz-user-select:text;-khtml-user-select:text;user-select:text;cursor:text;}
 .sc-view:focus,a.sc-view:focus,.sc-view:active,a.sc-view:active{outline:none;}.sc-view img{border:none;}
 .sc-view.hidden{display:none!important;}.sc-view.text-align-right,.sc-view.textAlignRight{text-align:right;}
-.stop{background:url('/static/sproutcore/media/en/0d01736cf4d528875a6067922937e1b5771a7b7a/resources/controls.png') no-repeat -8px 4px;height:20px;width:22px;}
-.play{background:url('/static/sproutcore/media/en/0d01736cf4d528875a6067922937e1b5771a7b7a/resources/controls.png') no-repeat 7px 4px;height:20px;width:22px;}
-.theater{background:url('/static/sproutcore/media/en/0d01736cf4d528875a6067922937e1b5771a7b7a/resources/controls.png') no-repeat -24px 4px;height:20px;width:18px;}
-.minus{background:url('/static/sproutcore/media/en/0d01736cf4d528875a6067922937e1b5771a7b7a/resources/controls.png') no-repeat -45px 3px;height:20px;width:20px;}
-.plus{background:url('/static/sproutcore/media/en/0d01736cf4d528875a6067922937e1b5771a7b7a/resources/controls.png') no-repeat -60px 3px;height:20px;width:20px;}
+.stop{background:url('/smartgraph-demos/static/sproutcore/media/en/0d01736cf4d528875a6067922937e1b5771a7b7a/resources/controls.png') no-repeat -8px 4px;height:20px;width:22px;}
+.play{background:url('/smartgraph-demos/static/sproutcore/media/en/0d01736cf4d528875a6067922937e1b5771a7b7a/resources/controls.png') no-repeat 7px 4px;height:20px;width:22px;}
+.theater{background:url('/smartgraph-demos/static/sproutcore/media/en/0d01736cf4d528875a6067922937e1b5771a7b7a/resources/controls.png') no-repeat -24px 4px;height:20px;width:18px;}
+.minus{background:url('/smartgraph-demos/static/sproutcore/media/en/0d01736cf4d528875a6067922937e1b5771a7b7a/resources/controls.png') no-repeat -45px 3px;height:20px;width:20px;}
+.plus{background:url('/smartgraph-demos/static/sproutcore/media/en/0d01736cf4d528875a6067922937e1b5771a7b7a/resources/controls.png') no-repeat -60px 3px;height:20px;width:20px;}
 .time{font-size:10px!important;line-height:20px!important;}.sc-media-controls{background:black;opacity:.8;}
 .sc-media-controls .sc-view.sc-slider-view .sc-inner{background:white;height:2px;top:9px;}
 .sc-media-controls .sc-view.sc-slider-view .sc-inner .sc-leftcap{background:white;}

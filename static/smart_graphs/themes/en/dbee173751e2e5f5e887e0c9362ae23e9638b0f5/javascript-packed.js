@@ -45579,7 +45579,7 @@ SC.IMAGE_STATE_SPRITE = 'sprite';
 */
 SC.BLANK_IMAGE_DATAURL = "data:image/gif;base64,R0lGODlhAQABAJAAAP///wAAACH5BAUQAAAALAAAAAABAAEAAAICBAEAOw==";
 
-SC.BLANK_IMAGE_URL = SC.browser.msie && SC.browser.msie<8 ? '/static/sproutcore/foundation/en/0aa83b4ec33fa19bbe0f4059364788f3c4680a78/blank.gif' : SC.BLANK_IMAGE_DATAURL;
+SC.BLANK_IMAGE_URL = SC.browser.msie && SC.browser.msie<8 ? '/smartgraph-demos/static/sproutcore/foundation/en/0aa83b4ec33fa19bbe0f4059364788f3c4680a78/blank.gif' : SC.BLANK_IMAGE_DATAURL;
 
 /**
   @class
