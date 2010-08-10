@@ -1,147 +1,100 @@
 <!doctype html>
 <html lang='en'>
 <head>
-  <meta charset='utf-8' />
-  <title>SmartGraph Demos</title>
-  <link rel='stylesheet' href='stylesheets/style.css'>
+<meta charset='utf-8' />
+<title>SmartGraph Demos</title>
+<link rel='stylesheet' href='stylesheets/style.css'>
 </head>
 <body>
-  <div class='page-content'>
-    <h1>SmartGraph Technology Experiments</h1>
-      <div class='section'>
-        <div class='section-content'>
-          <h2>Latest Sproutcore-based Demos</h2>
+<div class='page-content'>
+  <h1>SmartGraph Technology Experiments</h1>
+  <div class='section'>
+    <div class='section-content'>
+      <h2>Latest Sproutcore-based Demos</h2>
+      <ul>
+        <li> August 10: <a href='http://smartgraphs-rails-demos.dev.concord.org/static/smartgraphs/en/40d1d3a8ff6b5d250480f8d540c6851d4dea3069/index.html' target="activity_2010_08_10">Example with authorable activity content stored in a persistent database</a>
           <ul>
-            <li>
-              August 3: <a href='sproutcore/example-new-2-with-loading.html'>New version that loads activity specified in the URL, shows waiting indicator while it loads an activity, and more</a></li>
-            <li>
-              July 26: <a href='http://smartgraphs-rails-demos.dev.concord.org/static/smartgraphs/en/40ea27eed2aa54e4826372ff6039a893b0e44d67/index.html' target="activity_2010_07_26">Example with authorable Guide Page and Dialog Turn content stored in a persistent database</a>
-                <li>Temporary pages for authoring: <a href="http://smartgraphs-rails-demos.dev.concord.org/rails/guide_pages" target="author_guide_pages">Guide Pages</a>,  <a href="http://smartgraphs-rails-demos.dev.concord.org/rails/dialog_turns" target="author_dialog_turns">Dialog Turns</a>.</li>
-              July 22: <a href='sproutcore/command-refactor-student-test.html'>New, rebuilt version with predictiion graph and multiple graphs</a> </li>
-            <!--li>
-              July 6: <a href='sproutcore/rails-example-1.html'>Version with activity content stored in a persistent database</a>
-            </li-->
-            <li>
-              July 17: <a href='http://smartgraphs-rails-demos.dev.concord.org/static/smartgraphs/en/a1cf8d1b5ec229280c02b2399dde99db1f20ba1f/index.html' target="activity">Example with authorable Guide Page content stored in a persistent database and simple password protection</a>
-              <ul>
-                <li>Temporary page for authoring Guide Pages is <a href="http://smartgraphs-rails-demos.dev.concord.org/guide_pages" target="author">here</a>.</li>
-              </ul>
-            </li>
-            <li>July 6: <a href='sproutcore/jar-test.html'>Test version with locally cached jars and no query strings</a>            </li>
-            <li> June 12: <a href='demos/formbasedatmockup/index.html'>Form-Based Authoring Tool Mock-Up 1</a> </li>
-            <li> June 10: <a href='sproutcore/example-23.html'>Randolph test version merged with Kofi's page authoring work</a> </li>
-            <li>
-              June 7: <a href='sproutcore/randolph-test.html'>Version for in-class test in Randolph, MA</a>            </li>
-            <li>
-              June 6: <a href='sproutcore/example-22.html'>Example with y columns on the left and various bug fixes</a>            </li>
-            <li>
-              June 6: <a href='sproutcore/example-21.html'>Example with 1s sampling interval an 30 samples max</a> (due to IE7 limitations)            </li>
-            <li>
-              June 5: <a href='sproutcore/example-20.html'>Example with graphical hints</a>            </li>
-            <li>
-              June 4: <a href='sproutcore/example-19.html'>Example with updated visualization of new data model</a>            </li>
-            <li>
-              June 4: <a href='sproutcore/example-18.html'>Example with improved styling and content of scaffolded questions 1-7 and 9 filled out</a>            </li>
-            <li>
-              June 2: <a href='sproutcore/example-17.html'>Improved integration of motion sensor and 'Maria' questions</a> with better formatting, axis labels, open-response text boxes, and more.            </li>
-            <li>
-              June 2: <a href='sproutcore/example-16-six-pages-with-sensor.html'>Preliminary integration of sensor applet and prefab activity</a> Doesn't work well; sensor applet clobbers 'Maria' data.            </li>
-            <li>
-              June 1: <a href='sproutcore/example-15-with-scaffold-dialog.html'>Major new version with scaffolding</a> (and a much more flexible data model)            </li>
-            <li>
-              May 25: <a href='sproutcore/example-14-editable-author-data.html'>Example with a button to edit authorable content</a>            </li>
-            <li>
-              <a href='sproutcore/example-13-with-question-data-on-the-side.html'>Example with the soon-to-be-authorable data on the side</a>            </li>
-            <li>
-              <a href='sproutcore/example-12-beginnings-of-author-view.html'>Example showing the beginnings of exposing the authored data created for the previous example</a> (see the bottom of the screen; not everything fits)            </li>
-            <li>
-              <a href='sproutcore/example-11-no-alert-boxes.html'>Answers on the lower left instead of in obtrusive dialog boxes</a> (This follows a major refactoring that makes the questions and answers far less 'hard-wired'.)            </li>
-            <li>
-              <a href='sproutcore/example-10-check-graph-annotation.html'>Maria's Practice Run, answerable by clicking on the graph.</a>            </li>
-            <li>
-              <a href='sproutcore/example-9-with-check-answer.html'>Maria's Practice Run with space to fill in an answer and a 'check answer' button.</a>            </li>
-            <li>
-              <a href='sproutcore/example-8-next-back.html'>Maria's Practice Run with 'next' and 'back' buttons</a>            </li>
-            <li>
-              <a href='sproutcore/example-7-tabbed.html'>Maria's Practice Run with 3 tabbed pages</a>            </li>
-            <li>
-              <a href='sproutcore/example-6-maria.html'>'Maria's Practice Run'</a>            </li>
-            <li>
-              <a href='sproutcore/example-5-fixed.html'>Example with selectable items (NOW FIXED!)</a>            </li>
-            <li>
-              <a href='sproutcore/example-4.html'>Example with separate x and y columns</a>            </li>
-            <li>
-              <a href='sproutcore/example-3.html'>Example with rich text in upper left pane</a>            </li>
-            <li>
-              <a href='sproutcore/example-2.html'>Four Pane Example (note the, um, iPhoney colors)</a>            </li>
-            <li>
-              <a href='sproutcore/example-1.html'>Simple Graph and Corresponding List of Data Points</a>            </li>
+            <li>Temporary <a href="http://smartgraphs-rails-demos.dev.concord.org/backend/activities" target="author_activities_2010_08_10">pages for authoring activities</a>.</li>
           </ul>
-        </div>
-        
-        <div class='section-content'>
-          <h2>Early exploration of making activities into "executable" versions an author's printout-like view</h2>
+        <li> August 3: <a href='sproutcore/example-new-2-with-loading.html'>New version that loads activity specified in the URL, shows waiting indicator while it loads an activity, and more</a></li>
+        <li> July 26: <a href='http://smartgraphs-rails-demos.dev.concord.org/static/smartgraphs/en/40ea27eed2aa54e4826372ff6039a893b0e44d67/index.html' target="activity_2010_07_26">Example with authorable Guide Page and Dialog Turn content stored in a persistent database</a>
           <ul>
-            <li>
-              <a href='demos/executable-author-report/microdata-author-view-demo.html'>Prettier "printout" a similar activity that could be made "executable" similarly to the following activity</a> (embedded data is highlighted yellow)
-            </li>
-            <li>
-              <a href='demos/executable-author-report/frame-demo.html'>Early demo of activity</a> (with frames) that 'executes' <a href='demos/executable-author-report/frame-demo-no-js.html'>the HTML here</a>
-            </li>
-            
+            <li>Temporary pages for authoring: <a href="http://smartgraphs-rails-demos.dev.concord.org/rails/guide_pages" target="author_guide_pages">Guide Pages</a>, <a href="http://smartgraphs-rails-demos.dev.concord.org/rails/dialog_turns" target="author_dialog_turns">Dialog Turns</a>.</li>
           </ul>
-        </div>
-        
-        <div class='section-content'>
-          <h2>Early Prototype Smartgraph Activity</h2>
+        <li> July 22: <a href='sproutcore/command-refactor-student-test.html'>New, rebuilt version with predictiion graph and multiple graphs</a> </li>
+        <li> July 17: <a href='http://smartgraphs-rails-demos.dev.concord.org/static/smartgraphs/en/a1cf8d1b5ec229280c02b2399dde99db1f20ba1f/index.html' target="activity">Example with authorable Guide Page content stored in a persistent database and simple password protection</a>
           <ul>
-            <li>
-              <a href='slope-prototype/index.html'>Slope Activity Prototype</a>
-            </li>
+            <li>Temporary page for authoring Guide Pages is <a href="http://smartgraphs-rails-demos.dev.concord.org/guide_pages" target="author">here</a>.</li>
           </ul>
-        </div>
-
-        <div class='section-content'>
-          <h2>Raphael Demo</h2>
-          <ul>
-            <li>
-              <a href='raphael.html'>Plot function and check answer</a>
-            </li>
-          </ul>
-        </div>
-        
-        <div class='section-content'>
-          <h2>JSXGraph Demos</h2>
-          <ul>
-            <li>
-              <a href='jsxgraphs.html'>Plot function and check answer</a>
-            </li>
-            <li>
-              <a href='jsxgraphs-realtime-function.html'>Plot "realtime" function</a>
-            </li>
-          </ul>
-        </div>
-
-        <div class='section-content'>
-          <h2>Protovis Demo</h2>
-          <ul>
-            <li>
-              <a href='protovis.html'>Plot function and check answer</a>
-            </li>
-          </ul>
-        </div>
-        
-        <div class='section-content'>
-          <h2>Flotr Demo</h2>
-          <ul>
-            <li>
-              <a href='flotrgraphs.html'>Plot function and check answer</a>
-            </li>
-          </ul>
-        </div>
-        
-      </div>
+        </li>
+        <li>July 6: <a href='sproutcore/jar-test.html'>Test version with locally cached jars and no query strings</a> </li>
+        <li> June 12: <a href='demos/formbasedatmockup/index.html'>Form-Based Authoring Tool Mock-Up 1</a> </li>
+        <li> June 10: <a href='sproutcore/example-23.html'>Randolph test version merged with Kofi's page authoring work</a> </li>
+        <li> June 7: <a href='sproutcore/randolph-test.html'>Version for in-class test in Randolph, MA</a> </li>
+        <li> June 6: <a href='sproutcore/example-22.html'>Example with y columns on the left and various bug fixes</a> </li>
+        <li> June 6: <a href='sproutcore/example-21.html'>Example with 1s sampling interval an 30 samples max</a> (due to IE7 limitations) </li>
+        <li> June 5: <a href='sproutcore/example-20.html'>Example with graphical hints</a> </li>
+        <li> June 4: <a href='sproutcore/example-19.html'>Example with updated visualization of new data model</a> </li>
+        <li> June 4: <a href='sproutcore/example-18.html'>Example with improved styling and content of scaffolded questions 1-7 and 9 filled out</a> </li>
+        <li> June 2: <a href='sproutcore/example-17.html'>Improved integration of motion sensor and 'Maria' questions</a> with better formatting, axis labels, open-response text boxes, and more. </li>
+        <li> June 2: <a href='sproutcore/example-16-six-pages-with-sensor.html'>Preliminary integration of sensor applet and prefab activity</a> Doesn't work well; sensor applet clobbers 'Maria' data. </li>
+        <li> June 1: <a href='sproutcore/example-15-with-scaffold-dialog.html'>Major new version with scaffolding</a> (and a much more flexible data model) </li>
+        <li> May 25: <a href='sproutcore/example-14-editable-author-data.html'>Example with a button to edit authorable content</a> </li>
+        <li> <a href='sproutcore/example-13-with-question-data-on-the-side.html'>Example with the soon-to-be-authorable data on the side</a> </li>
+        <li> <a href='sproutcore/example-12-beginnings-of-author-view.html'>Example showing the beginnings of exposing the authored data created for the previous example</a> (see the bottom of the screen; not everything fits) </li>
+        <li> <a href='sproutcore/example-11-no-alert-boxes.html'>Answers on the lower left instead of in obtrusive dialog boxes</a> (This follows a major refactoring that makes the questions and answers far less 'hard-wired'.) </li>
+        <li> <a href='sproutcore/example-10-check-graph-annotation.html'>Maria's Practice Run, answerable by clicking on the graph.</a> </li>
+        <li> <a href='sproutcore/example-9-with-check-answer.html'>Maria's Practice Run with space to fill in an answer and a 'check answer' button.</a> </li>
+        <li> <a href='sproutcore/example-8-next-back.html'>Maria's Practice Run with 'next' and 'back' buttons</a> </li>
+        <li> <a href='sproutcore/example-7-tabbed.html'>Maria's Practice Run with 3 tabbed pages</a> </li>
+        <li> <a href='sproutcore/example-6-maria.html'>'Maria's Practice Run'</a> </li>
+        <li> <a href='sproutcore/example-5-fixed.html'>Example with selectable items (NOW FIXED!)</a> </li>
+        <li> <a href='sproutcore/example-4.html'>Example with separate x and y columns</a> </li>
+        <li> <a href='sproutcore/example-3.html'>Example with rich text in upper left pane</a> </li>
+        <li> <a href='sproutcore/example-2.html'>Four Pane Example (note the, um, iPhoney colors)</a> </li>
+        <li> <a href='sproutcore/example-1.html'>Simple Graph and Corresponding List of Data Points</a> </li>
+      </ul>
+    </div>
+    <div class='section-content'>
+      <h2>Early exploration of making activities into "executable" versions an author's printout-like view</h2>
+      <ul>
+        <li> <a href='demos/executable-author-report/microdata-author-view-demo.html'>Prettier "printout" a similar activity that could be made "executable" similarly to the following activity</a> (embedded data is highlighted yellow) </li>
+        <li> <a href='demos/executable-author-report/frame-demo.html'>Early demo of activity</a> (with frames) that 'executes' <a href='demos/executable-author-report/frame-demo-no-js.html'>the HTML here</a> </li>
+      </ul>
+    </div>
+    <div class='section-content'>
+      <h2>Early Prototype Smartgraph Activity</h2>
+      <ul>
+        <li> <a href='slope-prototype/index.html'>Slope Activity Prototype</a> </li>
+      </ul>
+    </div>
+    <div class='section-content'>
+      <h2>Raphael Demo</h2>
+      <ul>
+        <li> <a href='raphael.html'>Plot function and check answer</a> </li>
+      </ul>
+    </div>
+    <div class='section-content'>
+      <h2>JSXGraph Demos</h2>
+      <ul>
+        <li> <a href='jsxgraphs.html'>Plot function and check answer</a> </li>
+        <li> <a href='jsxgraphs-realtime-function.html'>Plot "realtime" function</a> </li>
+      </ul>
+    </div>
+    <div class='section-content'>
+      <h2>Protovis Demo</h2>
+      <ul>
+        <li> <a href='protovis.html'>Plot function and check answer</a> </li>
+      </ul>
+    </div>
+    <div class='section-content'>
+      <h2>Flotr Demo</h2>
+      <ul>
+        <li> <a href='flotrgraphs.html'>Plot function and check answer</a> </li>
+      </ul>
     </div>
   </div>
+</div>
+</div>
 </body>
 </html>
