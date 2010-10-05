@@ -1,0 +1,13 @@
+body.sc-theme{background-color:#B4C0D7;overflow:hidden;}.sc-theme .app-loading{background-color:#B4C0D7;position:absolute;top:0;right:0;bottom:0;left:0;}
+.app-loading img,.app-loading p{position:absolute;top:50%;left:50%;}.app-loading p{height:24px;text-align:center;font-size:18px;line-height:1.0;color:#666;font-style:bold;}
+.sc-theme .sc-pane.sc-main{background:#B4C0D7;}.sc-theme .sc-label-view.loading{font-size:18px;line-height:1.0;color:#666;font-style:bold;}
+.sc-theme .sc-label-view.error{color:#333;font-size:24px;line-height:1.0;font-style:bold;}
+.sc-view.smartgraph-pane{background-color:#E5E8EF;color:#333;border:1px solid #A2B5D7;}
+.sc-view.text-wrapper .sc-view{font-size:16px;}.text-wrapper p,.text-wrapper h1,.text-wrapper img{margin:10px;}
+.text-wrapper h1{font-size:18px;}.text-wrapper .text-field-view-wrapper,.sc-view.dialog-text .sc-radio-view{margin:10px;}
+.sc-view.dialog-text{margin:10px 0 10px 0;border:1px solid #ccc;background-color:#EFEDDD;}
+.sc-view.dialog-text .sc-view{color:black;font-size:14px;}.sc-view.dialog-text textarea{padding:5px;}
+.sc-theme .sc-label-view.pane-label{font-size:18px;line-height:1.0;color:#666;}.sc-theme .sc-label-view.sensor-message{font-size:24px;font-style:italic;line-height:1.0;color:#666;}
+.sc-theme .sc-view.ace.sc-radio-view.sc-static-layout .sc-radio-button{height:auto;}
+.sc-theme .sc-view.ace.sc-radio-view.sc-static-layout .sc-button-label{position:static;margin-left:5px;display:block;}
+.sc-theme .sc-view.dialog-text .sc-view.ace.sc-radio-view span.button{top:2px;}
