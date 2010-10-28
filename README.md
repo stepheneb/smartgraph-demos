@@ -40,6 +40,6 @@ The source code for the SproutCore demos is located here:
          Deny from all     
       </Proxy>
    
-       ProxyPass /db/ http://127.0.0.1:5984/ nocanon
+       ProxyPass /db/ http://127.0.0.1:5984/ nocanon retry=0
        ProxyPassReverse /db/ http://127.0.0.1:5984/
     </VirtualHost>
