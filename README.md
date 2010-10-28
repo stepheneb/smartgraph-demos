@@ -1,4 +1,4 @@
-# SmartGraph Technology Experiments
+# Smartgraph Experiments
 
 Live versions of the demos in this repository are hosted here
 [http://smartgraph-demos.dev.concord.org](http://smartgraph-demos.dev.concord.org).
@@ -9,16 +9,16 @@ Experiments in lightweight smartgraphs by the people working on the
 The source code for the SproutCore demos is located here:
 [http://github.com/rklancer/Smartgraphs](http://github.com/rklancer/Smartgraphs).
 
-To run this locally on a Mac,
 
-1. Install CouchDB
-2. Turn on web sharing. Uncomment the vhosts line in `/private/etc/apache2/httpd.conf`. Restart apache.
-3. Add the following line to `etc.hosts`:
+## To run this locally on a Mac,
+
+### Install CouchDB
+### Turn on web sharing. Uncomment the vhosts line in `/private/etc/apache2/httpd.conf`. Restart apache.
+### Add the following line to `etc.hosts`:
 
     127.0.0.1 demos.local
     
-4. Edit `/private/etc/apache2/extra/httpd-vhosts.conf` to include the following (replacing "(directory you
-cloned smartgraph-demos into)" as appropriate):
+### Edit `/private/etc/apache2/extra/httpd-vhosts.conf` to include the following (replacing `(directory you cloned smartgraph-demos into)` as appropriate):
 
     <VirtualHost *:80>
       ServerAdmin webmaster@localhost
@@ -42,5 +42,4 @@ cloned smartgraph-demos into)" as appropriate):
    
        ProxyPass /db/ http://127.0.0.1:5984/ nocanon
        ProxyPassReverse /db/ http://127.0.0.1:5984/
-   
     </VirtualHost>
