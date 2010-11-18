@@ -2,3 +2,4 @@
 .DS_Store
 log/*.log
 bin/config.yml
+docs/
