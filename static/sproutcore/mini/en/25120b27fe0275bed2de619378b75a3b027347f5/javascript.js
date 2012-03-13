@@ -1,4 +1,5 @@
-/* @license
+/* >>>>>>>>>> BEGIN source/license.js */
+/*! @license
 ==========================================================================
 SproutCore -- JavaScript Application Framework
 copyright 2006-2008, Sprout Systems, Inc. and contributors.
@@ -26,5 +27,4 @@ For more information about SproutCore, visit http://www.sproutcore.com
 
 ==========================================================================
 @license */
-if((typeof SC!=="undefined")&&SC&&SC.bundleDidLoad){SC.bundleDidLoad("sproutcore/mini")
-};
+

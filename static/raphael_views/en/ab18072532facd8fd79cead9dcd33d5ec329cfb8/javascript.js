@@ -1,4 +1,5 @@
-/* @license
+/* >>>>>>>>>> BEGIN source/license.js */
+/*! @license
 ==========================================================================
 Project:   RaphaelViews
 Copyright: ©2010 Richard Klancer and Concord Consortium
@@ -24,5 +25,3 @@ THE SOFTWARE.
 
 ==========================================================================
 @license */
-if((typeof SC!=="undefined")&&SC&&SC.bundleDidLoad){SC.bundleDidLoad("raphael_views")
-};

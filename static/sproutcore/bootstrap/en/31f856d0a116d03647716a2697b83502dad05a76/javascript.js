@@ -1,16 +1,99 @@
-var SC=SC||{BUNDLE_INFO:{},LAZY_INSTANTIATION:{}};SC._detectBrowser=function(c,f){if(c===undefined){c=navigator.userAgent
-}if(f===undefined){f=navigator.language||navigator.browserLanguage}var e=c.toLowerCase(),a=(e.match(/.*(?:rv|chrome|webkit|opera|ie)[\/: ](.+?)([ \);]|$)/)||[])[1],d=(e.match(/webkit\/(.+?) /)||[])[1];
-var b={version:a,safari:/webkit/.test(e)?d:0,opera:/opera/.test(e)?a:0,msie:/msie/.test(e)&&!/opera/.test(e)?a:0,mozilla:/mozilla/.test(e)&&!/(compatible|webkit)/.test(e)?a:0,mobileSafari:/apple.*mobile.*safari/.test(e)?a:0,chrome:/chrome/.test(e)?a:0,windows:!!/windows/.test(e),mac:!!/macintosh/.test(e)||(/mac os x/.test(e)&&!/like mac os x/.test(e)),language:f.split("-",1)[0]};
-b.current=b.msie?"msie":b.mozilla?"mozilla":b.chrome?"chrome":b.safari?"safari":b.opera?"opera":"unknown";
-return b};SC.browser=SC._detectBrowser();SC.bundleDidLoad=function(a){var b=this.BUNDLE_INFO[a];
-if(!b){b=this.BUNDLE_INFO[a]={}}b.loaded=true};SC.bundleIsLoaded=function(a){var b=this.BUNDLE_INFO[a];
-return b?!!b.loaded:false};SC.loadBundle=function(){throw"SC.loadBundle(): SproutCore is not loaded."
-};SC.setupBodyClassNames=function(){var e=document.body;if(!e){return}var c,a,f,b,g,d;
-c=SC.browser.current;a=SC.browser.windows?"windows":SC.browser.mac?"mac":"other-platform";
-d=document.documentElement.style;f=(d.MozBoxShadow!==undefined)||(d.webkitBoxShadow!==undefined)||(d.oBoxShadow!==undefined)||(d.boxShadow!==undefined);
-b=(d.MozBorderRadius!==undefined)||(d.webkitBorderRadius!==undefined)||(d.oBorderRadius!==undefined)||(d.borderRadius!==undefined);
-g=e.className?e.className.split(" "):[];if(f){g.push("box-shadow")}if(b){g.push("border-rad")
-}g.push(c);if(c==="chrome"){g.push("safari")}g.push(a);if(parseInt(SC.browser.msie,0)==7){g.push("ie7")
-}if(SC.browser.mobileSafari){g.push("mobile-safari")}if("createTouch" in document){g.push("touch")
-}e.className=g.join(" ")};if((typeof SC!=="undefined")&&SC&&SC.bundleDidLoad){SC.bundleDidLoad("sproutcore/bootstrap")
+/* >>>>>>>>>> BEGIN source/core.js */
+// ==========================================================================
+// Project:   SproutCore - JavaScript Application Framework
+// Copyright: ©2006-2010 Sprout Systems, Inc. and contributors.
+//            Portions ©2008-2010 Apple Inc. All rights reserved.
+// License:   Licensed under MIT license (see license.js)
+// ==========================================================================
+
+
+/* >>>>>>>>>> BEGIN source/system/browser.js */
+// ==========================================================================
+// Project:   SproutCore - JavaScript Application Framework
+// Copyright: ©2006-2010 Sprout Systems, Inc. and contributors.
+//            Portions ©2008-2010 Apple Inc. All rights reserved.
+// License:   Licensed under MIT license (see license.js)
+// ==========================================================================
+
+var SC = SC || { BUNDLE_INFO: {}, LAZY_INSTANTIATION: {} };
+
+SC._detectBrowser = function(rawUserAgent, language) {
+  if (rawUserAgent === undefined) rawUserAgent = navigator.userAgent;
+  if (language === undefined) language = navigator.language || navigator.browserLanguage;
+
+  var userAgent = rawUserAgent.toLowerCase(),
+      // Gibberish at the end is to determine when the browser version is done
+      version = (userAgent.match( /.*(?:rv|chrome|webkit|opera|ie)[\/: ](.+?)([ \);]|$)/ ) || [])[1],
+      webkitVersion = (userAgent.match( /webkit\/(.+?) / ) || [])[1];
+
+  var browser = {
+    version:      version,
+    safari:       /webkit/.test(userAgent) ? webkitVersion : 0,
+    opera:        /opera/.test(userAgent) ? version : 0,
+    msie:         /msie/.test(userAgent) && !/opera/.test(userAgent) ? version : 0,
+    mozilla:      /mozilla/.test( userAgent ) && !/(compatible|webkit)/.test(userAgent) ? version : 0,
+    mobileSafari: /apple.*mobile.*safari/.test(userAgent) ? version : 0,
+    chrome:       /chrome/.test( userAgent ) ? version : 0,
+    windows:      !!/windows/.test(userAgent),
+    mac:          !!/macintosh/.test(userAgent) || (/mac os x/.test(userAgent) && !/like mac os x/.test(userAgent)),
+    language:     language.split('-', 1)[0]
+  };
+
+  browser.current = browser.msie ? 'msie' : browser.mozilla ? 'mozilla' : browser.chrome ? 'chrome' : browser.safari ? 'safari' : browser.opera ? 'opera' : 'unknown' ;
+  return browser ;
 };
+
+SC.browser = SC._detectBrowser();
+
+/* >>>>>>>>>> BEGIN source/system/loader.js */
+// ==========================================================================
+// Project:   SproutCore - JavaScript Application Framework
+// Copyright: ©2006-2010 Sprout Systems, Inc. and contributors.
+//            Portions ©2008-2010 Apple Inc. All rights reserved.
+// License:   Licensed under MIT license (see license.js)
+// ==========================================================================
+
+// sc_require("system/browser");
+
+SC.bundleDidLoad = function(bundle) {
+  var info = this.BUNDLE_INFO[bundle] ;
+  if (!info) info = this.BUNDLE_INFO[bundle] = {} ;
+  info.loaded = true ;
+};
+
+SC.bundleIsLoaded = function(bundle) {
+  var info = this.BUNDLE_INFO[bundle] ;
+  return info ? !!info.loaded : false ;
+};
+
+SC.loadBundle = function() { throw "SC.loadBundle(): SproutCore is not loaded."; };
+
+SC.setupBodyClassNames = function() {
+  var el = document.body ;
+  if (!el) return ;
+  var browser, platform, shadows, borderRad, classNames, style;
+  browser = SC.browser.current ;
+  platform = SC.browser.windows ? 'windows' : SC.browser.mac ? 'mac' : 'other-platform' ;
+  style = document.documentElement.style;
+  shadows = (style.MozBoxShadow !== undefined) || 
+                (style.webkitBoxShadow !== undefined) ||
+                (style.oBoxShadow !== undefined) ||
+                (style.boxShadow !== undefined);
+  
+  borderRad = (style.MozBorderRadius !== undefined) || 
+              (style.webkitBorderRadius !== undefined) ||
+              (style.oBorderRadius !== undefined) ||
+              (style.borderRadius !== undefined);
+  
+  classNames = el.className ? el.className.split(' ') : [] ;
+  if(shadows) classNames.push('box-shadow');
+  if(borderRad) classNames.push('border-rad');
+  classNames.push(browser) ;
+  if (browser === 'chrome') classNames.push('safari');
+  classNames.push(platform) ;
+  if (parseInt(SC.browser.msie,0)==7) classNames.push('ie7') ;
+  if (SC.browser.mobileSafari) classNames.push('mobile-safari') ;
+  if ('createTouch' in document) classNames.push('touch');
+  el.className = classNames.join(' ') ;
+} ;
+

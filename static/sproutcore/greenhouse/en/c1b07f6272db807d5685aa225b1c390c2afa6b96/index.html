@@ -7,13 +7,14 @@
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
     <meta name="viewport" content="initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <link rel="apple-touch-icon" href="/static/sproutcore/foundation/en/1e3562c3eded0e237a64955cae12d1a7789e90d1/images/sproutcore-logo.png" />
-	  <link rel="apple-touch-startup-image" media="screen and (orientation:portrait)" href="/static/sproutcore/foundation/en/1e3562c3eded0e237a64955cae12d1a7789e90d1/images/sproutcore-startup-portrait.png" /> 
-	  <link rel="apple-touch-startup-image" media="screen and (orientation:landscape)" href="/static/sproutcore/foundation/en/1e3562c3eded0e237a64955cae12d1a7789e90d1/images/sproutcore-startup-landscape.png" />
+    <link rel="apple-touch-icon" href="/static/sproutcore/foundation/en/1e3562c3eded0e237a64955cae12d1a7789e90d1/source/images/sproutcore-logo.png" />
+	  <link rel="apple-touch-startup-image" media="screen and (orientation:portrait)" href="/static/sproutcore/foundation/en/1e3562c3eded0e237a64955cae12d1a7789e90d1/source/images/sproutcore-startup-portrait.png" /> 
+	  <link rel="apple-touch-startup-image" media="screen and (orientation:landscape)" href="/static/sproutcore/foundation/en/1e3562c3eded0e237a64955cae12d1a7789e90d1/source/images/sproutcore-startup-landscape.png" />
 	  <link rel="shortcut icon" href="" type="image/x-icon" />
     
     <title>Sproutcore Greenhouse</title>
-  <script type="text/javascript">
+  <script type="text/javascript">String.preferredLanguage = "en";</script>
+<script type="text/javascript">
 /* >>>>>>>>>> BEGIN source/core.js */
 // ==========================================================================
 // Project:   SproutCore - JavaScript Application Framework
@@ -113,16 +114,12 @@ SC.setupBodyClassNames = function() {
   el.className = classNames.join(' ') ;
 } ;
 
-/* >>>>>>>>>> BEGIN bundle_loaded.js */
-; if ((typeof SC !== 'undefined') && SC && SC.bundleDidLoad) SC.bundleDidLoad('sproutcore/bootstrap');
 
 </script>
-<script type="text/javascript">SC.buildMode = "production";</script>
+<script type="text/javascript">SC.buildMode = "production"; 
+ SC.urlPrefix = null; </script>
 
-     <link href="/static/sproutcore/en/87acb76d0373c721ae7e87bf0f10ce570bebe0e3/stylesheet-packed.css" rel="stylesheet" type="text/css" />
-  <link href="/static/sproutcore/designer/en/568e9d62df0d8d0813e4aab59b1d91a199a3d774/stylesheet.css" rel="stylesheet" type="text/css" />
-  <link href="/static/sproutcore/standard_theme/en/436311824016a77b8d960c0a2ffbf28f1ee20f39/stylesheet.css" rel="stylesheet" type="text/css" />
-  <link href="/static/sproutcore/greenhouse/en/c1b07f6272db807d5685aa225b1c390c2afa6b96/stylesheet.css" rel="stylesheet" type="text/css" />
+     <link href="/static/sproutcore/greenhouse/en/c1b07f6272db807d5685aa225b1c390c2afa6b96/stylesheet-packed.css" rel="stylesheet" type="text/css" />
    
     
   </head>
@@ -148,11 +145,6 @@ if (SC.setupBodyClassNames) SC.setupBodyClassNames() ;
 
 
 </div>
-  <script type="text/javascript" src="/static/sproutcore/en/87acb76d0373c721ae7e87bf0f10ce570bebe0e3/javascript-packed.js"></script>
-  <script type="text/javascript" src="/static/sproutcore/designer/en/568e9d62df0d8d0813e4aab59b1d91a199a3d774/javascript.js"></script>
-  <script type="text/javascript" src="/static/sproutcore/statechart/en/86100c88ef2ac57b2f8aca95405665ee88f897d0/javascript.js"></script>
-  <script type="text/javascript" src="/static/sproutcore/empty_theme/en/ded52cb3e6a67934b7f5561e5397d9af187bd369/javascript.js"></script>
-  <script type="text/javascript" src="/static/sproutcore/greenhouse/en/c1b07f6272db807d5685aa225b1c390c2afa6b96/javascript.js"></script>
-<script type="text/javascript">String.preferredLanguage = "en";</script>
+  <script type="text/javascript" src="/static/sproutcore/greenhouse/en/c1b07f6272db807d5685aa225b1c390c2afa6b96/javascript-packed.js"></script>
 	</body>
 </html>
