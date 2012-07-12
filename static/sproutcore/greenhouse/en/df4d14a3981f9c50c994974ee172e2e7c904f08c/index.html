@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=8" />
+    <meta http-equiv="Content-Script-Type" content="text/javascript" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="viewport" content="initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <link rel="apple-touch-icon" href="/static/sproutcore/foundation/en/1e3562c3eded0e237a64955cae12d1a7789e90d1/images/sproutcore-logo.png" />
+	  <link rel="apple-touch-startup-image" media="screen and (orientation:portrait)" href="/static/sproutcore/foundation/en/1e3562c3eded0e237a64955cae12d1a7789e90d1/images/sproutcore-startup-portrait.png" /> 
+	  <link rel="apple-touch-startup-image" media="screen and (orientation:landscape)" href="/static/sproutcore/foundation/en/1e3562c3eded0e237a64955cae12d1a7789e90d1/images/sproutcore-startup-landscape.png" />
+	  <link rel="shortcut icon" href="" type="image/x-icon" />
+    
+    <title>Sproutcore Greenhouse</title>
+  <script type="text/javascript">
+/* >>>>>>>>>> BEGIN source/core.js */
+// ==========================================================================
+// Project:   SproutCore - JavaScript Application Framework
+// Copyright: ©2006-2010 Sprout Systems, Inc. and contributors.
+//            Portions ©2008-2010 Apple Inc. All rights reserved.
+// License:   Licensed under MIT license (see license.js)
+// ==========================================================================
+
+
+/* >>>>>>>>>> BEGIN source/system/browser.js */
+// ==========================================================================
+// Project:   SproutCore - JavaScript Application Framework
+// Copyright: ©2006-2010 Sprout Systems, Inc. and contributors.
+//            Portions ©2008-2010 Apple Inc. All rights reserved.
+// License:   Licensed under MIT license (see license.js)
+// ==========================================================================
+
+var SC = SC || { BUNDLE_INFO: {}, LAZY_INSTANTIATION: {} };
+
+SC._detectBrowser = function(rawUserAgent, language) {
+  if (rawUserAgent === undefined) rawUserAgent = navigator.userAgent;
+  if (language === undefined) language = navigator.language || navigator.browserLanguage;
+
+  var userAgent = rawUserAgent.toLowerCase(),
+      // Gibberish at the end is to determine when the browser version is done
+      version = (userAgent.match( /.*(?:rv|chrome|webkit|opera|ie)[\/: ](.+?)([ \);]|$)/ ) || [])[1],
+      webkitVersion = (userAgent.match( /webkit\/(.+?) / ) || [])[1];
+
+  var browser = {
+    version:      version,
+    safari:       /webkit/.test(userAgent) ? webkitVersion : 0,
+    opera:        /opera/.test(userAgent) ? version : 0,
+    msie:         /msie/.test(userAgent) && !/opera/.test(userAgent) ? version : 0,
+    mozilla:      /mozilla/.test( userAgent ) && !/(compatible|webkit)/.test(userAgent) ? version : 0,
+    mobileSafari: /apple.*mobile.*safari/.test(userAgent) ? version : 0,
+    chrome:       /chrome/.test( userAgent ) ? version : 0,
+    windows:      !!/windows/.test(userAgent),
+    mac:          !!/macintosh/.test(userAgent) || (/mac os x/.test(userAgent) && !/like mac os x/.test(userAgent)),
+    language:     language.split('-', 1)[0]
+  };
+
+  browser.current = browser.msie ? 'msie' : browser.mozilla ? 'mozilla' : browser.chrome ? 'chrome' : browser.safari ? 'safari' : browser.opera ? 'opera' : 'unknown' ;
+  return browser ;
+};
+
+SC.browser = SC._detectBrowser();
+
+/* >>>>>>>>>> BEGIN source/system/loader.js */
+// ==========================================================================
+// Project:   SproutCore - JavaScript Application Framework
+// Copyright: ©2006-2010 Sprout Systems, Inc. and contributors.
+//            Portions ©2008-2010 Apple Inc. All rights reserved.
+// License:   Licensed under MIT license (see license.js)
+// ==========================================================================
+
+// sc_require("system/browser");
+
+SC.bundleDidLoad = function(bundle) {
+  var info = this.BUNDLE_INFO[bundle] ;
+  if (!info) info = this.BUNDLE_INFO[bundle] = {} ;
+  info.loaded = true ;
+};
+
+SC.bundleIsLoaded = function(bundle) {
+  var info = this.BUNDLE_INFO[bundle] ;
+  return info ? !!info.loaded : false ;
+};
+
+SC.loadBundle = function() { throw "SC.loadBundle(): SproutCore is not loaded."; };
+
+SC.setupBodyClassNames = function() {
+  var el = document.body ;
+  if (!el) return ;
+  var browser, platform, shadows, borderRad, classNames, style;
+  browser = SC.browser.current ;
+  platform = SC.browser.windows ? 'windows' : SC.browser.mac ? 'mac' : 'other-platform' ;
+  style = document.documentElement.style;
+  shadows = (style.MozBoxShadow !== undefined) || 
+                (style.webkitBoxShadow !== undefined) ||
+                (style.oBoxShadow !== undefined) ||
+                (style.boxShadow !== undefined);
+  
+  borderRad = (style.MozBorderRadius !== undefined) || 
+              (style.webkitBorderRadius !== undefined) ||
+              (style.oBorderRadius !== undefined) ||
+              (style.borderRadius !== undefined);
+  
+  classNames = el.className ? el.className.split(' ') : [] ;
+  if(shadows) classNames.push('box-shadow');
+  if(borderRad) classNames.push('border-rad');
+  classNames.push(browser) ;
+  if (browser === 'chrome') classNames.push('safari');
+  classNames.push(platform) ;
+  if (parseInt(SC.browser.msie,0)==7) classNames.push('ie7') ;
+  if (SC.browser.mobileSafari) classNames.push('mobile-safari') ;
+  if ('createTouch' in document) classNames.push('touch');
+  el.className = classNames.join(' ') ;
+} ;
+
+/* >>>>>>>>>> BEGIN bundle_loaded.js */
+; if ((typeof SC !== 'undefined') && SC && SC.bundleDidLoad) SC.bundleDidLoad('sproutcore/bootstrap');
+
+</script>
+<script type="text/javascript">SC.buildMode = "production";</script>
+
+     <link href="/static/sproutcore/en/87acb76d0373c721ae7e87bf0f10ce570bebe0e3/stylesheet-packed.css" rel="stylesheet" type="text/css" />
+  <link href="/static/sproutcore/designer/en/568e9d62df0d8d0813e4aab59b1d91a199a3d774/stylesheet.css" rel="stylesheet" type="text/css" />
+  <link href="/static/sproutcore/standard_theme/en/436311824016a77b8d960c0a2ffbf28f1ee20f39/stylesheet.css" rel="stylesheet" type="text/css" />
+  <link href="/static/sproutcore/greenhouse/en/df4d14a3981f9c50c994974ee172e2e7c904f08c/stylesheet.css" rel="stylesheet" type="text/css" />
+   
+    
+  </head>
+    
+  <body class="sc-theme focus">  
+<script type="text/javascript">
+// ==========================================================================
+// Project:   SproutCore - JavaScript Application Framework
+// Copyright: ©2006-2010 Sprout Systems, Inc. and contributors.
+//            Portions ©2008-2010 Apple Inc. All rights reserved.
+// License:   Licensed under MIT license (see license.js)
+// ==========================================================================
+
+// sc_resource('setup_body_class_names'); // publish into inline format
+
+if (SC.setupBodyClassNames) SC.setupBodyClassNames() ;
+
+</script>
+
+
+<div id="loading">
+<p class="loading">Loading...<p>
+
+
+</div>
+  <script type="text/javascript" src="/static/sproutcore/en/87acb76d0373c721ae7e87bf0f10ce570bebe0e3/javascript-packed.js"></script>
+  <script type="text/javascript" src="/static/sproutcore/designer/en/568e9d62df0d8d0813e4aab59b1d91a199a3d774/javascript.js"></script>
+  <script type="text/javascript" src="/static/sproutcore/statechart/en/4b516741132ed1a30662a06b7a34438be78f64aa/javascript.js"></script>
+  <script type="text/javascript" src="/static/sproutcore/empty_theme/en/ded52cb3e6a67934b7f5561e5397d9af187bd369/javascript.js"></script>
+  <script type="text/javascript" src="/static/sproutcore/greenhouse/en/df4d14a3981f9c50c994974ee172e2e7c904f08c/javascript.js"></script>
+<script type="text/javascript">String.preferredLanguage = "en";</script>
+	</body>
+</html>
